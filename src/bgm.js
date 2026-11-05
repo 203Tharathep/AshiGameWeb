@@ -1,168 +1,359 @@
-// Cozy Arcade / eShop Lo-Fi Background Music Engine (Web Audio API)
+// Seamless Stereo WAV Cozy Lo-Fi Background Music Engine for AshiGameWeb
 export class PortalBGM {
   constructor() {
-    this.ctx = null;
-    this.masterGain = null;
-    this.filterNode = null;
-    this.schedulerTimer = null;
+    this.audio = null;
+    this.blobUrl = null;
+    this.fadeTimer = null;
 
     this.isMuted = localStorage.getItem('ashigame_bgm_muted') === 'true';
+    const savedVol = parseFloat(localStorage.getItem('ashigame_bgm_volume'));
+    this.volume = Number.isFinite(savedVol) ? Math.max(0, Math.min(1, savedVol)) : 0.45;
+
     this.inGame = false;
     this.isPlaying = false;
-    this.volume = 0.28;
+    this.needsGesture = false;
+    this.onStateChange = null;
 
-    this.stepIndex = 0;
-    this.nextNoteTime = 0;
-    this.stepDuration = 60 / 84 / 2; // 84 BPM eighth-note steps
+    this.initAudioElement();
+    this.bindGestureUnlock();
+    this.bindVisibility();
+  }
 
-    // 8-bar cozy jazzy chord progression (frequencies in Hz)
-    this.bars = [
+  initAudioElement() {
+    const wavBlob = this.buildCozyLofiWav();
+    this.blobUrl = URL.createObjectURL(wavBlob);
+
+    this.audio = new Audio(this.blobUrl);
+    this.audio.loop = true;
+    this.audio.preload = 'auto';
+    this.audio.volume = this.isMuted ? 0 : this.volume;
+
+    this.audio.addEventListener('play', () => {
+      this.isPlaying = true;
+      this.needsGesture = false;
+      this.notify();
+    });
+
+    this.audio.addEventListener('pause', () => {
+      this.isPlaying = false;
+      this.notify();
+    });
+  }
+
+  // Synthesize a warm, seamless 8-bar stereo 32kHz 16-bit PCM chillhop / lobby loop
+  buildCozyLofiWav() {
+    const sr = 32000;
+    const bpm = 88;
+    const stepSec = 60 / bpm / 2; // eighth-note
+    const totalSteps = 64; // 8 bars * 8 eighth-notes
+    const loopSec = totalSteps * stepSec;
+    const totalSamples = Math.floor(loopSec * sr);
+
+    const left = new Float32Array(totalSamples);
+    const right = new Float32Array(totalSamples);
+
+    const addSample = (idx, lVal, rVal) => {
+      const wrapped = ((idx % totalSamples) + totalSamples) % totalSamples;
+      left[wrapped] += lVal;
+      right[wrapped] += rVal;
+    };
+
+    const addTone = (startSec, durSec, freq, amp, pan = 0, bright = 0.14) => {
+      const start = Math.floor(startSec * sr);
+      const len = Math.floor(durSec * sr);
+      const lGain = Math.cos(((pan + 1) * Math.PI) / 4);
+      const rGain = Math.sin(((pan + 1) * Math.PI) / 4);
+      const attack = Math.min(Math.floor(0.018 * sr), Math.floor(len * 0.2));
+      const twoPiF = (2 * Math.PI * freq) / sr;
+
+      for (let i = 0; i < len; i++) {
+        const env =
+          i < attack
+            ? i / attack
+            : Math.exp((-3.6 * (i - attack)) / len);
+        const phase = twoPiF * i;
+        // Warm Rhodes-like fundamental + gentle 2nd & 3rd overtones
+        const sig =
+          (Math.sin(phase) +
+            bright * Math.sin(phase * 2) * Math.exp((-6 * i) / len) +
+            bright * 0.35 * Math.sin(phase * 3) * Math.exp((-10 * i) / len)) *
+          amp *
+          env;
+        addSample(start + i, sig * lGain, sig * rGain);
+      }
+    };
+
+    const addKick = (startSec, amp = 0.24) => {
+      const start = Math.floor(startSec * sr);
+      const len = Math.floor(0.16 * sr);
+      let phase = 0;
+      for (let i = 0; i < len; i++) {
+        const t = i / len;
+        const freq = 42 + 78 * Math.exp(-t * 14);
+        phase += (2 * Math.PI * freq) / sr;
+        const env = Math.exp(-t * 7.5);
+        const sig = Math.sin(phase) * amp * env;
+        addSample(start + i, sig, sig);
+      }
+    };
+
+    const addBrush = (startSec, durSec = 0.045, amp = 0.035, pan = 0) => {
+      const start = Math.floor(startSec * sr);
+      const len = Math.floor(durSec * sr);
+      const lGain = Math.cos(((pan + 1) * Math.PI) / 4);
+      const rGain = Math.sin(((pan + 1) * Math.PI) / 4);
+      let prev = 0;
+      // Deterministic PRNG so loop is crisp and consistent
+      let seed = (start + 12345) >>> 0;
+      for (let i = 0; i < len; i++) {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        const white = (seed / 2147483648) - 1;
+        const hp = white - prev;
+        prev = white * 0.82;
+        const env = Math.exp((-5.5 * i) / len);
+        const sig = hp * amp * env;
+        addSample(start + i, sig * lGain, sig * rGain);
+      }
+    };
+
+    const bars = [
       {
-        bass: 174.61, // F3
+        bass: [174.61, null, null, null, null, 174.61, null, 196.00], // F3
         chord: [261.63, 329.63, 349.23, 440.00], // Fmaj7
         melody: [523.25, null, 659.25, null, 587.33, null, 523.25, null]
       },
       {
-        bass: 164.81, // E3
+        bass: [164.81, null, null, null, null, 164.81, null, 146.83], // E3
         chord: [246.94, 293.66, 329.63, 392.00], // Em7
         melody: [493.88, null, null, 587.33, 659.25, null, 493.88, null]
       },
       {
-        bass: 146.83, // D3
+        bass: [146.83, null, null, null, null, 146.83, null, 164.81], // D3
         chord: [261.63, 293.66, 349.23, 440.00], // Dm7
         melody: [523.25, null, 440.00, null, 523.25, 587.33, 659.25, null]
       },
       {
-        bass: 130.81, // C3
+        bass: [130.81, null, null, null, null, 130.81, null, 196.00], // C3
         chord: [246.94, 293.66, 329.63, 392.00], // Cmaj9
         melody: [587.33, null, 523.25, null, 392.00, null, null, null]
       },
       {
-        bass: 116.54, // Bb2
+        bass: [116.54, null, null, null, null, 116.54, null, 130.81], // Bb2
         chord: [233.08, 293.66, 349.23, 440.00], // Bbmaj7
         melody: [440.00, null, 523.25, null, 587.33, null, 698.46, null]
       },
       {
-        bass: 110.00, // A2
-        chord: [261.63, 329.63, 392.00, 440.00], // Am7
+        bass: [110.00, null, null, null, null, 110.00, null, 130.81], // A2
+        chord: [246.94, 261.63, 329.63, 392.00], // Am9
         melody: [659.25, null, 523.25, null, 440.00, null, 392.00, null]
       },
       {
-        bass: 146.83, // D3
+        bass: [146.83, null, null, null, null, 146.83, null, 174.61], // D3
         chord: [261.63, 329.63, 349.23, 440.00], // Dm9
-        melody: [349.23, null, 440.00, 523.25, 587.33, null, 523.25, null]
+        melody: [440.00, null, 523.25, null, 587.33, null, 659.25, null]
       },
       {
-        bass: 196.00, // G3
-        chord: [246.94, 329.63, 349.23, 440.00], // G13
-        melody: [587.33, null, 523.25, null, 493.88, null, 392.00, null]
+        bass: [196.00, null, null, null, null, 196.00, null, 146.83], // G3
+        chord: [246.94, 293.66, 349.23, 440.00], // G9sus4 -> G13
+        melody: [587.33, null, 523.25, null, 493.88, null, 440.00, null]
       }
     ];
 
-    this.onStateChange = null;
-    this.setupAutoUnlock();
-    this.setupVisibilityHandler();
-  }
+    for (let barIdx = 0; barIdx < bars.length; barIdx++) {
+      const bar = bars[barIdx];
+      const barStart = barIdx * 8 * stepSec;
 
-  initContext() {
-    if (this.ctx) return;
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
+      // Strummed Rhodes chords on beat 1 and gentle syncopation on step 5
+      bar.chord.forEach((freq, nIdx) => {
+        const pan = (nIdx - 1.5) * 0.22;
+        addTone(barStart + nIdx * 0.022, stepSec * 5.2, freq, 0.13, pan, 0.16);
+        addTone(barStart + 5 * stepSec + nIdx * 0.015, stepSec * 2.8, freq, 0.075, -pan, 0.12);
+      });
 
-    this.ctx = new AudioCtx();
+      for (let s = 0; s < 8; s++) {
+        const t = barStart + s * stepSec;
+        const swing = s % 2 === 1 ? 0.024 : 0;
 
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.0001, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
+        // Warm Bass
+        if (bar.bass[s]) {
+          addTone(t + swing, stepSec * 3.2, bar.bass[s], 0.22, 0, 0.06);
+        }
 
-    // Warm low-pass filter for mellow Rhodes / Chillhop tone
-    this.filterNode = this.ctx.createBiquadFilter();
-    this.filterNode.type = 'lowpass';
-    this.filterNode.frequency.setValueAtTime(1750, this.ctx.currentTime);
-    this.filterNode.Q.setValueAtTime(0.7, this.ctx.currentTime);
-    this.filterNode.connect(this.masterGain);
+        // Melody + subtle stereo echo
+        if (bar.melody[s]) {
+          const melFreq = bar.melody[s];
+          addTone(t + swing, stepSec * 2.3, melFreq, 0.135, 0.18, 0.2);
+          addTone(t + swing + stepSec * 1.5, stepSec * 1.6, melFreq, 0.042, -0.35, 0.1);
+        }
 
-    // Soft ambient delay echo
-    const delay = this.ctx.createDelay();
-    delay.delayTime.setValueAtTime(0.28, this.ctx.currentTime);
-    const feedback = this.ctx.createGain();
-    feedback.gain.setValueAtTime(0.2, this.ctx.currentTime);
-    const wet = this.ctx.createGain();
-    wet.gain.setValueAtTime(0.15, this.ctx.currentTime);
-
-    this.filterNode.connect(delay);
-    delay.connect(feedback);
-    feedback.connect(delay);
-    delay.connect(wet);
-    wet.connect(this.masterGain);
-  }
-
-  setupAutoUnlock() {
-    const unlock = () => {
-      if (!this.isMuted && !this.inGame) {
-        this.start();
+        // Cozy minimal Lo-Fi rhythm
+        if (s === 0 || s === 5) {
+          addKick(t + swing, s === 0 ? 0.21 : 0.15);
+        }
+        if (s === 2 || s === 6) {
+          addBrush(t + swing, 0.065, 0.055, 0.08);
+        } else {
+          addBrush(t + swing, 0.03, 0.02, -0.12);
+        }
       }
-      if (this.ctx && this.ctx.state === 'running') {
-        window.removeEventListener('pointerdown', unlock);
-        window.removeEventListener('keydown', unlock);
+    }
+
+    // Gentle peak limiter / normalization to ~0.72 so audio is clear and warm without clipping
+    let peak = 0.001;
+    for (let i = 0; i < totalSamples; i++) {
+      const aL = Math.abs(left[i]);
+      const aR = Math.abs(right[i]);
+      if (aL > peak) peak = aL;
+      if (aR > peak) peak = aR;
+    }
+    const norm = 0.72 / peak;
+
+    // Encode 16-bit Stereo WAV
+    const dataSize = totalSamples * 4;
+    const buffer = new ArrayBuffer(44 + dataSize);
+    const view = new DataView(buffer);
+
+    const writeStr = (offset, str) => {
+      for (let i = 0; i < str.length; i++) {
+        view.setUint8(offset + i, str.charCodeAt(i));
       }
     };
-    window.addEventListener('pointerdown', unlock, { passive: true });
-    window.addEventListener('keydown', unlock, { passive: true });
+
+    writeStr(0, 'RIFF');
+    view.setUint32(4, 36 + dataSize, true);
+    writeStr(8, 'WAVE');
+    writeStr(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true); // PCM
+    view.setUint16(22, 2, true); // Stereo
+    view.setUint32(24, sr, true);
+    view.setUint32(28, sr * 4, true);
+    view.setUint16(32, 4, true);
+    view.setUint16(34, 16, true);
+    writeStr(36, 'data');
+    view.setUint32(40, dataSize, true);
+
+    let offset = 44;
+    for (let i = 0; i < totalSamples; i++) {
+      const sL = Math.max(-1, Math.min(1, left[i] * norm));
+      const sR = Math.max(-1, Math.min(1, right[i] * norm));
+      view.setInt16(offset, sL < 0 ? sL * 0x8000 : sL * 0x7fff, true);
+      view.setInt16(offset + 2, sR < 0 ? sR * 0x8000 : sR * 0x7fff, true);
+      offset += 4;
+    }
+
+    return new Blob([buffer], { type: 'audio/wav' });
   }
 
-  setupVisibilityHandler() {
+  bindGestureUnlock() {
+    const unlock = () => {
+      if (!this.isMuted && !this.inGame && this.audio && this.audio.paused) {
+        this.playSmooth();
+      }
+    };
+    window.addEventListener('pointerdown', unlock, { capture: true, passive: true });
+    window.addEventListener('keydown', unlock, { capture: true, passive: true });
+    window.addEventListener('touchstart', unlock, { capture: true, passive: true });
+  }
+
+  bindVisibility() {
     document.addEventListener('visibilitychange', () => {
-      if (!this.ctx) return;
+      if (!this.audio) return;
       if (document.hidden) {
-        this.fadeTo(0.0001, 0.2);
-      } else if (this.shouldPlay()) {
-        this.ctx.resume().catch(() => {});
-        this.fadeTo(this.volume, 0.4);
+        if (!this.audio.paused) this.audio.pause();
+      } else if (!this.isMuted && !this.inGame) {
+        this.playSmooth();
       }
     });
   }
 
-  shouldPlay() {
-    return !this.isMuted && !this.inGame && !document.hidden;
-  }
-
-  fadeTo(targetGain, seconds = 0.35) {
-    if (!this.ctx || !this.masterGain) return;
-    const now = this.ctx.currentTime;
-    this.masterGain.gain.cancelScheduledValues(now);
-    this.masterGain.gain.setValueAtTime(Math.max(0.0001, this.masterGain.gain.value), now);
-    this.masterGain.gain.linearRampToValueAtTime(Math.max(0.0001, targetGain), now + seconds);
-  }
-
-  start() {
-    this.initContext();
-    if (!this.ctx) return;
-
-    if (this.ctx.state === 'suspended') {
-      this.ctx.resume().then(() => {
+  tryAutoStart() {
+    if (this.isMuted || this.inGame || !this.audio) {
+      this.notify();
+      return;
+    }
+    this.audio.volume = this.volume;
+    const p = this.audio.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch(() => {
+        // Browser requires first click/tap on fresh session
+        this.needsGesture = true;
+        this.isPlaying = false;
         this.notify();
-      }).catch(() => {});
+      });
+    }
+  }
+
+  playSmooth() {
+    if (!this.audio || this.isMuted || this.inGame) return;
+    clearInterval(this.fadeTimer);
+    const target = this.volume;
+    this.audio.volume = Math.min(target, 0.04);
+    const p = this.audio.play();
+    if (p && typeof p.then === 'function') {
+      p.then(() => {
+        if (this.inGame || this.isMuted) {
+          this.audio.pause();
+          this.notify();
+          return;
+        }
+        this.fadeVolumeTo(target, 350);
+      }).catch(() => {
+        this.needsGesture = true;
+        this.notify();
+      });
+    }
+  }
+
+  fadeVolumeTo(target, durationMs = 300, pauseAtZero = false) {
+    if (!this.audio) return;
+    clearInterval(this.fadeTimer);
+    const startVol = this.audio.volume;
+    const steps = 12;
+    const stepTime = Math.max(16, Math.floor(durationMs / steps));
+    let count = 0;
+
+    this.fadeTimer = setInterval(() => {
+      count++;
+      const ratio = count / steps;
+      const nextVol = startVol + (target - startVol) * ratio;
+      this.audio.volume = Math.max(0, Math.min(1, nextVol));
+      if (count >= steps) {
+        clearInterval(this.fadeTimer);
+        this.audio.volume = Math.max(0, Math.min(1, target));
+        if (pauseAtZero && target === 0 && !this.audio.paused) {
+          this.audio.pause();
+        }
+        this.notify();
+      }
+    }, stepTime);
+  }
+
+  setVolume(val) {
+    this.volume = Math.max(0, Math.min(1, val));
+    try {
+      localStorage.setItem('ashigame_bgm_volume', String(this.volume));
+    } catch {
+      // Ignore storage error
     }
 
-    if (!this.isPlaying) {
-      this.isPlaying = true;
-      this.nextNoteTime = this.ctx.currentTime + 0.06;
-      this.schedulerTimer = setInterval(() => this.scheduleLoop(), 80);
-    }
-
-    if (this.shouldPlay()) {
-      this.fadeTo(this.volume, 0.5);
+    if (this.volume === 0) {
+      this.isMuted = true;
+      localStorage.setItem('ashigame_bgm_muted', 'true');
+      if (this.audio && !this.audio.paused) this.audio.pause();
+    } else {
+      if (this.isMuted) {
+        this.isMuted = false;
+        localStorage.setItem('ashigame_bgm_muted', 'false');
+      }
+      if (this.audio) {
+        this.audio.volume = this.volume;
+        if (this.audio.paused && !this.inGame) {
+          this.playSmooth();
+        }
+      }
     }
     this.notify();
-  }
-
-  stopScheduler() {
-    if (this.schedulerTimer) {
-      clearInterval(this.schedulerTimer);
-      this.schedulerTimer = null;
-    }
-    this.isPlaying = false;
   }
 
   toggleMute() {
@@ -170,19 +361,18 @@ export class PortalBGM {
     try {
       localStorage.setItem('ashigame_bgm_muted', String(this.isMuted));
     } catch {
-      // Ignore storage errors
+      // Ignore storage error
     }
 
     if (this.isMuted) {
-      this.fadeTo(0.0001, 0.25);
-      setTimeout(() => {
-        if (this.isMuted) this.stopScheduler();
-        this.notify();
-      }, 280);
+      this.fadeVolumeTo(0, 220, true);
     } else {
-      // Allow playing if user explicitly unmuted
+      if (this.volume === 0) {
+        this.volume = 0.45;
+        localStorage.setItem('ashigame_bgm_volume', '0.45');
+      }
       this.inGame = false;
-      this.start();
+      this.playSmooth();
     }
     this.notify();
     return this.isMuted;
@@ -190,155 +380,25 @@ export class PortalBGM {
 
   setInGame(flag) {
     this.inGame = flag;
-    if (!this.ctx) {
-      this.notify();
-      return;
-    }
     if (flag) {
-      this.fadeTo(0.0001, 0.35);
+      if (this.audio && !this.audio.paused) {
+        this.fadeVolumeTo(0, 260, true);
+      }
     } else if (!this.isMuted) {
-      this.start();
-      this.fadeTo(this.volume, 0.5);
+      this.playSmooth();
     }
     this.notify();
   }
 
-  isActiveAudio() {
-    return !this.isMuted && !this.inGame;
-  }
-
   notify() {
     if (typeof this.onStateChange === 'function') {
-      this.onStateChange(this.isActiveAudio(), this.isMuted);
-    }
-  }
-
-  scheduleLoop() {
-    if (!this.ctx || !this.shouldPlay()) return;
-    while (this.nextNoteTime < this.ctx.currentTime + 0.22) {
-      this.playStep(this.stepIndex, this.nextNoteTime);
-      this.nextNoteTime += this.stepDuration;
-      this.stepIndex = (this.stepIndex + 1) % (this.bars.length * 8);
-    }
-  }
-
-  playStep(step, time) {
-    const bar = this.bars[Math.floor(step / 8) % this.bars.length];
-    const subStep = step % 8;
-
-    // Warm electric piano chord on beat 1 and gentle syncopation on step 5
-    if (subStep === 0) {
-      bar.chord.forEach((freq, idx) => {
-        this.playRhodesNote(freq, time + idx * 0.018, this.stepDuration * 4.5, 0.085);
+      this.onStateChange({
+        isPlaying: Boolean(this.audio && !this.audio.paused && !this.isMuted),
+        isMuted: this.isMuted,
+        inGame: this.inGame,
+        needsGesture: this.needsGesture,
+        volume: this.volume
       });
-      this.playBassNote(bar.bass, time, this.stepDuration * 4.2, 0.14);
-    } else if (subStep === 5) {
-      bar.chord.forEach((freq, idx) => {
-        this.playRhodesNote(freq, time + idx * 0.012, this.stepDuration * 2.6, 0.055);
-      });
-      this.playBassNote(bar.bass * 1.5, time, this.stepDuration * 2.2, 0.09);
     }
-
-    // Soft bell melody
-    const mel = bar.melody[subStep];
-    if (mel) {
-      this.playBellNote(mel, time, this.stepDuration * 2.1, 0.075);
-    }
-
-    // Subtle soft lo-fi shaker on even eighth notes
-    if (subStep % 2 === 0) {
-      this.playSoftTick(time, subStep === 2 || subStep === 6 ? 0.022 : 0.01);
-    }
-  }
-
-  playRhodesNote(freq, time, dur, peak) {
-    const osc1 = this.ctx.createOscillator();
-    const osc2 = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(freq, time);
-
-    osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(freq * 2, time);
-
-    const g2 = this.ctx.createGain();
-    g2.gain.setValueAtTime(0.12, time);
-
-    gain.gain.setValueAtTime(0.0001, time);
-    gain.gain.linearRampToValueAtTime(peak, time + 0.025);
-    gain.gain.exponentialRampToValueAtTime(0.0008, time + dur);
-
-    osc1.connect(gain);
-    osc2.connect(g2);
-    g2.connect(gain);
-    gain.connect(this.filterNode);
-
-    osc1.start(time);
-    osc2.start(time);
-    osc1.stop(time + dur + 0.03);
-    osc2.stop(time + dur + 0.03);
-  }
-
-  playBassNote(freq, time, dur, peak) {
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, time);
-
-    gain.gain.setValueAtTime(0.0001, time);
-    gain.gain.linearRampToValueAtTime(peak, time + 0.03);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
-
-    osc.connect(gain);
-    gain.connect(this.filterNode);
-
-    osc.start(time);
-    osc.stop(time + dur + 0.03);
-  }
-
-  playBellNote(freq, time, dur, peak) {
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, time);
-
-    gain.gain.setValueAtTime(0.0001, time);
-    gain.gain.linearRampToValueAtTime(peak, time + 0.018);
-    gain.gain.exponentialRampToValueAtTime(0.0008, time + dur);
-
-    osc.connect(gain);
-    gain.connect(this.filterNode);
-
-    osc.start(time);
-    osc.stop(time + dur + 0.03);
-  }
-
-  playSoftTick(time, peak) {
-    const bufferSize = Math.floor(this.ctx.sampleRate * 0.025);
-    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
-    }
-
-    const noise = this.ctx.createBufferSource();
-    noise.buffer = buffer;
-
-    const hp = this.ctx.createBiquadFilter();
-    hp.type = 'highpass';
-    hp.frequency.setValueAtTime(5200, time);
-
-    const gain = this.ctx.createGain();
-    gain.gain.setValueAtTime(peak, time);
-
-    noise.connect(hp);
-    hp.connect(gain);
-    gain.connect(this.masterGain);
-
-    noise.start(time);
   }
 }
-

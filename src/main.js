@@ -1,12 +1,12 @@
 import { OFFICIAL_GAMES, CATEGORIES } from './gamesData.js';
 import { PortalBGM } from './bgm.js';
 
-const SVG_HEART_OUTLINE = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
-const SVG_HEART_SOLID = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
-const SVG_MOON = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-const SVG_SUN = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-const SVG_MUSIC_OFF = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`;
-const SVG_MUSIC_NOTE = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>`;
+const SVG_HEART_OUTLINE = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
+const SVG_HEART_SOLID = `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.9"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
+const SVG_MOON = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+const SVG_SUN = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+const SVG_MUSIC_OFF = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`;
+const SVG_MUSIC_NOTE = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>`;
 const HTML_EQ_BARS = `<span class="eq-bars"><i></i><i></i><i></i></span>`;
 
 class CleanGamePortal {
@@ -19,7 +19,6 @@ class CleanGamePortal {
 
     this.theme = localStorage.getItem('ashigame_theme') || 'light';
     this.favorites = new Set(this.loadArray('ashigame_favorites'));
-    this.likedGames = new Set(this.loadArray('ashigame_likes'));
 
     this.bgm = new PortalBGM();
 
@@ -27,14 +26,22 @@ class CleanGamePortal {
     if (this.dom.searchInput) {
       this.dom.searchInput.value = '';
     }
+    if (this.dom.bgmVolumeSlider) {
+      this.dom.bgmVolumeSlider.value = String(this.bgm.isMuted ? 0 : this.bgm.volume);
+    }
+
     this.applyTheme(this.theme);
-    this.updateBgmButton();
-    this.bgm.onStateChange = () => this.updateBgmButton();
+    this.bgm.onStateChange = (state) => this.syncBgmUI(state);
 
     this.bindEvents();
     this.renderCategories();
     this.renderGrid();
     this.handleRoute();
+
+    // Attempt auto-playing Lobby BGM immediately when on the normal Home page
+    if (!this.currentGame) {
+      this.bgm.tryAutoStart();
+    }
   }
 
   loadArray(key) {
@@ -59,9 +66,11 @@ class CleanGamePortal {
     this.dom = {
       brandLogoLink: document.getElementById('brandLogoLink'),
       searchInput: document.getElementById('searchInput'),
+      bgmPillWrap: document.getElementById('bgmPillWrap'),
       bgmToggleBtn: document.getElementById('bgmToggleBtn'),
       bgmIconWrap: document.getElementById('bgmIconWrap'),
       bgmLabelText: document.getElementById('bgmLabelText'),
+      bgmVolumeSlider: document.getElementById('bgmVolumeSlider'),
       randomGameBtn: document.getElementById('randomGameBtn'),
       themeToggleBtn: document.getElementById('themeToggleBtn'),
       themeIconWrap: document.getElementById('themeIconWrap'),
@@ -84,8 +93,6 @@ class CleanGamePortal {
       playerGameTitle: document.getElementById('playerGameTitle'),
       playerCategoryText: document.getElementById('playerCategoryText'),
 
-      likeBtn: document.getElementById('likeBtn'),
-      likeCountText: document.getElementById('likeCountText'),
       playerFavBtn: document.getElementById('playerFavBtn'),
       playerFavIconWrap: document.getElementById('playerFavIconWrap'),
       mobileAspectBtn: document.getElementById('mobileAspectBtn'),
@@ -115,21 +122,29 @@ class CleanGamePortal {
     this.dom.themeIconWrap.innerHTML = theme === 'dark' ? SVG_SUN : SVG_MOON;
   }
 
-  updateBgmButton() {
-    if (!this.dom.bgmToggleBtn) return;
-    if (this.bgm.isMuted) {
-      this.dom.bgmToggleBtn.classList.remove('is-playing');
+  syncBgmUI(state) {
+    if (!this.dom.bgmPillWrap) return;
+    const { isPlaying, isMuted, inGame, needsGesture, volume } = state;
+
+    this.dom.bgmPillWrap.classList.toggle('is-playing', isPlaying);
+    this.dom.bgmPillWrap.classList.toggle('needs-gesture', !isPlaying && !isMuted && needsGesture);
+
+    if (this.dom.bgmVolumeSlider && document.activeElement !== this.dom.bgmVolumeSlider) {
+      this.dom.bgmVolumeSlider.value = String(isMuted ? 0 : volume);
+    }
+
+    if (isMuted) {
       this.dom.bgmIconWrap.innerHTML = SVG_MUSIC_OFF;
-      this.dom.bgmLabelText.textContent = 'ปิดเพลง';
-    } else if (this.bgm.inGame) {
-      this.dom.bgmToggleBtn.classList.remove('is-playing');
+      this.dom.bgmLabelText.textContent = 'ปิดเสียง';
+    } else if (isPlaying) {
+      this.dom.bgmIconWrap.innerHTML = HTML_EQ_BARS;
+      this.dom.bgmLabelText.textContent = 'BGM';
+    } else if (inGame) {
       this.dom.bgmIconWrap.innerHTML = SVG_MUSIC_NOTE;
       this.dom.bgmLabelText.textContent = 'พักเพลง';
     } else {
-      const running = this.bgm.ctx && this.bgm.ctx.state === 'running' && this.bgm.isPlaying;
-      this.dom.bgmToggleBtn.classList.toggle('is-playing', Boolean(running));
-      this.dom.bgmIconWrap.innerHTML = running ? HTML_EQ_BARS : SVG_MUSIC_NOTE;
-      this.dom.bgmLabelText.textContent = 'เพลง';
+      this.dom.bgmIconWrap.innerHTML = SVG_MUSIC_NOTE;
+      this.dom.bgmLabelText.textContent = 'เปิดเพลง';
     }
   }
 
@@ -139,8 +154,12 @@ class CleanGamePortal {
     this.dom.bgmToggleBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const muted = this.bgm.toggleMute();
-      this.updateBgmButton();
       this.showToast(muted ? 'ปิดเพลงพื้นหลังแล้ว' : 'เปิดเพลงพื้นหลังแล้ว');
+    });
+
+    this.dom.bgmVolumeSlider.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      this.bgm.setVolume(val);
     });
 
     this.dom.themeToggleBtn.addEventListener('click', () => {
@@ -197,20 +216,6 @@ class CleanGamePortal {
           // Ignore focus restrictions
         }
       }
-    });
-
-    this.dom.likeBtn.addEventListener('click', () => {
-      if (!this.currentGame) return;
-      const id = this.currentGame.id;
-      if (this.likedGames.has(id)) {
-        this.likedGames.delete(id);
-      } else {
-        this.likedGames.add(id);
-        this.showToast('ถูกใจเกมนี้แล้ว');
-      }
-      this.saveJSON('ashigame_likes', [...this.likedGames]);
-      this.updatePlayerBarState();
-      this.renderGrid();
     });
 
     this.dom.playerFavBtn.addEventListener('click', () => {
@@ -288,15 +293,8 @@ class CleanGamePortal {
   }
 
   // =========================================================================
-  // HOME VIEW RENDERING
+  // MINIMAL HOME VIEW RENDERING
   // =========================================================================
-  getLikeInfo(game) {
-    const extra = this.likedGames.has(game.id) ? 1 : 0;
-    const likes = game.likes + extra;
-    const pct = Math.round((likes / (likes + game.dislikes)) * 100);
-    return { likes, pct };
-  }
-
   toggleFavorite(id) {
     if (this.favorites.has(id)) {
       this.favorites.delete(id);
@@ -353,7 +351,7 @@ class CleanGamePortal {
     if (filtered.length === 0) {
       this.dom.gamesGrid.innerHTML = `
         <div class="empty-box">
-          <p>ไม่พบเกมในหมวดหมู่หรือคำค้นหานี้</p>
+          <p>ไม่พบเกมในหมวดหมู่นี้</p>
         </div>
       `;
       return;
@@ -361,54 +359,44 @@ class CleanGamePortal {
 
     this.dom.gamesGrid.innerHTML = filtered
       .map((game) => {
-        const { pct } = this.getLikeInfo(game);
         const isFav = this.favorites.has(game.id);
         return `
-          <article class="game-card">
-            <div class="card-cover js-play" data-id="${game.id}">
+          <article class="game-card js-card" data-id="${game.id}">
+            <div class="card-cover">
               <img class="card-cover-img" src="${game.thumbnailBg}" alt="${game.title}" loading="lazy" />
               ${
                 game.characterOverlay
                   ? `<img class="card-char-overlay" src="${game.characterOverlay}" alt="" loading="lazy" />`
                   : ''
               }
-              <span class="card-badge">${game.badge}</span>
-              <button class="card-fav-btn ${isFav ? 'is-fav' : ''} js-fav" data-id="${game.id}" title="รายการโปรด">
+              <button class="card-fav-btn ${isFav ? 'is-fav' : ''} js-fav" data-id="${game.id}" title="รายการโปรด" aria-label="รายการโปรด">
                 ${isFav ? SVG_HEART_SOLID : SVG_HEART_OUTLINE}
               </button>
               <div class="card-play-overlay">
-                <div class="play-circle">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <polygon points="6 4 20 12 6 20 6 4"></polygon>
+                <span class="play-pill">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
                   </svg>
-                </div>
+                  เล่นเกม
+                </span>
               </div>
             </div>
 
             <div class="card-content">
-              <h2 class="card-title js-play" data-id="${game.id}">${game.title}</h2>
-              <p class="card-subtitle">${game.subtitle}</p>
-
-              <div class="card-bottom">
-                <div class="card-stats">
-                  <span class="stat-like">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
-                    </svg>
-                    ${pct}%
-                  </span>
-                </div>
-
-                <button class="card-play-btn js-play" data-id="${game.id}">เข้าเล่น</button>
+              <div class="card-meta-row">
+                <span>${game.categoryLabel}</span>
+                <span class="card-enter-hint">เล่น →</span>
               </div>
+              <h2 class="card-title">${game.title}</h2>
+              <p class="card-subtitle">${game.subtitle}</p>
             </div>
           </article>
         `;
       })
       .join('');
 
-    this.dom.gamesGrid.querySelectorAll('.js-play').forEach((el) => {
-      el.addEventListener('click', () => this.openGame(el.dataset.id));
+    this.dom.gamesGrid.querySelectorAll('.js-card').forEach((card) => {
+      card.addEventListener('click', () => this.openGame(card.dataset.id));
     });
 
     this.dom.gamesGrid.querySelectorAll('.js-fav').forEach((btn) => {
@@ -420,7 +408,7 @@ class CleanGamePortal {
   }
 
   // =========================================================================
-  // PLAYER VIEW RENDERING
+  // MINIMAL PLAYER VIEW RENDERING
   // =========================================================================
   mountPlayer(game) {
     const isSame = this.currentGame && this.currentGame.id === game.id;
@@ -508,13 +496,7 @@ class CleanGamePortal {
 
   updatePlayerBarState() {
     if (!this.currentGame) return;
-    const { likes } = this.getLikeInfo(this.currentGame);
-    const isLiked = this.likedGames.has(this.currentGame.id);
     const isFav = this.favorites.has(this.currentGame.id);
-
-    this.dom.likeCountText.textContent = likes.toLocaleString('th-TH');
-    this.dom.likeBtn.classList.toggle('active', isLiked);
-
     this.dom.playerFavBtn.classList.toggle('active', isFav);
     this.dom.playerFavIconWrap.innerHTML = isFav ? SVG_HEART_SOLID : SVG_HEART_OUTLINE;
   }

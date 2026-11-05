@@ -1,5 +1,5 @@
-import { OFFICIAL_GAMES, CATEGORIES } from './gamesData.js';
-import { PortalBGM } from './bgm.js';
+import { OFFICIAL_GAMES, CATEGORIES } from './gamesData.js?v=6';
+import { PortalBGM } from './bgm.js?v=6';
 
 const SVG_HEART_OUTLINE = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
 const SVG_HEART_SOLID = `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.9"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
@@ -12,6 +12,7 @@ const HTML_EQ_BARS = `<span class="eq-bars"><i></i><i></i><i></i></span>`;
 class CleanGamePortal {
   constructor() {
     this.games = OFFICIAL_GAMES;
+    this.categories = CATEGORIES;
     this.activeCategory = 'all';
     this.searchQuery = '';
     this.currentGame = null;
@@ -37,10 +38,37 @@ class CleanGamePortal {
     this.renderCategories();
     this.renderGrid();
     this.handleRoute();
+    this.refreshGamesCatalogIfStatic();
 
     // Attempt auto-playing Lobby BGM immediately when on the normal Home page
     if (!this.currentGame) {
       this.bgm.tryAutoStart();
+    }
+  }
+
+  async refreshGamesCatalogIfStatic() {
+    if (!import.meta.url.includes('/src/main.js')) return;
+    if (typeof import.meta.env !== 'undefined' && import.meta.env?.DEV) return;
+    try {
+      const freshUrl = new URL('./gamesData.js', import.meta.url);
+      freshUrl.searchParams.set('ts', String(Date.now()));
+      const mod = await import(/* @vite-ignore */ freshUrl.href);
+      if (
+        Array.isArray(mod?.OFFICIAL_GAMES) &&
+        JSON.stringify(mod.OFFICIAL_GAMES) !== JSON.stringify(this.games)
+      ) {
+        this.games = mod.OFFICIAL_GAMES;
+        if (Array.isArray(mod.CATEGORIES)) {
+          this.categories = mod.CATEGORIES;
+        }
+        this.renderCategories();
+        this.renderGrid();
+        if (window.location.hash.startsWith('#play/')) {
+          this.handleRoute();
+        }
+      }
+    } catch {
+      // Ignore in bundled or offline environments
     }
   }
 
@@ -309,7 +337,7 @@ class CleanGamePortal {
   }
 
   renderCategories() {
-    this.dom.categoryPills.innerHTML = CATEGORIES.map((cat) => {
+    this.dom.categoryPills.innerHTML = this.categories.map((cat) => {
       const active = this.activeCategory === cat.id ? 'active' : '';
       return `<button class="pill-btn ${active}" data-cat="${cat.id}">${cat.label}</button>`;
     }).join('');

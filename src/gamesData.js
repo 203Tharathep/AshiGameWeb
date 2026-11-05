@@ -1,5 +1,36 @@
 export const OFFICIAL_GAMES = [
   {
+    id: 'ashitunnel',
+    title: 'ทางออกที่ 10 : Ashi Tunnel',
+    subtitle: 'เกม 3D สไตล์ The Exit 8 ในอุโมงค์สถานี จดจำโปสเตอร์ 10 แผ่น จับผิดจุดหลอนสู่อิสรภาพ',
+    playUrl: './games/ashitunnel/index.html',
+    author: '203Tharathep',
+    category: 'horror',
+    categoryLabel: 'สยองขวัญ / เอาชีวิตรอด',
+    badge: '3D Anomaly · Exit 8',
+    thumbnailBg: './games/ashitunnel/ashi/variants/R2_var_cerberus.jpg',
+    characterOverlay: '',
+    icon: './games/ashitunnel/ashi/variants/L1_var_eyes_open.jpg',
+    screenshots: [
+      { src: './games/ashitunnel/ashi/variants/R2_var_cerberus.jpg', caption: 'โกลเด้นอชิกลายร่างเป็นหมาปีศาจเซเบอรัสตาแดง' },
+      { src: './games/ashitunnel/ashi/variants/L1_var_eyes_open.jpg', caption: 'เจ้าชายนิทราลืมตาตื่นจ้องมองผู้เล่น' },
+      { src: './games/ashitunnel/ashi/variants/L2_var_gigachad.jpg', caption: 'เหนียงแห่งสันติภาพกลายร่างเป็นกิกะชาดหน้าเหลี่ยม' },
+      { src: './games/ashitunnel/ashi/base/R2_dog.jpg', caption: 'ภาพด่านต้นแบบปกติ (ทางออก 0) ต้องจำให้แม่นยำ' }
+    ],
+    likes: 2480,
+    dislikes: 12,
+    plays: 31200,
+    allowMobileAspect: true,
+    description:
+      'คุณติดอยู่ในอุโมงค์ใต้ดินสถานีอชิที่วนลูปไม่รู้จบในรูปแบบ 3D สมจริง! ใน "ทางออก 0" จงเดินสำรวจและจดจำภาพโปสเตอร์ทั้งหมด 10 แผ่นให้แม่นยำ หากทางเดินปกติดีให้เดินตรงไปสุดทางแล้วเลี้ยวขวาเพื่อเพิ่มด่าน แต่ถ้าพบสิ่งผิดปกติแม้แต่น้อย (ภาพเปลี่ยนไป, ไฟกระพริบ, หรือสิ่งลี้ลับ) ให้รีบหันหลังเดินย้อนกลับเลี้ยวขวาทันที! ฝ่าฟันให้ครบทั้ง 10 ด่านเพื่อหนีสู่อิสรภาพ',
+    controls: [
+      { key: 'W / A / S / D', action: 'เดินสำรวจในอุโมงค์ (กด Shift เพื่อวิ่ง)' },
+      { key: 'เมาส์ / จอยมือถือ', action: 'หันมุมมองกล้อง 360 องศา (คลิกเพื่อล็อกเมาส์)' },
+      { key: 'คลิกขวา / F / ซูม', action: 'ซูมเพ่ง 2.5× ส่องสังเกตรายละเอียดภาพโปสเตอร์' },
+      { key: 'R / ปุ่มกลับหลัง', action: 'กลับหลังหันทันที (เมื่อพบความผิดปกติ)' }
+    ]
+  },
+  {
     id: 'fivenightatashi3',
     title: 'Five Nights at Ashi 3',
     subtitle: '30 ปีต่อมาในบ้านผีสิง Fazbear’s Fright เปิดเสียงล่อ ปิดท่อแอร์ และรีบูตระบบหนี Springtrap',

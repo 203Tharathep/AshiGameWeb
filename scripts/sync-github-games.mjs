@@ -39,6 +39,12 @@ const REPOS = [
     url: 'https://github.com/AkashiZai/AshiGame.git',
     dest: 'games/ashigame',
     copyItems: ['index.html', 'style.css', 'cards.js', 'game.js', 'peerjs.min.js', 'images']
+  },
+  {
+    name: 'AshiTunnel',
+    url: 'https://github.com/203Tharathep/Ashi-Tunnel.git',
+    dest: 'games/ashitunnel',
+    copyItems: ['dist']
   }
 ];
 
@@ -114,10 +120,42 @@ try {
       fs.writeFileSync(fnafHtmlPath, html, 'utf8');
     }
 
+    if (repo.name === 'AshiTunnel') {
+      const distDir = path.join(destDir, 'dist');
+      if (fs.existsSync(distDir)) {
+        for (const item of fs.readdirSync(distDir)) {
+          const s = path.join(distDir, item);
+          const d = path.join(destDir, item);
+          fs.cpSync(s, d, { recursive: true, force: true });
+        }
+        fs.rmSync(distDir, { recursive: true, force: true });
+      }
+      const indexPath = path.join(destDir, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        let h = fs.readFileSync(indexPath, 'utf8');
+        h = h.replaceAll('src="/assets/', 'src="./assets/');
+        h = h.replaceAll('href="/assets/', 'href="./assets/');
+        h = h.replaceAll('src="/ashi/', 'src="./ashi/');
+        h = h.replaceAll('src="/qrcode.png"', 'src="./qrcode.png"');
+        fs.writeFileSync(indexPath, h, 'utf8');
+      }
+      const assetsDir = path.join(destDir, 'assets');
+      if (fs.existsSync(assetsDir)) {
+        for (const f of fs.readdirSync(assetsDir)) {
+          if (f.endsWith('.js')) {
+            const jsPath = path.join(assetsDir, f);
+            let js = fs.readFileSync(jsPath, 'utf8');
+            js = js.replaceAll('"/ashi/', '"./ashi/');
+            fs.writeFileSync(jsPath, js, 'utf8');
+          }
+        }
+      }
+    }
+
     console.log(`Updated ${repo.name} -> ${repo.dest}`);
   }
 } finally {
   fs.rmSync(tmpRoot, { recursive: true, force: true });
 }
 
-console.log('\nAll 6 GitHub games synced successfully!');
+console.log('\nAll 7 GitHub games synced successfully!');

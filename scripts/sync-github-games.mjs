@@ -29,6 +29,12 @@ const REPOS = [
     copyItems: ['index.html', 'assets2']
   },
   {
+    name: 'FiveNightsAtAshi3',
+    url: 'https://github.com/AkashiZai/fivenightatashi3.git',
+    dest: 'games/fivenightatashi3',
+    copyItems: ['index.html', 'assets3']
+  },
+  {
     name: 'AshiGame',
     url: 'https://github.com/AkashiZai/AshiGame.git',
     dest: 'games/ashigame',
@@ -56,7 +62,11 @@ try {
       }
     }
 
-    if (repo.name === 'FiveNightsAtAshi' || repo.name === 'FiveNightsAtAshi2') {
+    if (
+      repo.name === 'FiveNightsAtAshi' ||
+      repo.name === 'FiveNightsAtAshi2' ||
+      repo.name === 'FiveNightsAtAshi3'
+    ) {
       const fnafHtmlPath = path.join(destDir, 'index.html');
       let html = fs.readFileSync(fnafHtmlPath, 'utf8');
       html = html.replace(
@@ -85,6 +95,22 @@ try {
           );
         }
       }
+      if (repo.name === 'FiveNightsAtAshi3') {
+        html = html.replaceAll(
+          'href="https://github.com/AkashiZai/fivenightatashi" target="_blank"',
+          'href="../fivenightatashi/index.html" onclick="switchToPart(event, \'fivenightatashi\')"'
+        );
+        html = html.replaceAll(
+          'href="https://github.com/AkashiZai/fivenightatashi2" target="_blank"',
+          'href="../fivenightatashi2/index.html" onclick="switchToPart(event, \'fivenightatashi2\')"'
+        );
+        if (!html.includes('fitGameWrap')) {
+          html = html.replace(
+            '// Mouse & Keyboard Input',
+            `function fitGameWrap() {\n  const wrap = document.getElementById('game-wrap');\n  const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);\n  wrap.style.transform = \`scale(\${scale})\`;\n}\nwindow.addEventListener('resize', fitGameWrap);\nfitGameWrap();\n\nfunction switchToPart(e, gameId) {\n  if (window.top && window.top !== window) {\n    e.preventDefault();\n    window.top.location.hash = '#play/' + gameId;\n  }\n}\n\n// Mouse & Keyboard Input`
+          );
+        }
+      }
       fs.writeFileSync(fnafHtmlPath, html, 'utf8');
     }
 
@@ -94,4 +120,4 @@ try {
   fs.rmSync(tmpRoot, { recursive: true, force: true });
 }
 
-console.log('\nAll 5 GitHub games synced successfully!');
+console.log('\nAll 6 GitHub games synced successfully!');

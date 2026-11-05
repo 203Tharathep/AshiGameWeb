@@ -1,5 +1,36 @@
 export const OFFICIAL_GAMES = [
   {
+    id: 'fivenightatashi3',
+    title: 'Five Nights at Ashi 3',
+    subtitle: '30 ปีต่อมาในบ้านผีสิง Fazbear’s Fright เปิดเสียงล่อ ปิดท่อแอร์ และรีบูตระบบหนี Springtrap',
+    playUrl: './games/fivenightatashi3/index.html',
+    author: 'AkashiZai',
+    category: 'horror',
+    categoryLabel: 'สยองขวัญ / เอาชีวิตรอด',
+    badge: 'Horror · Part 3',
+    thumbnailBg: './games/fivenightatashi3/assets3/cams/office_window_springtrap.jpg',
+    characterOverlay: '',
+    icon: './games/fivenightatashi3/assets3/sprites/springtrap_full.jpg',
+    screenshots: [
+      { src: './games/fivenightatashi3/assets3/cams/office_window_springtrap.jpg', caption: 'Springtrap Ashi จ้องมองผ่านกระจกหน้าห้องทำงาน' },
+      { src: './games/fivenightatashi3/assets3/cams/office_door_springtrap.jpg', caption: 'Springtrap ประชิดหน้าทางเข้าห้องด้านซ้าย' },
+      { src: './games/fivenightatashi3/assets3/cams/cam08_springtrap.jpg', caption: 'ตรวจจับการเคลื่อนไหวในกล้องวงจรปิด (CAM 08)' },
+      { src: './games/fivenightatashi3/assets3/cams/office_alarm.jpg', caption: 'สัญญาณเตือนไฟแดงเมื่อระบบระบายอากาศขัดข้อง' }
+    ],
+    likes: 2150,
+    dislikes: 14,
+    plays: 29400,
+    allowMobileAspect: false,
+    description:
+      '30 ปีหลังจากตำนานความหลอนสู่บ้านผีสิง Fazbear’s Fright! ห้องทำงานของคุณไม่มีทั้งประตูและหน้ากาก ต้องคอยเปิดเสียงเด็กหัวเราะ (Play Audio) ล่อ Springtrap Ashi ให้ถอยกลับไป ดับเบิลคลิกหรือกดปิดผนึกท่อระบายอากาศ (CAM 11–15) เมื่อมันมุดท่อบุกเข้ามา หลบสายตาวิญญาณหลอนทั้ง 6 ตัว (Phantoms) และรีบหันซ้ายเปิด Maintenance Panel เพื่อ Reboot ระบบ Audio, Camera และ Ventilation ก่อนจะขาดอากาศหายใจ!',
+    controls: [
+      { key: 'A / แถบซ้าย', action: 'เปิด Maintenance Panel เพื่อ Reboot ระบบที่ขัดข้อง' },
+      { key: 'Space / S', action: 'เปิด–ปิดจอมอนิเตอร์กล้องวงจรปิดฝั่งขวา' },
+      { key: 'W (ขณะเปิดกล้อง)', action: 'กด Play Audio ส่งเสียงล่อ Springtrap ไปห้องข้างเคียง' },
+      { key: 'Q / E (หรือดับเบิลคลิกท่อ)', action: 'สลับดูแผนที่ท่อแอร์ (CAM 11–15) และกด Seal Vent ปิดกั้นท่อ' }
+    ]
+  },
+  {
     id: 'fivenightatashi2',
     title: 'Five Nights at Ashi 2',
     subtitle: 'ภาคต่อสุดหลอนไร้ประตู! สวมหน้ากาก ส่องไฟฉาย และไขลานกล่องดนตรีรับมือ 11 หุ่น',

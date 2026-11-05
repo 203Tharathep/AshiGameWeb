@@ -253,6 +253,47 @@ body.lights-off #lightsToggleBtn {
   border-color: var(--border-hover);
 }
 
+.bgm-btn.is-playing {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.bgm-btn.is-playing:hover {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.bgm-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eq-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 13px;
+  width: 14px;
+}
+
+.eq-bars i {
+  display: block;
+  width: 2.5px;
+  background: currentColor;
+  border-radius: 2px;
+  animation: eqBounce 0.85s ease-in-out infinite alternate;
+}
+
+.eq-bars i:nth-child(1) { height: 5px; animation-delay: 0s; }
+.eq-bars i:nth-child(2) { height: 12px; animation-delay: 0.2s; }
+.eq-bars i:nth-child(3) { height: 8px; animation-delay: 0.4s; }
+
+@keyframes eqBounce {
+  0% { transform: scaleY(0.35); }
+  100% { transform: scaleY(1); }
+}
+
 /* ==========================================================================
    MAIN CONTAINER & FILTER BAR
    ========================================================================== */

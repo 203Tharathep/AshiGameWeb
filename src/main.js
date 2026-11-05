@@ -1,9 +1,13 @@
 import { OFFICIAL_GAMES, CATEGORIES } from './gamesData.js';
+import { PortalBGM } from './bgm.js';
 
 const SVG_HEART_OUTLINE = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
 const SVG_HEART_SOLID = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
 const SVG_MOON = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
 const SVG_SUN = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+const SVG_MUSIC_OFF = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`;
+const SVG_MUSIC_NOTE = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>`;
+const HTML_EQ_BARS = `<span class="eq-bars"><i></i><i></i><i></i></span>`;
 
 class CleanGamePortal {
   constructor() {
@@ -14,23 +18,32 @@ class CleanGamePortal {
     this.isMobileAspect = false;
 
     this.theme = localStorage.getItem('ashigame_theme') || 'light';
-    this.favorites = new Set(this.loadJSON('ashigame_favorites', []));
-    this.likedGames = new Set(this.loadJSON('ashigame_likes', []));
+    this.favorites = new Set(this.loadArray('ashigame_favorites'));
+    this.likedGames = new Set(this.loadArray('ashigame_likes'));
+
+    this.bgm = new PortalBGM();
 
     this.cacheDOM();
+    if (this.dom.searchInput) {
+      this.dom.searchInput.value = '';
+    }
     this.applyTheme(this.theme);
+    this.updateBgmButton();
+    this.bgm.onStateChange = () => this.updateBgmButton();
+
     this.bindEvents();
     this.renderCategories();
     this.renderGrid();
     this.handleRoute();
   }
 
-  loadJSON(key, fallback) {
+  loadArray(key) {
     try {
       const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : fallback;
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
-      return fallback;
+      return [];
     }
   }
 
@@ -46,6 +59,9 @@ class CleanGamePortal {
     this.dom = {
       brandLogoLink: document.getElementById('brandLogoLink'),
       searchInput: document.getElementById('searchInput'),
+      bgmToggleBtn: document.getElementById('bgmToggleBtn'),
+      bgmIconWrap: document.getElementById('bgmIconWrap'),
+      bgmLabelText: document.getElementById('bgmLabelText'),
       randomGameBtn: document.getElementById('randomGameBtn'),
       themeToggleBtn: document.getElementById('themeToggleBtn'),
       themeIconWrap: document.getElementById('themeIconWrap'),
@@ -99,8 +115,33 @@ class CleanGamePortal {
     this.dom.themeIconWrap.innerHTML = theme === 'dark' ? SVG_SUN : SVG_MOON;
   }
 
+  updateBgmButton() {
+    if (!this.dom.bgmToggleBtn) return;
+    if (this.bgm.isMuted) {
+      this.dom.bgmToggleBtn.classList.remove('is-playing');
+      this.dom.bgmIconWrap.innerHTML = SVG_MUSIC_OFF;
+      this.dom.bgmLabelText.textContent = 'ปิดเพลง';
+    } else if (this.bgm.inGame) {
+      this.dom.bgmToggleBtn.classList.remove('is-playing');
+      this.dom.bgmIconWrap.innerHTML = SVG_MUSIC_NOTE;
+      this.dom.bgmLabelText.textContent = 'พักเพลง';
+    } else {
+      const running = this.bgm.ctx && this.bgm.ctx.state === 'running' && this.bgm.isPlaying;
+      this.dom.bgmToggleBtn.classList.toggle('is-playing', Boolean(running));
+      this.dom.bgmIconWrap.innerHTML = running ? HTML_EQ_BARS : SVG_MUSIC_NOTE;
+      this.dom.bgmLabelText.textContent = 'เพลง';
+    }
+  }
+
   bindEvents() {
     window.addEventListener('hashchange', () => this.handleRoute());
+
+    this.dom.bgmToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const muted = this.bgm.toggleMute();
+      this.updateBgmButton();
+      this.showToast(muted ? 'ปิดเพลงพื้นหลังแล้ว' : 'เปิดเพลงพื้นหลังแล้ว');
+    });
 
     this.dom.themeToggleBtn.addEventListener('click', () => {
       this.applyTheme(this.theme === 'dark' ? 'light' : 'dark');
@@ -384,6 +425,7 @@ class CleanGamePortal {
   mountPlayer(game) {
     const isSame = this.currentGame && this.currentGame.id === game.id;
     this.currentGame = game;
+    this.bgm.setInGame(true);
 
     this.dom.homeView.classList.add('hidden');
     this.dom.playerView.classList.remove('hidden');
@@ -398,6 +440,10 @@ class CleanGamePortal {
 
       this.dom.iframeLoader.style.display = 'flex';
       this.dom.gameIframe.src = game.playUrl;
+      clearTimeout(this.loaderFallbackTimer);
+      this.loaderFallbackTimer = setTimeout(() => {
+        this.dom.iframeLoader.style.display = 'none';
+      }, 2000);
     }
 
     this.dom.crumbCategory.textContent = game.categoryLabel;
@@ -481,6 +527,7 @@ class CleanGamePortal {
     }
     this.dom.playerView.classList.add('hidden');
     this.dom.homeView.classList.remove('hidden');
+    this.bgm.setInGame(false);
     this.renderGrid();
   }
 
@@ -494,6 +541,21 @@ class CleanGamePortal {
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  new CleanGamePortal();
+const bootPortal = () => {
+  if (!window.__ashiPortal) {
+    window.__ashiPortal = new CleanGamePortal();
+  }
+};
+
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', bootPortal);
+} else {
+  bootPortal();
+}
+
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted && window.__ashiPortal) {
+    window.__ashiPortal.renderGrid();
+    window.__ashiPortal.handleRoute();
+  }
 });

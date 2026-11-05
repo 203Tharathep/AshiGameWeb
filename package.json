@@ -1,0 +1,17 @@
+{
+  "name": "ashi-y8-game-portal",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Y8-Style Web Game Portal featuring AkiraJung & AshiCard from GitHub",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "sync-games": "node scripts/sync-github-games.mjs"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}
+

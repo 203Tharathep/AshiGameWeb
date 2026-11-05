@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>รักวุ่นวายของนายสายเสมอ กับรุ่นพี่ AkiraJung ~ Visual Novel ~</title>
+  <link rel="stylesheet" href="./src/style.css">
+  <link rel="icon" href="./asset/icon-192.png">
+  <link rel="apple-touch-icon" href="./asset/icon-192.png">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AkiraJung VN">
+  <meta name="theme-color" content="#ff2a70">
+</head>
+<body>
+  <div id="app">
+    <!-- Visual Effect Layers -->
+    <canvas id="effect-canvas"></canvas>
+    <div id="speed-lines" class="speed-lines"></div>
+    <div id="screen-flash" class="screen-flash"></div>
+
+    <!-- Floating Audio Toggle -->
+    <button id="audio-toggle-btn" class="audio-floating-btn" title="เปิด/ปิดเสียงดนตรีและเอฟเฟกต์">🎵</button>
+
+    <!-- TITLE SCREEN -->
+    <div id="title-screen">
+      <div class="title-overlay"></div>
+      <div class="title-content">
+        <div class="title-tagline">✨ ซิมูเลชั่นสารภาพรักโรแมนติกคอมเมดี้ ✨</div>
+        <h1 class="title-logo">รักวุ่นวายของนายสายเสมอ<br>กับรุ่นพี่ AkiraJung</h1>
+        <div class="title-sub">The Path of Love & Chaos ~ ฝ่า 108 อุปสรรคพิชิตใจ ~</div>
+      </div>
+
+      <div class="title-menu-box">
+        <button id="start-game-btn" class="menu-btn primary-btn">
+          <span>💖</span> เริ่มต้นเรื่องราว (New Game)
+        </button>
+        <button class="menu-btn open-gallery-btn">
+          <span>🖼️</span> แกลเลอรีภาพ CG (Gallery)
+        </button>
+        <button class="menu-btn open-endings-btn">
+          <span>🏆</span> บันทึกตอนจบ (Endings)
+        </button>
+        <button id="load-btn" class="menu-btn">
+          <span>📂</span> โหลดเกม (Load Game)
+        </button>
+        <button id="mobile-btn" class="menu-btn">
+          <span>📱</span> เล่นบนมือถือ (Mobile QR)
+        </button>
+        <button id="settings-btn" class="menu-btn">
+          <span>⚙️</span> ตั้งค่าระบบ (Settings)
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN GAME SCREEN -->
+    <div id="game-screen" style="display: none;">
+      <!-- Dynamic Background -->
+      <div id="bg-layer" class="game-bg-layer"></div>
+      <div class="game-vignette"></div>
+
+      <!-- Top HUD -->
+      <div class="top-hud">
+        <div class="hud-left">
+          <div id="hud-time" class="time-badge">⏰ 07:45 น.</div>
+          <div class="heart-meter-box">
+            <span class="heart-icon">💖</span>
+            <div class="progress-track">
+              <div id="heart-fill" class="progress-fill"></div>
+            </div>
+            <span id="heart-val" class="meter-val">20%</span>
+          </div>
+          <div id="items-container" class="items-box"></div>
+        </div>
+
+        <div class="hud-right">
+          <button id="auto-btn" class="hud-btn" title="เล่นอัตโนมัติ">AUTO</button>
+          <button id="skip-btn" class="hud-btn" title="ข้ามข้อความเร็ว">SKIP</button>
+          <button id="log-btn" class="hud-btn" title="ดูประวัติการคุย">LOG</button>
+          <button id="save-btn" class="hud-btn" title="บันทึกเกม">SAVE</button>
+          <button id="title-hud-btn" class="hud-btn" title="กลับหน้าแรก">MENU</button>
+        </div>
+      </div>
+
+      <!-- Character Stage -->
+      <div id="character-stage" class="character-stage">
+        <div id="character-card" class="character-card">
+          <div id="emotion-bubble" class="emotion-bubble" style="display: none;">💢</div>
+          <img id="character-img" class="character-img" src="" alt="Character Sprite" />
+        </div>
+      </div>
+
+      <!-- Dialogue & Choice Section -->
+      <div class="dialogue-container">
+        <!-- Interactive Choices -->
+        <div id="choice-box" class="choice-box" style="display: none;"></div>
+
+        <!-- Dialogue Box -->
+        <div id="dialogue-box" class="dialogue-box">
+          <div id="speaker-badge" class="speaker-badge" style="display: none;"></div>
+          <div id="dialogue-text" class="dialogue-text"></div>
+          <div class="dialogue-footer">
+            <div class="footer-nav-hint">
+              <span>คลิกเพื่อดำเนินการต่อ</span>
+              <span id="next-arrow" class="next-arrow">▼</span>
+            </div>
+            <div class="dialogue-quick-bar">
+              <button class="quick-btn open-gallery-btn">CG</button>
+              <button class="quick-btn open-endings-btn">Endings</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: GALLERY -->
+    <div id="gallery-modal" class="modal-backdrop">
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-title">🖼️ แกลเลอรีภาพ CG (AkiraJung Memory)</div>
+          <button class="close-btn close-modal-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 16px;">
+            สะสมภาพแห่งความทรงจำจากการเผชิญหน้าในเนื้อเรื่อง (คลิกภาพที่ปลดล็อกเพื่อดูภาพขยาย)
+          </p>
+          <div id="gallery-container" class="gallery-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: ENDINGS -->
+    <div id="endings-modal" class="modal-backdrop">
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-title">🏆 ตราประทับฉากจบ (Ending Collection)</div>
+          <button class="close-btn close-modal-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 16px;">
+            บันทึกปลายทางแห่งชะตากรรมทั้ง 5 แบบที่คุณค้นพบ
+          </p>
+          <div id="endings-container" class="endings-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: SAVE / LOAD -->
+    <div id="save-modal" class="modal-backdrop">
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-title">💾 จัดการบันทึก (Save / Load Data)</div>
+          <button class="close-btn close-modal-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <div id="save-container" class="save-slots-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: LOG -->
+    <div id="log-modal" class="modal-backdrop">
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-title">📜 ประวัติบทสนทนา (Backlog)</div>
+          <button class="close-btn close-modal-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <div id="log-container" class="log-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: SETTINGS -->
+    <div id="settings-modal" class="modal-backdrop">
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-title">⚙️ ตั้งค่าระบบ (Settings)</div>
+          <button class="close-btn close-modal-btn">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="setting-row">
+            <span class="setting-label">🎵 ระดับเสียงดนตรีประกอบ (BGM Volume)</span>
+            <input id="bgm-slider" type="range" class="slider-input" min="0" max="1" step="0.05" value="0.5">
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">🔊 ระดับเสียงเอฟเฟกต์ (SFX Volume)</span>
+            <input id="sfx-slider" type="range" class="slider-input" min="0" max="1" step="0.05" value="0.7">
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">🎙️ ระดับเสียงพากย์ตัวละคร (Voice Volume)</span>
+            <input id="voice-slider" type="range" class="slider-input" min="0" max="1" step="0.05" value="0.9">
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">⚡ ความเร็วตัวอักษร (Text Speed)</span>
+            <input id="speed-slider" type="range" class="slider-input" min="10" max="55" step="5" value="35">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: MOBILE QR & PWA -->
+    <div id="mobile-modal" class="modal-backdrop">
+      <div class="modal-container" style="max-width: 520px;">
+        <div class="modal-header">
+          <div class="modal-title">📱 เล่นบนมือถือ (Play on Mobile)</div>
+          <button class="close-btn close-modal-btn">✕</button>
+        </div>
+        <div class="modal-body" style="text-align: center;">
+          <p style="font-size: 0.95rem; color: #cbd5e1; margin-bottom: 14px;">
+            เชื่อมต่อ Wi-Fi วงเดียวกัน แล้วใช้กล้องมือถือสแกน QR Code นี้ได้เลย!
+          </p>
+          <div style="background: #fff; padding: 12px; border-radius: 16px; display: inline-block; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+            <img id="mobile-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=http://192.168.1.33:5173/" alt="Mobile QR Code" style="width: 200px; height: 200px; display: block;" />
+          </div>
+          <div id="mobile-url-display" style="margin-top: 14px; font-family: monospace; font-size: 0.95rem; color: #ffbe3b; background: rgba(0,0,0,0.4); padding: 8px 14px; border-radius: 10px; border: 1px solid rgba(255,190,59,0.3); word-break: break-all;">
+            👉 http://192.168.1.33:5173/
+          </div>
+          <div style="margin-top: 16px; text-align: left; background: rgba(255,255,255,0.05); padding: 14px; border-radius: 12px; font-size: 0.85rem; line-height: 1.6; color: #e2e8f0;">
+            <div style="font-weight: 700; color: #ff5e97; margin-bottom: 4px;">💡 วิธีเล่นแบบเต็มจอเสมือนแอปจริง (PWA):</div>
+            • <b>iPhone / iPad:</b> เปิดใน Safari ➔ กดปุ่มแชร์ ➔ เลือก <b>"เพิ่มไปยังหน้าจอโฮม" (Add to Home Screen)</b><br>
+            • <b>Android:</b> เปิดใน Chrome ➔ กดจุด 3 จุด ➔ เลือก <b>"ติดตั้งแอป" หรือ "เพิ่มลงในหน้าจอหลัก"</b><br>
+            • ตัวเกมจะติดตั้งเป็นไอคอนแอปบนหน้าจอมือถือ กดเปิดเล่นได้ทันทีแบบเต็มจอ 100%!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENDING RESULT OVERLAY -->
+    <div id="ending-result-modal" class="ending-result-overlay" style="display: none;"></div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

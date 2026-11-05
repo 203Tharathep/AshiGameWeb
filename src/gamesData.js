@@ -1,5 +1,36 @@
 export const OFFICIAL_GAMES = [
   {
+    id: 'fivenightatashi2',
+    title: 'Five Nights at Ashi 2',
+    subtitle: 'ภาคต่อสุดหลอนไร้ประตู! สวมหน้ากาก ส่องไฟฉาย และไขลานกล่องดนตรีรับมือ 11 หุ่น',
+    playUrl: './games/fivenightatashi2/index.html',
+    author: 'AkashiZai',
+    category: 'horror',
+    categoryLabel: 'สยองขวัญ / เอาชีวิตรอด',
+    badge: 'Horror · Part 2',
+    thumbnailBg: './games/fivenightatashi2/assets2/cams/office_hall_foxy.jpg',
+    characterOverlay: '',
+    icon: './games/fivenightatashi2/assets2/sprites/foxy.png',
+    screenshots: [
+      { src: './games/fivenightatashi2/assets2/cams/office_hall_foxy.jpg', caption: 'ส่องไฟฉายทางเดินกลางรับมือ Fire Ashi' },
+      { src: './games/fivenightatashi2/assets2/cams/cam09_all.jpg', caption: 'เวที Show Stage (CAM 09)' },
+      { src: './games/fivenightatashi2/assets2/cams/cam11_2.jpg', caption: 'ไขลานกล่องดนตรี Prize Corner (CAM 11)' },
+      { src: './games/fivenightatashi2/assets2/cams/cam08_all.jpg', caption: 'ห้อง Parts / Service รวมหุ่น Withered (CAM 08)' }
+    ],
+    likes: 1920,
+    dislikes: 16,
+    plays: 26800,
+    allowMobileAspect: false,
+    description:
+      'ภาคต่อ Grand Re-Opening สุดระทึกที่ห้องทำงานไม่มีประตู! คุณต้องเอาชีวิตรอดตั้งแต่เที่ยงคืนถึง 6 โมงเช้าจากหุ่นทั้ง 11 ตัว (รุ่นใหม่ + Withered จากภาคแรก) ด้วยการรีบสวมหน้ากาก Freddy Mask เมื่อไฟกะพริบ รัวไฟฉายส่องทางเดินกลางไล่ Fire Ashi เช็กท่อระบายอากาศซ้าย–ขวา และคอยไขลานกล่องดนตรีที่ CAM 11 ไม่ให้หมด!',
+    controls: [
+      { key: 'D', action: 'สวม / ถอดหน้ากาก Freddy Mask ป้องกันหุ่นบุกห้อง' },
+      { key: 'Z / Ctrl / คลิกโถงกลาง', action: 'ส่องไฟฉายโถงทางเดินกลาง (รัวไฟไล่ Fire Ashi)' },
+      { key: 'Q / E', action: 'เปิดไฟเช็กท่อระบายอากาศฝั่งซ้าย / ขวา' },
+      { key: 'Space / S และปุ่ม W', action: 'เปิดจอมอนิเตอร์ 12 กล้อง และกด W ค้างไขลานกล่องดนตรี (CAM 11)' }
+    ]
+  },
+  {
     id: 'ashigame',
     title: 'Meme Duel: สงครามการ์ดเพื่อนแท้',
     subtitle: 'การ์ดแบทเทิลสไตล์ Hearthstone ดวลกับบ็อต หรือสร้างห้อง 4 หลักเล่นกับเพื่อน',

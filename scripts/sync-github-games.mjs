@@ -23,6 +23,12 @@ const REPOS = [
     copyItems: ['index.html', 'assets']
   },
   {
+    name: 'FiveNightsAtAshi2',
+    url: 'https://github.com/AkashiZai/fivenightatashi2.git',
+    dest: 'games/fivenightatashi2',
+    copyItems: ['index.html', 'assets2']
+  },
+  {
     name: 'AshiGame',
     url: 'https://github.com/AkashiZai/AshiGame.git',
     dest: 'games/ashigame',
@@ -50,18 +56,34 @@ try {
       }
     }
 
-    if (repo.name === 'FiveNightsAtAshi') {
+    if (repo.name === 'FiveNightsAtAshi' || repo.name === 'FiveNightsAtAshi2') {
       const fnafHtmlPath = path.join(destDir, 'index.html');
       let html = fs.readFileSync(fnafHtmlPath, 'utf8');
       html = html.replace(
         /max-width:\s*100vw;\s*max-height:\s*100vh;\s*aspect-ratio:\s*16\s*\/\s*9;/,
         'flex-shrink: 0;\n    transform-origin: center center;'
       );
-      if (!html.includes('fitGameWrap')) {
+      if (repo.name === 'FiveNightsAtAshi' && !html.includes('fitGameWrap')) {
         html = html.replace(
           '// Mouse Tracking for Office Panning',
           `function fitGameWrap() {\n  const wrap = document.getElementById('game-wrap');\n  const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);\n  wrap.style.transform = \`scale(\${scale})\`;\n}\nwindow.addEventListener('resize', fitGameWrap);\nfitGameWrap();\n\n// Mouse Tracking for Office Panning`
         );
+      }
+      if (repo.name === 'FiveNightsAtAshi2') {
+        html = html.replace(
+          '<a href="https://github.com/AkashiZai/fivenightatashi" target="_blank" class="switch-game-btn">',
+          '<a href="../fivenightatashi/index.html" onclick="switchToPart1(event)" class="switch-game-btn">'
+        );
+        html = html.replace(
+          '<a href="index.html" class="tool-pill" style="text-decoration:none;">Switch to FNaA 1</a>',
+          '<a href="../fivenightatashi/index.html" onclick="switchToPart1(event)" class="tool-pill" style="text-decoration:none;">Switch to FNaA 1</a>'
+        );
+        if (!html.includes('fitGameWrap')) {
+          html = html.replace(
+            '// Mouse & Keyboard Input',
+            `function fitGameWrap() {\n  const wrap = document.getElementById('game-wrap');\n  const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);\n  wrap.style.transform = \`scale(\${scale})\`;\n}\nwindow.addEventListener('resize', fitGameWrap);\nfitGameWrap();\n\nfunction switchToPart1(e) {\n  if (window.top && window.top !== window) {\n    e.preventDefault();\n    window.top.location.hash = '#play/fivenightatashi';\n  }\n}\n\n// Mouse & Keyboard Input`
+          );
+        }
       }
       fs.writeFileSync(fnafHtmlPath, html, 'utf8');
     }
@@ -72,4 +94,4 @@ try {
   fs.rmSync(tmpRoot, { recursive: true, force: true });
 }
 
-console.log('\nAll 4 GitHub games synced successfully!');
+console.log('\nAll 5 GitHub games synced successfully!');

@@ -1540,11 +1540,21 @@ function fitGameWrap() {
 window.addEventListener('resize', fitGameWrap);
 fitGameWrap();
 
-// Mouse Tracking for Office Panning
-document.getElementById('game-wrap').addEventListener('mousemove', e => {
-  const rect = e.currentTarget.getBoundingClientRect();
-  G.mouseX = ((e.clientX - rect.left) / rect.width) * 1280;
-});
+// Mouse & Touch Tracking for Office Panning
+const officeWrap = document.getElementById('game-wrap');
+function updateOfficePan(clientX) {
+  const rect = officeWrap.getBoundingClientRect();
+  if (rect.width > 0) {
+    G.mouseX = ((clientX - rect.left) / rect.width) * 1280;
+  }
+}
+officeWrap.addEventListener('mousemove', e => updateOfficePan(e.clientX));
+officeWrap.addEventListener('touchmove', e => {
+  if (e.touches && e.touches[0]) updateOfficePan(e.touches[0].clientX);
+}, { passive: true });
+officeWrap.addEventListener('touchstart', e => {
+  if (e.touches && e.touches[0]) updateOfficePan(e.touches[0].clientX);
+}, { passive: true });
 
 // Keyboard Shortcuts
 window.addEventListener('keydown', e => {

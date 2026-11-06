@@ -1,5 +1,5 @@
-import { OFFICIAL_GAMES, CATEGORIES } from './gamesData.js?v=8';
-import { PortalBGM } from './bgm.js?v=8';
+import { OFFICIAL_GAMES, CATEGORIES } from './gamesData.js?v=9';
+import { PortalBGM } from './bgm.js?v=9';
 
 const SVG_HEART_OUTLINE = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
 const SVG_HEART_SOLID = `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.9"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
@@ -259,6 +259,18 @@ class CleanGamePortal {
       this.dom.mobileAspectBtn.classList.toggle('active', this.isMobileAspect);
     });
 
+    window.addEventListener('resize', () => {
+      if (this.currentGame && this.currentGame.allowMobileAspect) {
+        const isMobilePortrait = window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
+        if (isMobilePortrait !== this.isMobileAspect) {
+          this.isMobileAspect = isMobilePortrait;
+          this.dom.gameStageWrapper.classList.toggle('aspect-mobile', this.isMobileAspect);
+          this.dom.gameStageWrapper.classList.toggle('aspect-wide', !this.isMobileAspect);
+          this.dom.mobileAspectBtn.classList.toggle('active', this.isMobileAspect);
+        }
+      }
+    });
+
     this.dom.lightsToggleBtn.addEventListener('click', () => {
       document.body.classList.toggle('lights-off');
     });
@@ -448,10 +460,13 @@ class CleanGamePortal {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     if (!isSame) {
-      this.isMobileAspect = false;
-      this.dom.gameStageWrapper.classList.remove('aspect-mobile');
-      this.dom.gameStageWrapper.classList.add('aspect-wide');
-      this.dom.mobileAspectBtn.classList.remove('active');
+      // Auto-adapt aspect ratio based on platform / screen orientation
+      const isMobilePortrait = window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
+      this.isMobileAspect = Boolean(game.allowMobileAspect && isMobilePortrait);
+
+      this.dom.gameStageWrapper.classList.toggle('aspect-mobile', this.isMobileAspect);
+      this.dom.gameStageWrapper.classList.toggle('aspect-wide', !this.isMobileAspect);
+      this.dom.mobileAspectBtn.classList.toggle('active', this.isMobileAspect);
       this.dom.mobileAspectBtn.style.display = game.allowMobileAspect ? 'inline-flex' : 'none';
 
       this.dom.iframeLoader.style.display = 'flex';

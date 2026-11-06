@@ -1188,11 +1188,21 @@ function switchToPart(e, gameId) {
   }
 }
 
-// Mouse & Keyboard Input
-document.getElementById('game-wrap').addEventListener('mousemove', e => {
-  const rect = e.currentTarget.getBoundingClientRect();
-  G.mouseX = ((e.clientX - rect.left) / rect.width) * 1280;
-});
+// Mouse & Touch Tracking for Office Panning
+const officeWrap3 = document.getElementById('game-wrap');
+function updateOfficePan3(clientX) {
+  const rect = officeWrap3.getBoundingClientRect();
+  if (rect.width > 0) {
+    G.mouseX = ((clientX - rect.left) / rect.width) * 1280;
+  }
+}
+officeWrap3.addEventListener('mousemove', e => updateOfficePan3(e.clientX));
+officeWrap3.addEventListener('touchmove', e => {
+  if (e.touches && e.touches[0]) updateOfficePan3(e.touches[0].clientX);
+}, { passive: true });
+officeWrap3.addEventListener('touchstart', e => {
+  if (e.touches && e.touches[0]) updateOfficePan3(e.touches[0].clientX);
+}, { passive: true });
 
 window.addEventListener('keydown', e => {
   if (e.key === ' ') e.preventDefault();

@@ -1223,11 +1223,21 @@ function switchToPart1(e) {
   }
 }
 
-// Mouse & Keyboard Input
-document.getElementById('game-wrap').addEventListener('mousemove', e => {
-  const rect = e.currentTarget.getBoundingClientRect();
-  G.mouseX = ((e.clientX - rect.left) / rect.width) * 1280;
-});
+// Mouse & Touch Tracking for Office Panning
+const officeWrap2 = document.getElementById('game-wrap');
+function updateOfficePan2(clientX) {
+  const rect = officeWrap2.getBoundingClientRect();
+  if (rect.width > 0) {
+    G.mouseX = ((clientX - rect.left) / rect.width) * 1280;
+  }
+}
+officeWrap2.addEventListener('mousemove', e => updateOfficePan2(e.clientX));
+officeWrap2.addEventListener('touchmove', e => {
+  if (e.touches && e.touches[0]) updateOfficePan2(e.touches[0].clientX);
+}, { passive: true });
+officeWrap2.addEventListener('touchstart', e => {
+  if (e.touches && e.touches[0]) updateOfficePan2(e.touches[0].clientX);
+}, { passive: true });
 
 window.addEventListener('keydown', e => {
   if (e.key === ' ') e.preventDefault();

@@ -181,15 +181,44 @@ try {
         fs.writeFileSync(cssPath, c, 'utf8');
       }
 
-      // Increase sun spawn interval by 2 seconds
+      // Increase sun spawn interval by 2 seconds & adjust wave timings
       const levelsPath = path.join(destDir, 'js', 'levels.js');
       if (fs.existsSync(levelsPath)) {
         let lvl = fs.readFileSync(levelsPath, 'utf8');
+        lvl = lvl.replaceAll('startingSun: 0,', 'startingSun: 25,');
         lvl = lvl.replaceAll('skySunInterval: 4.5,', 'skySunInterval: 6.5,');
         lvl = lvl.replaceAll('skySunInterval: 6.0,', 'skySunInterval: 8.0,');
         lvl = lvl.replaceAll('skySunInterval: 4.2,', 'skySunInterval: 6.2,');
         lvl = lvl.replaceAll('skySunInterval: 3.8,', 'skySunInterval: 5.8,');
+
+        // Delay wave spawns slightly
+        lvl = lvl.replaceAll('delay: 18,', 'delay: 26,');
+        lvl = lvl.replaceAll('delay: 42,', 'delay: 54,');
+        lvl = lvl.replaceAll('delay: 66,', 'delay: 82,');
+        lvl = lvl.replaceAll('delay: 90,', 'delay: 110,');
+        lvl = lvl.replaceAll('delay: 115,', 'delay: 140,');
+        lvl = lvl.replace('{ delay: 140, isFlag: true, isFinal: true, zombies: [', '{ delay: 170, isFlag: true, isFinal: true, zombies: [');
+        lvl = lvl.replaceAll('delay: 20,', 'delay: 28,');
+        lvl = lvl.replaceAll('delay: 44,', 'delay: 56,');
+        lvl = lvl.replaceAll('delay: 68,', 'delay: 84,');
+        lvl = lvl.replaceAll('delay: 92,', 'delay: 112,');
+        lvl = lvl.replaceAll('delay: 116,', 'delay: 140,');
+        lvl = lvl.replaceAll('delay: 142,', 'delay: 172,');
+        lvl = lvl.replace('{ delay: 8, zombies: [{ type: \'boss\', row: 2 }] }', '{ delay: 15, zombies: [{ type: \'boss\', row: 2 }] }');
         fs.writeFileSync(levelsPath, lvl, 'utf8');
+      }
+      const zombiesPath = path.join(destDir, 'js', 'zombies.js');
+      if (fs.existsSync(zombiesPath)) {
+        let zm = fs.readFileSync(zombiesPath, 'utf8');
+        zm = zm.replace(/(basic:\s*\{[\s\S]*?speed:\s*)20,/, '$115,');
+        zm = zm.replace(/(cone:\s*\{[\s\S]*?speed:\s*)20,/, '$115,');
+        zm = zm.replace(/(bucket:\s*\{[\s\S]*?speed:\s*)18,/, '$114,');
+        zm = zm.replace(/(shield:\s*\{[\s\S]*?speed:\s*)18,/, '$114,');
+        zm = zm.replace(/(gigachad:\s*\{[\s\S]*?speed:\s*)46,\s*normalSpeed:\s*20,/, '$136,\n        normalSpeed: 15,');
+        zm = zm.replace(/(couch:\s*\{[\s\S]*?speed:\s*)12,/, '$19.5,');
+        zm = zm.replace(/(boss:\s*\{[\s\S]*?speed:\s*)8,/, '$16.5,');
+        zm = zm.replace('this.speed = this.type.normalSpeed || 20;', 'this.speed = this.type.normalSpeed || 15;');
+        fs.writeFileSync(zombiesPath, zm, 'utf8');
       }
       const plantsPath = path.join(destDir, 'js', 'plants.js');
       if (fs.existsSync(plantsPath)) {
@@ -204,12 +233,14 @@ try {
           'descTh: \'อชิชุดว่ายน้ำ ผลิตดวงอาทิตย์ 25 แต้ม คูลดาวน์พื้นฐาน 9 วินาที (+0.5 วินาทีต่อจำนวนต้นที่ปลูก)\','
         );
         // Increase card deployment cooldowns for high-cost & heavy plants
-        pl = pl.replace(/(repeater:\s*\{[\s\S]*?cost:\s*175,\s*cooldown:\s*)5\.5/, '$114.0');
-        pl = pl.replace(/(gatling:\s*\{[\s\S]*?cost:\s*200,\s*cooldown:\s*)10\.0/, '$122.0');
-        pl = pl.replace(/(icepea:\s*\{[\s\S]*?cost:\s*150,\s*cooldown:\s*)5\.5/, '$112.0');
-        pl = pl.replace(/(chomper:\s*\{[\s\S]*?cost:\s*150,\s*cooldown:\s*)7\.5/, '$114.0');
-        pl = pl.replace(/(bomb:\s*\{[\s\S]*?cost:\s*150,\s*cooldown:\s*)16\.0/, '$124.0');
-        pl = pl.replace(/(jalapeno:\s*\{[\s\S]*?cost:\s*100,\s*cooldown:\s*)16\.0/, '$124.0');
+        pl = pl.replace(/(gatling:\s*\{[\s\S]*?cost:\s*200,\s*cooldown:\s*)10\.0/, '$145.0');
+        pl = pl.replace(/(repeater:\s*\{[\s\S]*?cost:\s*175,\s*cooldown:\s*)5\.5/, '$130.0');
+        pl = pl.replace(/(bomb:\s*\{[\s\S]*?cost:\s*150,\s*cooldown:\s*)16\.0/, '$145.0');
+        pl = pl.replace(/(chomper:\s*\{[\s\S]*?cost:\s*150,\s*cooldown:\s*)7\.5/, '$130.0');
+        pl = pl.replace(/(icepea:\s*\{[\s\S]*?cost:\s*150,\s*cooldown:\s*)5\.5/, '$125.0');
+        pl = pl.replace(/(jalapeno:\s*\{[\s\S]*?cost:\s*100,\s*cooldown:\s*)16\.0/, '$140.0');
+        pl = pl.replace(/(catapult:\s*\{[\s\S]*?cost:\s*100,\s*cooldown:\s*)8\.0/, '$116.0');
+        pl = pl.replace(/(wallnut:\s*\{[\s\S]*?cost:\s*50,\s*cooldown:\s*)10\.0/, '$120.0');
         fs.writeFileSync(plantsPath, pl, 'utf8');
       }
       const gameJsPath = path.join(destDir, 'js', 'game.js');
@@ -217,6 +248,8 @@ try {
         let gj = fs.readFileSync(gameJsPath, 'utf8');
         gj = gj.replaceAll('this.skySunTimer = 7.0;', 'this.skySunTimer = 9.0;');
         gj = gj.replaceAll('this.skySunTimer = 1.0;', 'this.skySunTimer = 3.0;');
+        gj = gj.replaceAll('this.sun = 0;', 'this.sun = 25;');
+        gj = gj.replaceAll(': 0;', ': 25;');
         gj = gj.replace(
           'const newPlant = new window.PlantInstance(plantType.id, row, col);\n                    this.plants.push(newPlant);',
           'const newPlant = new window.PlantInstance(plantType.id, row, col);\n                    if (plantType.id === \'sunflower\') {\n                        const sunflowerCount = this.plants.filter(p => p.typeId === \'sunflower\' && p.hp > 0).length + 1;\n                        newPlant.sunTimer += sunflowerCount * 0.5;\n                    }\n                    this.plants.push(newPlant);'

@@ -25,7 +25,7 @@ class AshiVsZombieGame {
         this.gameSpeed = 1;
         this.currentLevelIndex = 0;
         this.currentLevel = null;
-        this.sun = 0;
+        this.sun = 25;
 
         // Entities
         this.plants = [];
@@ -160,7 +160,7 @@ class AshiVsZombieGame {
         }
 
         this.currentLevel = window.LEVELS_CONFIG[levelIdx];
-        this.sun = (this.currentLevel && this.currentLevel.startingSun !== undefined) ? this.currentLevel.startingSun : 0;
+        this.sun = (this.currentLevel && this.currentLevel.startingSun !== undefined) ? this.currentLevel.startingSun : 25;
         if (this.ui) this.ui.updateSunDisplay(this.sun);
 
         // Reset entities

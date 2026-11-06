@@ -9,15 +9,15 @@ const LEVELS_CONFIG = [
         nameTh: 'ด่าน 1-1: จุดเริ่มต้นรั้วมหาวิทยาลัย',
         theme: 'day',
         activeRows: [1, 2, 3], // 3 center lanes
-        startingSun: 0,
+        startingSun: 25,
         skySunInterval: 6.5,
         allowedPlants: ['sunflower', 'peashooter'],
         rewardPlant: 'wallnut',
         waves: [
-            { delay: 18, zombies: [{ type: 'basic', row: 2 }] },
-            { delay: 42, zombies: [{ type: 'basic', row: 1 }] },
-            { delay: 66, zombies: [{ type: 'basic', row: 2 }, { type: 'basic', row: 3 }] },
-            { delay: 90, isFlag: true, zombies: [{ type: 'basic', row: 1 }, { type: 'basic', row: 2 }, { type: 'basic', row: 3 }] }
+            { delay: 26, zombies: [{ type: 'basic', row: 2 }] },
+            { delay: 54, zombies: [{ type: 'basic', row: 1 }] },
+            { delay: 82, zombies: [{ type: 'basic', row: 2 }, { type: 'basic', row: 3 }] },
+            { delay: 110, isFlag: true, zombies: [{ type: 'basic', row: 1 }, { type: 'basic', row: 2 }, { type: 'basic', row: 3 }] }
         ]
     },
     {
@@ -27,16 +27,16 @@ const LEVELS_CONFIG = [
         nameTh: 'ด่าน 1-2: กองทัพกรวยส้มบุก',
         theme: 'day',
         activeRows: [0, 1, 2, 3, 4], // all 5 lanes
-        startingSun: 0,
+        startingSun: 25,
         skySunInterval: 6.5,
         allowedPlants: ['sunflower', 'peashooter', 'wallnut'],
         rewardPlant: 'repeater',
         waves: [
-            { delay: 18, zombies: [{ type: 'basic', row: 2 }] },
-            { delay: 42, zombies: [{ type: 'basic', row: 1 }, { type: 'basic', row: 3 }] },
-            { delay: 66, zombies: [{ type: 'cone', row: 2 }, { type: 'basic', row: 0 }] },
-            { delay: 90, zombies: [{ type: 'cone', row: 4 }, { type: 'basic', row: 1 }] },
-            { delay: 115, isFlag: true, zombies: [
+            { delay: 26, zombies: [{ type: 'basic', row: 2 }] },
+            { delay: 54, zombies: [{ type: 'basic', row: 1 }, { type: 'basic', row: 3 }] },
+            { delay: 82, zombies: [{ type: 'cone', row: 2 }, { type: 'basic', row: 0 }] },
+            { delay: 110, zombies: [{ type: 'cone', row: 4 }, { type: 'basic', row: 1 }] },
+            { delay: 140, isFlag: true, zombies: [
                 { type: 'cone', row: 2 }, { type: 'basic', row: 0 }, { type: 'basic', row: 1 },
                 { type: 'basic', row: 3 }, { type: 'basic', row: 4 }
             ]}
@@ -49,19 +49,19 @@ const LEVELS_CONFIG = [
         nameTh: 'ด่าน 1-3: วิกฤตการณ์กล่องพิซซ่า',
         theme: 'day',
         activeRows: [0, 1, 2, 3, 4],
-        startingSun: 0,
+        startingSun: 25,
         skySunInterval: 6.5,
         allowedPlants: ['sunflower', 'peashooter', 'repeater', 'wallnut'],
         rewardPlant: 'bomb',
         waves: [
-            { delay: 18, zombies: [{ type: 'basic', row: 2 }] },
-            { delay: 42, zombies: [{ type: 'shield', row: 3 }] },
-            { delay: 66, zombies: [{ type: 'cone', row: 1 }, { type: 'basic', row: 4 }] },
-            { delay: 90, isFlag: true, zombies: [
+            { delay: 26, zombies: [{ type: 'basic', row: 2 }] },
+            { delay: 54, zombies: [{ type: 'shield', row: 3 }] },
+            { delay: 82, zombies: [{ type: 'cone', row: 1 }, { type: 'basic', row: 4 }] },
+            { delay: 110, isFlag: true, zombies: [
                 { type: 'shield', row: 2 }, { type: 'cone', row: 1 }, { type: 'basic', row: 3 }
             ]},
-            { delay: 115, zombies: [{ type: 'shield', row: 0 }, { type: 'cone', row: 4 }] },
-            { delay: 140, isFlag: true, isFinal: true, zombies: [
+            { delay: 140, zombies: [{ type: 'shield', row: 0 }, { type: 'cone', row: 4 }] },
+            { delay: 170, isFlag: true, isFinal: true, zombies: [
                 { type: 'shield', row: 1 }, { type: 'shield', row: 3 },
                 { type: 'cone', row: 2 }, { type: 'basic', row: 0 }, { type: 'basic', row: 4 }
             ]}
@@ -76,20 +76,20 @@ const LEVELS_CONFIG = [
         nameTh: 'ด่าน 2-1: คืนเดือนดับ แสงจันทร์เลือนราง',
         theme: 'night',
         activeRows: [0, 1, 2, 3, 4],
-        startingSun: 0,
+        startingSun: 25,
         skySunInterval: 8.0,
         allowedPlants: ['sunflower', 'peashooter', 'repeater', 'wallnut', 'bomb'],
         rewardPlant: 'icepea',
         graves: [[1, 7], [3, 6]],
         waves: [
-            { delay: 20, zombies: [{ type: 'basic', row: 2 }] },
-            { delay: 44, zombies: [{ type: 'cone', row: 1 }, { type: 'basic', row: 3 }] },
-            { delay: 68, zombies: [{ type: 'bucket', row: 2 }] },
-            { delay: 92, isFlag: true, zombies: [
+            { delay: 28, zombies: [{ type: 'basic', row: 2 }] },
+            { delay: 56, zombies: [{ type: 'cone', row: 1 }, { type: 'basic', row: 3 }] },
+            { delay: 84, zombies: [{ type: 'bucket', row: 2 }] },
+            { delay: 112, isFlag: true, zombies: [
                 { type: 'bucket', row: 2 }, { type: 'cone', row: 1 }, { type: 'basic', row: 3 }
             ]},
-            { delay: 116, zombies: [{ type: 'bucket', row: 0 }, { type: 'cone', row: 4 }] },
-            { delay: 142, isFlag: true, isFinal: true, zombies: [
+            { delay: 140, zombies: [{ type: 'bucket', row: 0 }, { type: 'cone', row: 4 }] },
+            { delay: 172, isFlag: true, isFinal: true, zombies: [
                 { type: 'bucket', row: 2 }, { type: 'cone', row: 0 }, { type: 'cone', row: 4 },
                 { type: 'basic', row: 1 }, { type: 'basic', row: 3 }
             ]}
@@ -102,20 +102,20 @@ const LEVELS_CONFIG = [
         nameTh: 'ด่าน 2-2: กิกะแชดพุ่งทะยาน',
         theme: 'night',
         activeRows: [0, 1, 2, 3, 4],
-        startingSun: 0,
+        startingSun: 25,
         skySunInterval: 8.0,
         allowedPlants: ['sunflower', 'peashooter', 'repeater', 'wallnut', 'bomb', 'icepea'],
         rewardPlant: 'squash',
         graves: [[0, 6], [2, 7], [4, 6]],
         waves: [
-            { delay: 20, zombies: [{ type: 'gigachad', row: 2 }] },
-            { delay: 44, zombies: [{ type: 'basic', row: 1 }, { type: 'cone', row: 3 }] },
-            { delay: 68, zombies: [{ type: 'gigachad', row: 4 }, { type: 'cone', row: 0 }] },
-            { delay: 92, isFlag: true, zombies: [
+            { delay: 28, zombies: [{ type: 'gigachad', row: 2 }] },
+            { delay: 56, zombies: [{ type: 'basic', row: 1 }, { type: 'cone', row: 3 }] },
+            { delay: 84, zombies: [{ type: 'gigachad', row: 4 }, { type: 'cone', row: 0 }] },
+            { delay: 112, isFlag: true, zombies: [
                 { type: 'gigachad', row: 2 }, { type: 'bucket', row: 1 }, { type: 'cone', row: 3 }
             ]},
-            { delay: 116, zombies: [{ type: 'shield', row: 0 }, { type: 'gigachad', row: 4 }] },
-            { delay: 142, isFlag: true, isFinal: true, zombies: [
+            { delay: 140, zombies: [{ type: 'shield', row: 0 }, { type: 'gigachad', row: 4 }] },
+            { delay: 172, isFlag: true, isFinal: true, zombies: [
                 { type: 'gigachad', row: 0 }, { type: 'bucket', row: 2 }, { type: 'gigachad', row: 4 },
                 { type: 'basic', row: 1 }, { type: 'basic', row: 3 }
             ]}
@@ -131,19 +131,19 @@ const LEVELS_CONFIG = [
         theme: 'pool',
         waterRows: [2, 3],
         activeRows: [0, 1, 2, 3, 4],
-        startingSun: 0,
+        startingSun: 25,
         skySunInterval: 6.5,
         allowedPlants: ['sunflower', 'peashooter', 'repeater', 'wallnut', 'bomb', 'icepea', 'squash', 'lilypad'],
         rewardPlant: 'chomper',
         waves: [
-            { delay: 20, zombies: [{ type: 'basic', row: 1 }] },
-            { delay: 44, zombies: [{ type: 'basic', row: 2 }, { type: 'cone', row: 0 }] },
-            { delay: 68, zombies: [{ type: 'shield', row: 3 }, { type: 'cone', row: 4 }] },
-            { delay: 92, isFlag: true, zombies: [
+            { delay: 28, zombies: [{ type: 'basic', row: 1 }] },
+            { delay: 56, zombies: [{ type: 'basic', row: 2 }, { type: 'cone', row: 0 }] },
+            { delay: 84, zombies: [{ type: 'shield', row: 3 }, { type: 'cone', row: 4 }] },
+            { delay: 112, isFlag: true, zombies: [
                 { type: 'cone', row: 2 }, { type: 'cone', row: 3 }, { type: 'bucket', row: 1 }
             ]},
-            { delay: 116, zombies: [{ type: 'gigachad', row: 0 }, { type: 'shield', row: 2 }] },
-            { delay: 142, isFlag: true, isFinal: true, zombies: [
+            { delay: 140, zombies: [{ type: 'gigachad', row: 0 }, { type: 'shield', row: 2 }] },
+            { delay: 172, isFlag: true, isFinal: true, zombies: [
                 { type: 'bucket', row: 1 }, { type: 'bucket', row: 3 }, { type: 'shield', row: 2 },
                 { type: 'cone', row: 0 }, { type: 'cone', row: 4 }
             ]}
@@ -157,19 +157,19 @@ const LEVELS_CONFIG = [
         theme: 'pool',
         waterRows: [2, 3],
         activeRows: [0, 1, 2, 3, 4],
-        startingSun: 0,
+        startingSun: 25,
         skySunInterval: 6.5,
         allowedPlants: ['sunflower', 'peashooter', 'repeater', 'wallnut', 'bomb', 'icepea', 'squash', 'lilypad', 'chomper'],
         rewardPlant: 'spikeweed',
         waves: [
-            { delay: 20, zombies: [{ type: 'couch', row: 1 }] },
-            { delay: 44, zombies: [{ type: 'cone', row: 4 }, { type: 'shield', row: 2 }] },
-            { delay: 68, zombies: [{ type: 'couch', row: 3 }, { type: 'basic', row: 0 }] },
-            { delay: 92, isFlag: true, zombies: [
+            { delay: 28, zombies: [{ type: 'couch', row: 1 }] },
+            { delay: 56, zombies: [{ type: 'cone', row: 4 }, { type: 'shield', row: 2 }] },
+            { delay: 84, zombies: [{ type: 'couch', row: 3 }, { type: 'basic', row: 0 }] },
+            { delay: 112, isFlag: true, zombies: [
                 { type: 'couch', row: 2 }, { type: 'bucket', row: 0 }, { type: 'cone', row: 4 }
             ]},
-            { delay: 116, zombies: [{ type: 'gigachad', row: 1 }, { type: 'shield', row: 3 }] },
-            { delay: 142, isFlag: true, isFinal: true, zombies: [
+            { delay: 140, zombies: [{ type: 'gigachad', row: 1 }, { type: 'shield', row: 3 }] },
+            { delay: 172, isFlag: true, isFinal: true, zombies: [
                 { type: 'couch', row: 1 }, { type: 'couch', row: 3 },
                 { type: 'bucket', row: 2 }, { type: 'cone', row: 0 }, { type: 'cone', row: 4 }
             ]}
@@ -184,19 +184,19 @@ const LEVELS_CONFIG = [
         nameTh: 'ด่าน 4-1: บุกทะลวงหลังคาดาดฟ้า',
         theme: 'roof',
         activeRows: [0, 1, 2, 3, 4],
-        startingSun: 0,
+        startingSun: 25,
         skySunInterval: 6.2,
         allowedPlants: ['sunflower', 'peashooter', 'repeater', 'wallnut', 'bomb', 'icepea', 'squash', 'chomper', 'spikeweed', 'catapult'],
         rewardPlant: 'gatling',
         waves: [
-            { delay: 20, zombies: [{ type: 'shield', row: 2 }] },
-            { delay: 44, zombies: [{ type: 'bucket', row: 1 }, { type: 'shield', row: 3 }] },
-            { delay: 68, zombies: [{ type: 'couch', row: 2 }, { type: 'cone', row: 0 }] },
-            { delay: 92, isFlag: true, zombies: [
+            { delay: 28, zombies: [{ type: 'shield', row: 2 }] },
+            { delay: 56, zombies: [{ type: 'bucket', row: 1 }, { type: 'shield', row: 3 }] },
+            { delay: 84, zombies: [{ type: 'couch', row: 2 }, { type: 'cone', row: 0 }] },
+            { delay: 112, isFlag: true, zombies: [
                 { type: 'couch', row: 2 }, { type: 'gigachad', row: 0 }, { type: 'gigachad', row: 4 }
             ]},
-            { delay: 116, zombies: [{ type: 'couch', row: 1 }, { type: 'bucket', row: 3 }] },
-            { delay: 142, isFlag: true, isFinal: true, zombies: [
+            { delay: 140, zombies: [{ type: 'couch', row: 1 }, { type: 'bucket', row: 3 }] },
+            { delay: 172, isFlag: true, isFinal: true, zombies: [
                 { type: 'couch', row: 0 }, { type: 'couch', row: 4 }, { type: 'bucket', row: 2 },
                 { type: 'shield', row: 1 }, { type: 'shield', row: 3 }
             ]}
@@ -210,14 +210,14 @@ const LEVELS_CONFIG = [
         theme: 'boss',
         isBossLevel: true,
         activeRows: [0, 1, 2, 3, 4],
-        startingSun: 0,
+        startingSun: 25,
         skySunInterval: 5.8,
         allowedPlants: [
             'sunflower', 'peashooter', 'repeater', 'wallnut', 'bomb',
             'icepea', 'squash', 'chomper', 'spikeweed', 'catapult', 'jalapeno', 'gatling', 'hypno'
         ],
         waves: [
-            { delay: 8, zombies: [{ type: 'boss', row: 2 }] }
+            { delay: 15, zombies: [{ type: 'boss', row: 2 }] }
         ]
     }
 ];

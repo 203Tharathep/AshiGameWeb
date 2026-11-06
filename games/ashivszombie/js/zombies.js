@@ -6,7 +6,7 @@ const ZOMBIE_TYPES = {
         name: 'Ashi Zombie',
         nameTh: 'ซอมบี้อชิชุดขาด',
         maxHp: 160,
-        speed: 20,
+        speed: 15,
         eatDps: 65,
         sprite: 'assets/sprites/zombie_basic.png',
         points: 10
@@ -18,7 +18,7 @@ const ZOMBIE_TYPES = {
         maxHp: 400,
         armorHp: 240,
         armorType: 'cone',
-        speed: 20,
+        speed: 15,
         eatDps: 65,
         sprite: 'assets/sprites/zombie_cone.png',
         points: 20
@@ -30,7 +30,7 @@ const ZOMBIE_TYPES = {
         maxHp: 750,
         armorHp: 550,
         armorType: 'metal',
-        speed: 18,
+        speed: 14,
         eatDps: 70,
         sprite: 'assets/sprites/zombie_bucket.png',
         points: 35
@@ -41,7 +41,7 @@ const ZOMBIE_TYPES = {
         nameTh: 'ซอมบี้อชิโล่กล่องพิซซ่า',
         maxHp: 500,
         shieldHp: 340,
-        speed: 18,
+        speed: 14,
         eatDps: 70,
         sprite: 'assets/sprites/zombie_shield.png',
         hasShield: true,
@@ -52,8 +52,8 @@ const ZOMBIE_TYPES = {
         name: 'GigaChad Ashi',
         nameTh: 'ซอมบี้อชิกิกะแชด (นักกระโดดค้ำ)',
         maxHp: 280,
-        speed: 46,
-        normalSpeed: 20,
+        speed: 36,
+        normalSpeed: 15,
         eatDps: 80,
         sprite: 'assets/sprites/zombie_gigachad.png',
         canVault: true,
@@ -64,7 +64,7 @@ const ZOMBIE_TYPES = {
         name: 'Couch Tank Ashi',
         nameTh: 'ซอมบี้อชิโซฟาขี้เกียจ (แทงก์)',
         maxHp: 1100,
-        speed: 12,
+        speed: 9.5,
         eatDps: 110,
         sprite: 'assets/sprites/zombie_couch.png',
         isHeavy: true,
@@ -75,7 +75,7 @@ const ZOMBIE_TYPES = {
         name: 'EMPEROR ASHI (BOSS)',
         nameTh: 'จักรพรรดิอชิร่างยักษ์ (บอสใหญ่)',
         maxHp: 4200,
-        speed: 8,
+        speed: 6.5,
         eatDps: 180,
         sprite: 'assets/sprites/zombie_boss.png',
         isBoss: true,
@@ -168,7 +168,7 @@ class ZombieInstance {
             if (this.vaultTimer <= 0) {
                 this.isVaulting = false;
                 this.vaultYOffset = 0;
-                this.speed = this.type.normalSpeed || 20;
+                this.speed = this.type.normalSpeed || 15;
                 this.baseSpeed = this.speed;
             }
             return true;

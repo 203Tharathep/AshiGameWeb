@@ -194,8 +194,15 @@ try {
       const plantsPath = path.join(destDir, 'js', 'plants.js');
       if (fs.existsSync(plantsPath)) {
         let pl = fs.readFileSync(plantsPath, 'utf8');
-        pl = pl.replaceAll('this.sunTimer = 7.0; // 7 seconds between suns', 'this.sunTimer = 9.0; // 9 seconds between suns (+2s)');
+        pl = pl.replaceAll(
+          'this.sunTimer = 7.0; // 7 seconds between suns',
+          'const sunflowerCount = (game && game.plants) ? game.plants.filter(p => p.typeId === \'sunflower\' && p.hp > 0).length : 1;\n                this.sunTimer = 9.0 + (sunflowerCount * 0.5);'
+        );
         pl = pl.replaceAll('this.sunTimer = 2.5 + Math.random() * 1.0;', 'this.sunTimer = 4.5 + Math.random() * 1.0;');
+        pl = pl.replaceAll(
+          'descTh: \'อชิชุดว่ายน้ำ ผลิตดวงอาทิตย์ 25 แต้ม ทุกๆ 7 วินาทีเพื่อใช้ปลูกตัวอื่น\',',
+          'descTh: \'อชิชุดว่ายน้ำ ผลิตดวงอาทิตย์ 25 แต้ม คูลดาวน์พื้นฐาน 9 วินาที (+0.5 วินาทีต่อจำนวนต้นที่ปลูก)\','
+        );
         fs.writeFileSync(plantsPath, pl, 'utf8');
       }
       const gameJsPath = path.join(destDir, 'js', 'game.js');
@@ -203,6 +210,10 @@ try {
         let gj = fs.readFileSync(gameJsPath, 'utf8');
         gj = gj.replaceAll('this.skySunTimer = 7.0;', 'this.skySunTimer = 9.0;');
         gj = gj.replaceAll('this.skySunTimer = 1.0;', 'this.skySunTimer = 3.0;');
+        gj = gj.replace(
+          'const newPlant = new window.PlantInstance(plantType.id, row, col);\n                    this.plants.push(newPlant);',
+          'const newPlant = new window.PlantInstance(plantType.id, row, col);\n                    if (plantType.id === \'sunflower\') {\n                        const sunflowerCount = this.plants.filter(p => p.typeId === \'sunflower\' && p.hp > 0).length + 1;\n                        newPlant.sunTimer += sunflowerCount * 0.5;\n                    }\n                    this.plants.push(newPlant);'
+        );
         fs.writeFileSync(gameJsPath, gj, 'utf8');
       }
     }

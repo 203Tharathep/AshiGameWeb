@@ -9,8 +9,8 @@ const PLANT_TYPES = {
         cooldown: 4.5,
         maxHp: 350,
         sprite: 'assets/sprites/plant_sunflower.png',
-        desc: 'Produces Sun energy periodically to fuel your defense.',
-        descTh: 'อชิชุดว่ายน้ำ ผลิตดวงอาทิตย์ 25 แต้ม ทุกๆ 7 วินาทีเพื่อใช้ปลูกตัวอื่น',
+        desc: 'Produces Sun energy periodically. Cooldown increases by +0.5s per sunflower planted.',
+        descTh: 'อชิชุดว่ายน้ำ ผลิตดวงอาทิตย์ 25 แต้ม คูลดาวน์พื้นฐาน 9 วินาที (+0.5 วินาทีต่อจำนวนต้นที่ปลูก)',
         unlockedAt: '1-1'
     },
     peashooter: {
@@ -243,7 +243,12 @@ class PlantInstance {
         if (this.typeId === 'sunflower') {
             this.sunTimer -= dt;
             if (this.sunTimer <= 0) {
-                this.sunTimer = 9.0; // 9 seconds between suns (+2s)
+                // Cooldown scaling: base 9.0s + 0.5s per sunflower planted on the field
+                const sunflowerCount = (game && game.plants)
+                    ? game.plants.filter(p => p.typeId === 'sunflower' && p.hp > 0).length
+                    : 1;
+                const baseCooldown = 9.0;
+                this.sunTimer = baseCooldown + (sunflowerCount * 0.5);
                 game.spawnSunFromPlant(this);
             }
         }

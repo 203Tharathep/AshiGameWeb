@@ -668,6 +668,10 @@ class AshiVsZombieGame {
                     this.ui.startCooldown(plantType.id);
 
                     const newPlant = new window.PlantInstance(plantType.id, row, col);
+                    if (plantType.id === 'sunflower') {
+                        const sunflowerCount = this.plants.filter(p => p.typeId === 'sunflower' && p.hp > 0).length + 1;
+                        newPlant.sunTimer += sunflowerCount * 0.5;
+                    }
                     this.plants.push(newPlant);
 
                     window.AudioMgr.playPlant();

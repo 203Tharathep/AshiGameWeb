@@ -215,7 +215,7 @@ class PlantInstance {
 
         // Timers & State
         this.shootTimer = 0.2 + Math.random() * 0.3; // shoot fast initially
-        this.sunTimer = 2.5 + Math.random() * 1.0; // produce first sun very promptly
+        this.sunTimer = 4.5 + Math.random() * 1.0; // produce first sun promptly (+2s)
         this.fuseTimer = this.type.fuseTime || 0;
         this.burstLeft = 0;
         this.burstTimer = 0;
@@ -243,7 +243,7 @@ class PlantInstance {
         if (this.typeId === 'sunflower') {
             this.sunTimer -= dt;
             if (this.sunTimer <= 0) {
-                this.sunTimer = 7.0; // 7 seconds between suns
+                this.sunTimer = 9.0; // 9 seconds between suns (+2s)
                 game.spawnSunFromPlant(this);
             }
         }

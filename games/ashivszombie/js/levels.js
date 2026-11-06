@@ -10,7 +10,7 @@ const LEVELS_CONFIG = [
         theme: 'day',
         activeRows: [1, 2, 3], // 3 center lanes
         startingSun: 0,
-        skySunInterval: 4.5,
+        skySunInterval: 6.5,
         allowedPlants: ['sunflower', 'peashooter'],
         rewardPlant: 'wallnut',
         waves: [
@@ -28,7 +28,7 @@ const LEVELS_CONFIG = [
         theme: 'day',
         activeRows: [0, 1, 2, 3, 4], // all 5 lanes
         startingSun: 0,
-        skySunInterval: 4.5,
+        skySunInterval: 6.5,
         allowedPlants: ['sunflower', 'peashooter', 'wallnut'],
         rewardPlant: 'repeater',
         waves: [
@@ -50,7 +50,7 @@ const LEVELS_CONFIG = [
         theme: 'day',
         activeRows: [0, 1, 2, 3, 4],
         startingSun: 0,
-        skySunInterval: 4.5,
+        skySunInterval: 6.5,
         allowedPlants: ['sunflower', 'peashooter', 'repeater', 'wallnut'],
         rewardPlant: 'bomb',
         waves: [
@@ -77,7 +77,7 @@ const LEVELS_CONFIG = [
         theme: 'night',
         activeRows: [0, 1, 2, 3, 4],
         startingSun: 0,
-        skySunInterval: 6.0,
+        skySunInterval: 8.0,
         allowedPlants: ['sunflower', 'peashooter', 'repeater', 'wallnut', 'bomb'],
         rewardPlant: 'icepea',
         graves: [[1, 7], [3, 6]],
@@ -103,7 +103,7 @@ const LEVELS_CONFIG = [
         theme: 'night',
         activeRows: [0, 1, 2, 3, 4],
         startingSun: 0,
-        skySunInterval: 6.0,
+        skySunInterval: 8.0,
         allowedPlants: ['sunflower', 'peashooter', 'repeater', 'wallnut', 'bomb', 'icepea'],
         rewardPlant: 'squash',
         graves: [[0, 6], [2, 7], [4, 6]],
@@ -132,7 +132,7 @@ const LEVELS_CONFIG = [
         waterRows: [2, 3],
         activeRows: [0, 1, 2, 3, 4],
         startingSun: 0,
-        skySunInterval: 4.5,
+        skySunInterval: 6.5,
         allowedPlants: ['sunflower', 'peashooter', 'repeater', 'wallnut', 'bomb', 'icepea', 'squash', 'lilypad'],
         rewardPlant: 'chomper',
         waves: [
@@ -158,7 +158,7 @@ const LEVELS_CONFIG = [
         waterRows: [2, 3],
         activeRows: [0, 1, 2, 3, 4],
         startingSun: 0,
-        skySunInterval: 4.5,
+        skySunInterval: 6.5,
         allowedPlants: ['sunflower', 'peashooter', 'repeater', 'wallnut', 'bomb', 'icepea', 'squash', 'lilypad', 'chomper'],
         rewardPlant: 'spikeweed',
         waves: [
@@ -185,7 +185,7 @@ const LEVELS_CONFIG = [
         theme: 'roof',
         activeRows: [0, 1, 2, 3, 4],
         startingSun: 0,
-        skySunInterval: 4.2,
+        skySunInterval: 6.2,
         allowedPlants: ['sunflower', 'peashooter', 'repeater', 'wallnut', 'bomb', 'icepea', 'squash', 'chomper', 'spikeweed', 'catapult'],
         rewardPlant: 'gatling',
         waves: [
@@ -211,7 +211,7 @@ const LEVELS_CONFIG = [
         isBossLevel: true,
         activeRows: [0, 1, 2, 3, 4],
         startingSun: 0,
-        skySunInterval: 3.8,
+        skySunInterval: 5.8,
         allowedPlants: [
             'sunflower', 'peashooter', 'repeater', 'wallnut', 'bomb',
             'icepea', 'squash', 'chomper', 'spikeweed', 'catapult', 'jalapeno', 'gatling', 'hypno'

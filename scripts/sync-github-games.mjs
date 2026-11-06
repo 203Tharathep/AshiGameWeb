@@ -180,6 +180,31 @@ try {
         c = c.replace('max-width: 1060px;', 'width: 1060px;\n    flex-shrink: 0;\n    transform-origin: center center;');
         fs.writeFileSync(cssPath, c, 'utf8');
       }
+
+      // Increase sun spawn interval by 2 seconds
+      const levelsPath = path.join(destDir, 'js', 'levels.js');
+      if (fs.existsSync(levelsPath)) {
+        let lvl = fs.readFileSync(levelsPath, 'utf8');
+        lvl = lvl.replaceAll('skySunInterval: 4.5,', 'skySunInterval: 6.5,');
+        lvl = lvl.replaceAll('skySunInterval: 6.0,', 'skySunInterval: 8.0,');
+        lvl = lvl.replaceAll('skySunInterval: 4.2,', 'skySunInterval: 6.2,');
+        lvl = lvl.replaceAll('skySunInterval: 3.8,', 'skySunInterval: 5.8,');
+        fs.writeFileSync(levelsPath, lvl, 'utf8');
+      }
+      const plantsPath = path.join(destDir, 'js', 'plants.js');
+      if (fs.existsSync(plantsPath)) {
+        let pl = fs.readFileSync(plantsPath, 'utf8');
+        pl = pl.replaceAll('this.sunTimer = 7.0; // 7 seconds between suns', 'this.sunTimer = 9.0; // 9 seconds between suns (+2s)');
+        pl = pl.replaceAll('this.sunTimer = 2.5 + Math.random() * 1.0;', 'this.sunTimer = 4.5 + Math.random() * 1.0;');
+        fs.writeFileSync(plantsPath, pl, 'utf8');
+      }
+      const gameJsPath = path.join(destDir, 'js', 'game.js');
+      if (fs.existsSync(gameJsPath)) {
+        let gj = fs.readFileSync(gameJsPath, 'utf8');
+        gj = gj.replaceAll('this.skySunTimer = 7.0;', 'this.skySunTimer = 9.0;');
+        gj = gj.replaceAll('this.skySunTimer = 1.0;', 'this.skySunTimer = 3.0;');
+        fs.writeFileSync(gameJsPath, gj, 'utf8');
+      }
     }
 
     console.log(`Updated ${repo.name} -> ${repo.dest}`);

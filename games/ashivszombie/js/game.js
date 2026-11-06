@@ -48,7 +48,7 @@ class AshiVsZombieGame {
         this.totalWaves = 0;
         this.hugeWaveActive = false;
         this.hugeWaveTimer = 0;
-        this.skySunTimer = 7.0;
+        this.skySunTimer = 9.0;
 
         // Stats
         this.stats = {
@@ -205,7 +205,7 @@ class AshiVsZombieGame {
         this.totalWaves = this.currentLevel.waves.length;
         this.hugeWaveActive = false;
         this.hugeWaveTimer = 0;
-        this.skySunTimer = 1.0; // first sun drops almost immediately
+        this.skySunTimer = 3.0; // first sun drops after 3s
 
         // UI & BGM
         if (this.ui) {

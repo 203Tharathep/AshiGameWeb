@@ -1,5 +1,36 @@
 export const OFFICIAL_GAMES = [
   {
+    id: 'ashivszombie',
+    title: 'Ashi vs Zombie: Defense of the Dorm',
+    subtitle: 'เกมกันป้อมสไตล์ Plants vs Zombies วางแนวพืชอชิ 14 ชนิด สกัดกั้นกองทัพซอมบี้บุกหอพัก',
+    playUrl: './games/ashivszombie/index.html',
+    author: '203Tharathep',
+    category: 'defense',
+    categoryLabel: 'กันป้อม / วางแผน',
+    badge: 'Tower Defense · PvZ Style',
+    thumbnailBg: './games/akirajung/asset/bg/school_gate.jpg',
+    characterOverlay: './games/ashivszombie/assets/sprites/zombie_boss.png',
+    icon: './games/ashivszombie/assets/sprites/plant_peashooter.png',
+    screenshots: [
+      { src: './games/ashivszombie/assets/sprites/zombie_boss.png', caption: 'Stage 4-2: Final Boss ศึกตัดสิน มหาจักรพรรดิอชิ 6,500 HP' },
+      { src: './games/ashivszombie/assets/sprites/plant_peashooter.png', caption: 'Gekko-Ashi อชิมือปืนเก๊กโกะ ยิงสกัดซอมบี้ในเลน' },
+      { src: './games/ashivszombie/assets/sprites/zombie_gigachad.png', caption: 'Gigachad Zombie ซอมบี้กิกะชาดหน้าเหลี่ยม เลือดหนาพิเศษ' },
+      { src: './games/ashivszombie/assets/sprites/plant_sunflower.png', caption: 'Sun-Ashi อชิบิกินี่พลังแสง ผลิตแต้มดวงอาทิตย์' }
+    ],
+    likes: 2650,
+    dislikes: 11,
+    plays: 35800,
+    allowMobileAspect: false,
+    description:
+      'เกมแนว Plants vs Zombies สุดฮาฉบับมีมอชิ! วางแผนปลูกกองทัพพืชผู้พิทักษ์ 14 ชนิด ทั้ง Sun-Ashi บิกินี่ผลิตแสง, Gekko-Ashi มือปืนยิงพลาสมา, อชิจูบเบิ้ล Repeater และ Fat-Ashi กำแพงเลือด 4,000 HP เพื่อป้องกันหอพักจากการรุกรานของซอมบี้อชิหลากสายพันธุ์ ผจญภัยฝ่า 8+ ด่าน ครบทั้งด่านกลางวัน หอพักยามค่ำคืน สระน้ำ ดาดฟ้า และบอสใหญ่ Final Boss มหาจักรพรรดิอชิ 6,500 HP พร้อมดนตรี Web Audio และสารานุกรม Almanac ครบครัน!',
+    controls: [
+      { key: 'คลิกซ้าย / แตะจอ', action: 'คลิกเก็บดวงอาทิตย์ ☀️ และเลือกการ์ดพืชมาวางลงแปลงหญ้า' },
+      { key: 'พลั่ว (Shovel)', action: 'เลือกพลั่วแล้วคลิกที่พืชเพื่อขุดถอนเปิดทาง' },
+      { key: 'ปุ่ม 1x / 2x', action: 'ปรับความเร็วเกม เพิ่มความสะใจในการต่อสู้' },
+      { key: 'สารานุกรม (Almanac)', action: 'เปิดอ่านสเตตัส ประวัติตัวละคร และวิธีแก้ทางพืช/ซอมบี้' }
+    ]
+  },
+  {
     id: 'ashitunnel',
     title: 'ทางออกที่ 10 : Ashi Tunnel',
     subtitle: 'เกม 3D สไตล์ The Exit 8 ในอุโมงค์สถานี จดจำโปสเตอร์ 10 แผ่น จับผิดจุดหลอนสู่อิสรภาพ',
@@ -220,6 +251,7 @@ export const OFFICIAL_GAMES = [
 
 export const CATEGORIES = [
   { id: 'all', label: 'ทั้งหมด' },
+  { id: 'defense', label: 'กันป้อม / วางแผน' },
   { id: 'card-battle', label: 'การ์ดแบทเทิล' },
   { id: 'horror', label: 'สยองขวัญ' },
   { id: 'visual-novel', label: 'เนื้อเรื่อง' },

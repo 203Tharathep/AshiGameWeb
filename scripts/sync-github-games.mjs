@@ -45,6 +45,12 @@ const REPOS = [
     url: 'https://github.com/203Tharathep/Ashi-Tunnel.git',
     dest: 'games/ashitunnel',
     copyItems: ['dist']
+  },
+  {
+    name: 'AshiVsZombie',
+    url: 'https://github.com/203Tharathep/AshiVsZombie.git',
+    dest: 'games/ashivszombie',
+    copyItems: ['index.html', 'css', 'js', 'assets']
   }
 ];
 
@@ -152,10 +158,34 @@ try {
       }
     }
 
+    if (repo.name === 'AshiVsZombie') {
+      const indexPath = path.join(destDir, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        let h = fs.readFileSync(indexPath, 'utf8');
+        if (!h.includes('fitGameWrapper')) {
+          h = h.replace(
+            "window.addEventListener('DOMContentLoaded', () => {",
+            "function fitGameWrapper() {\n    const wrap = document.getElementById('game-wrapper');\n    if (!wrap) return;\n    const targetW = 1060;\n    const targetH = 728;\n    const scale = Math.min(window.innerWidth / targetW, window.innerHeight / targetH);\n    wrap.style.transform = `scale(${scale})`;\n}\nwindow.addEventListener('resize', fitGameWrapper);\nwindow.addEventListener('DOMContentLoaded', () => {\n    fitGameWrapper();"
+          );
+          fs.writeFileSync(indexPath, h, 'utf8');
+        }
+      }
+      const cssPath = path.join(destDir, 'css', 'style.css');
+      if (fs.existsSync(cssPath)) {
+        let c = fs.readFileSync(cssPath, 'utf8');
+        c = c.replace(
+          /body\s*\{[^}]*min-height:\s*100vh;[^}]*\}/,
+          'html, body {\n    width: 100vw;\n    height: 100vh;\n    margin: 0;\n    padding: 0;\n    overflow: hidden;\n    background: radial-gradient(circle at center, #1b2838 0%, #0d131a 100%);\n    color: #ffffff;\n    font-family: \'Segoe UI\', system-ui, -apple-system, sans-serif;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n    justify-content: center;\n}'
+        );
+        c = c.replace('max-width: 1060px;', 'width: 1060px;\n    flex-shrink: 0;\n    transform-origin: center center;');
+        fs.writeFileSync(cssPath, c, 'utf8');
+      }
+    }
+
     console.log(`Updated ${repo.name} -> ${repo.dest}`);
   }
 } finally {
   fs.rmSync(tmpRoot, { recursive: true, force: true });
 }
 
-console.log('\nAll 7 GitHub games synced successfully!');
+console.log('\nAll 8 GitHub games synced successfully!');

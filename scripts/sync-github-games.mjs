@@ -203,6 +203,13 @@ try {
           'descTh: \'อชิชุดว่ายน้ำ ผลิตดวงอาทิตย์ 25 แต้ม ทุกๆ 7 วินาทีเพื่อใช้ปลูกตัวอื่น\',',
           'descTh: \'อชิชุดว่ายน้ำ ผลิตดวงอาทิตย์ 25 แต้ม คูลดาวน์พื้นฐาน 9 วินาที (+0.5 วินาทีต่อจำนวนต้นที่ปลูก)\','
         );
+        // Increase card deployment cooldowns for high-cost & heavy plants
+        pl = pl.replace(/(repeater:\s*\{[\s\S]*?cost:\s*175,\s*cooldown:\s*)5\.5/, '$114.0');
+        pl = pl.replace(/(gatling:\s*\{[\s\S]*?cost:\s*200,\s*cooldown:\s*)10\.0/, '$122.0');
+        pl = pl.replace(/(icepea:\s*\{[\s\S]*?cost:\s*150,\s*cooldown:\s*)5\.5/, '$112.0');
+        pl = pl.replace(/(chomper:\s*\{[\s\S]*?cost:\s*150,\s*cooldown:\s*)7\.5/, '$114.0');
+        pl = pl.replace(/(bomb:\s*\{[\s\S]*?cost:\s*150,\s*cooldown:\s*)16\.0/, '$124.0');
+        pl = pl.replace(/(jalapeno:\s*\{[\s\S]*?cost:\s*100,\s*cooldown:\s*)16\.0/, '$124.0');
         fs.writeFileSync(plantsPath, pl, 'utf8');
       }
       const gameJsPath = path.join(destDir, 'js', 'game.js');

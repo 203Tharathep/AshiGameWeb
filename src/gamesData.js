@@ -96,7 +96,7 @@ export const OFFICIAL_GAMES = [
     id: 'ashigame',
     title: 'Meme Duel: สงครามการ์ดเพื่อนแท้',
     subtitle: 'การ์ดแบทเทิลสไตล์ Hearthstone ดวลกับบ็อต หรือสร้างห้อง 4 หลักเล่นกับเพื่อน',
-    playUrl: './games/ashigame/index.html',
+    playUrl: 'https://ashigame.onrender.com/',
     author: 'AkashiZai',
     category: 'card-battle',
     categoryLabel: 'การ์ดแบทเทิล / ออนไลน์',

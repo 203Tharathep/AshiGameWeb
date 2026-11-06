@@ -393,10 +393,10 @@ class MemeGame {
   }
 
   getServerBaseUrl() {
-    if (window.location.protocol.startsWith('http')) {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       return window.location.origin;
     }
-    return 'http://localhost:3000';
+    return 'https://ashigame.onrender.com';
   }
 
   async fetchServerInfo() {

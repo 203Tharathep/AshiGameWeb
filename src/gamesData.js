@@ -1,5 +1,38 @@
 export const OFFICIAL_GAMES = [
   {
+    id: 'ashibirds',
+    title: 'Ashi Birds: หนังสติ๊กถล่มปราสาทหมูอชิ',
+    subtitle: 'เกมฟิสิกส์หนังสติ๊กสไตล์ Angry Birds ยิงฝูงนกอชิ 7 พลังพิเศษ ถล่มป้อมหมูอชิและถัง TNT 10 ด่าน',
+    playUrl: './games/ashibirds/index.html?v=20',
+    author: 'AshiTeam',
+    category: 'physics',
+    categoryLabel: 'ฟิสิกส์ / หนังสติ๊ก',
+    badge: 'Slingshot Physics · Angry Birds Style',
+    thumbnailBg: './games/akirajung/asset/bg/school_gate.jpg',
+    characterOverlay: './games/ashibirds/assets/sprites/terence.png',
+    icon: './games/ashibirds/assets/sprites/red.png',
+    screenshots: [
+      { src: './games/ashibirds/assets/sprites/terence.png', caption: 'Terence Ashi พี่ใหญ่อชิแดงยักษ์ มวลหนักพิเศษทลายกำแพงหิน' },
+      { src: './games/ashibirds/assets/sprites/chuck.png', caption: 'Chuck Ashi อชิเหลืองเทอร์โบ พุ่งทะลวงไม้ด้วยความเร็วสูง' },
+      { src: './games/ashibirds/assets/sprites/bomb.png', caption: 'Bomb Ashi อชิดำลูกระเบิด จุดชนวนบึ้มป้อมหินรอบทิศ' },
+      { src: './games/ashibirds/assets/sprites/eagle.png', caption: 'Mighty Eagle Ashi พญาอินทรีโฉบถล่มปฐพีสะเทือนทั้งฉาก' },
+      { src: './games/ashibirds/assets/sprites/pig_king.png', caption: 'Level 10: Emperor King Pig ราชาหมูอชิบอสใหญ่บนบัลลังก์' }
+    ],
+    likes: 2890,
+    dislikes: 10,
+    plays: 41200,
+    allowMobileAspect: true,
+    defaultMobileAspect: false,
+    description:
+      'เกมฟิสิกส์หนังสติ๊กสุดมันส์สไตล์ Angry Birds ฉบับมีมอชิ! ดึงหนังสติ๊ก เล็งวิถีกระสุน และปล่อยฝูงนกอชิพลังพิเศษทั้ง 7 ตัว: Red Ashi คลาสสิก, Chuck Ashi นกเหลืองพุ่งเทอร์โบเจาะไม้, The Blues แก๊งนกฟ้าแยก 3 ร่างทำลายน้ำแข็ง, Bomb Ashi นกดำระเบิดทำลายหิน, Stella Ashi นกชมพูเป่าฟองสบู่ยกตึกลอยฟ้า, Terence Ashi พี่ใหญ่มวลมหึมา และ Mighty Eagle Ashi พญาอินทรีโฉบถล่มปฐพี! ตะลุย 10 ด่านปราบหมูเชฟ หมูผู้พันหมวกเหล็ก และบอสใหญ่ราชาหมู King Pig!',
+    controls: [
+      { key: 'ลากเมาส์ / ปัดหน้าจอ', action: 'ดึงหนังสติ๊กถอยหลังเพื่อเล็งมุมและแรง แล้วปล่อยเพื่อยิง' },
+      { key: 'แตะจอ / คลิก / ปุ่ม SKILL / Space', action: 'กดใช้สกิลพิเศษขณะนกกำลังบิน (เทอร์โบ / แยก 3 ร่าง / ฟองสบู่ / ระเบิด / โฉบพสุธา)' },
+      { key: 'ปุ่ม R', action: 'รีสตาร์ตเล่นใหม่ด่านเดิมทันที' },
+      { key: 'ปุ่มเลือกด่าน & ตัวละคร', action: 'เลือกด่าน 1–10 ได้อิสระ และเปิดดูทำเนียบสกิลตัวละคร' }
+    ]
+  },
+  {
     id: 'ashivszombie',
     title: 'Ashi vs Zombie: Defense of the Dorm',
     subtitle: 'เกมกันป้อมสไตล์ Plants vs Zombies วางแนวพืชอชิ 14 ชนิด สกัดกั้นกองทัพซอมบี้บุกหอพัก',
@@ -325,6 +358,7 @@ export const OFFICIAL_GAMES = [
 
 export const CATEGORIES = [
   { id: 'all', label: 'ทั้งหมด' },
+  { id: 'physics', label: 'ฟิสิกส์ / หนังสติ๊ก' },
   { id: 'defense', label: 'กันป้อม / วางแผน' },
   { id: 'card-battle', label: 'การ์ดแบทเทิล' },
   { id: 'horror', label: 'สยองขวัญ' },

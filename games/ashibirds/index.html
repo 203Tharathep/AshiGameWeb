@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Ashi Birds — หนังสติ๊กยิงถล่มปราสาทหมูอชิ</title>
+  <link rel="stylesheet" href="css/style.css?v=20">
+</head>
+<body>
+  <div id="game-wrap">
+    <!-- Main Physics & Rendering Canvas -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Top HUD Navigation Bar -->
+    <div class="hud-bar">
+      <div class="hud-left">
+        <div class="hud-badge hud-score-box">
+          <span class="hud-label">คะแนน</span>
+          <span id="hud-score" class="hud-score-val">0</span>
+        </div>
+
+        <div class="hud-badge hud-stage-box">
+          <span id="hud-level-title" class="hud-level-val">ด่าน 1: ปฐมบทการบิน</span>
+          <span id="hud-level-sub" class="hud-level-sub">ดึงหนังสติ๊กเล็งยิงถล่มบ้านไม้ของหมูเชฟ!</span>
+        </div>
+
+        <div class="hud-badge hud-pigs-box" title="จำนวนหมูอชิที่เหลือในด่าน">
+          <img src="assets/sprites/pig_king.png" class="hud-pigs-icon" alt="Pigs" />
+          <span class="hud-label" style="color:#b2ff59;">เหลือ</span>
+          <span id="hud-pigs-left" class="hud-pigs-count">1</span>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <button id="btn-sound-toggle" class="wood-btn secondary" title="เปิด/ปิดเสียง [M]">🔊</button>
+        <button id="btn-restart" class="wood-btn secondary" title="เริ่มด่านนี้ใหม่ [R]">🔄 เริ่มใหม่</button>
+        <button id="btn-roster" class="wood-btn" title="ดูความสามารถนกทั้ง 7 และหมูอชิ">📖 ตัวละคร</button>
+        <button id="btn-level-select" class="wood-btn" title="เลือกด่าน 1–10">🗺️ เลือกด่าน (1–10)</button>
+      </div>
+    </div>
+
+    <!-- Bottom HUD: Active Bird Info, Queue Strip & Mobile Skill Button -->
+    <div class="bottom-hud">
+      <div class="bottom-left-deck">
+        <div id="active-bird-info" class="active-bird-panel">
+          <img src="assets/sprites/red.png" class="active-bird-sprite" alt="Red Ashi" />
+          <div class="active-bird-meta">
+            <strong>อชิแดงคลาสสิก</strong>
+            <span>Battle Warcry (คลื่นเสียงกระแทก)</span>
+          </div>
+        </div>
+
+        <div class="birds-strip-wrap">
+          <span class="birds-strip-title">คิวปล่อยนก:</span>
+          <div id="birds-queue-strip" class="birds-queue-items"></div>
+        </div>
+      </div>
+
+      <button id="btn-trigger-skill" class="skill-action-btn" disabled title="กดใช้สกิลพิเศษขณะนกกำลังบิน [Space / แตะจอ]">
+        ⚡ กดใช้สกิล! (SKILL)
+      </button>
+    </div>
+
+    <!-- Victory Modal -->
+    <div id="victory-modal" class="modal-layer hidden">
+      <div class="modal-box">
+        <img src="assets/sprites/eagle.png" class="modal-hero-sprite" alt="Victory" />
+        <h1 class="modal-h1">🎉 ถล่มป้อมสำเร็จ!</h1>
+        <div id="victory-stars-display" class="stars-row">★★★</div>
+        <div class="modal-score-wrap">
+          <span class="modal-score-label">คะแนนรวมด่านนี้</span>
+          <span id="victory-score-num" class="modal-score-val">45,000</span>
+          <span id="victory-bonus-num" class="modal-score-bonus">+10,000 (โบนัสนกเหลือ)</span>
+        </div>
+        <div class="modal-actions">
+          <button id="victory-retry-btn" class="wood-btn secondary">🔄 เล่นซ้ำด่านนี้</button>
+          <button id="victory-next-btn" class="wood-btn">ด่านถัดไป ➔</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Defeat / Out of Birds Modal -->
+    <div id="defeat-modal" class="modal-layer hidden">
+      <div class="modal-box">
+        <img src="assets/sprites/pig_king.png" class="modal-hero-sprite" alt="Pig Laugh" />
+        <h1 class="modal-h1 defeat">🐷 หมูอชิยังรอดอยู่!</h1>
+        <p style="color:#ffecb3; margin: 10px 0 22px; font-size:15px;">
+          นกในคิวหมดแล้ว! ลองเล็งจุดอ่อนเสาค้ำยัน ถัง TNT หรือกดใช้สกิลกลางอากาศให้ถูกจังหวะ!
+        </p>
+        <div class="modal-actions">
+          <button id="defeat-retry-btn" class="wood-btn">🔄 ลองใหม่อีกครั้ง [R]</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level Select 10-Stages Modal -->
+    <div id="level-modal" class="modal-layer hidden">
+      <div class="modal-box level-select-box">
+        <h1 class="modal-h1">🗺️ เลือกด่านผจญภัย (1–10)</h1>
+        <p style="color:#ffe082; font-size:13px;">สามารถเลือกเล่นด่านใดก็ได้ทันที!</p>
+        <div id="level-grid" class="level-grid"></div>
+        <div class="modal-actions">
+          <button onclick="document.getElementById('level-modal').classList.add('hidden')" class="wood-btn secondary">ปิดหน้าต่าง</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Character Roster Guide Modal (All 7 Birds + 3 Pig Classes) -->
+    <div id="roster-modal" class="modal-layer hidden">
+      <div class="modal-box roster-modal-box">
+        <h1 class="modal-h1">📖 ทำเนียบฝูงนกอชิ &amp; กองทัพหมู</h1>
+        <p style="color:#ffe082; font-size:13px;">ตัวละครทั้งหมดตัดพื้นหลังพอดีตัว พร้อมสกิลพิเศษเฉพาะตัว</p>
+        <div id="roster-grid" class="roster-grid"></div>
+        <div class="modal-actions">
+          <button onclick="document.getElementById('roster-modal').classList.add('hidden')" class="wood-btn">พร้อมลุย!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Physics Engine, Audio & Game Scripts -->
+  <script src="js/matter.min.js?v=20"></script>
+  <script src="js/audio.js?v=20"></script>
+  <script src="js/levels.js?v=20"></script>
+  <script src="js/game.js?v=20"></script>
+</body>
+</html>

@@ -1,0 +1,563 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@500;600;700&family=Inter:wght@600;700;800;900&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #1b2838 0%, #090d14 100%);
+  color: #ffffff;
+  font-family: 'IBM Plex Sans Thai', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#game-wrap {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  flex-shrink: 0;
+  transform-origin: center center;
+  background: #000;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 3px solid rgba(255, 213, 79, 0.35);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.85);
+}
+
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: grab;
+}
+
+#game-canvas:active {
+  cursor: grabbing;
+}
+
+/* =========================================================================
+   TOP HUD BAR (ANGRY BIRDS WOOD & GOLD STYLE)
+   ========================================================================= */
+.hud-bar {
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.hud-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+  flex-wrap: wrap;
+}
+
+.hud-badge {
+  background: linear-gradient(180deg, rgba(62, 39, 35, 0.94) 0%, rgba(39, 22, 18, 0.96) 100%);
+  border: 2.5px solid #ffb300;
+  border-radius: 16px;
+  padding: 7px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.hud-score-box {
+  min-width: 145px;
+}
+
+.hud-label {
+  font-size: 12px;
+  color: #ffe082;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hud-score-val {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  color: #ffd54f;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.hud-stage-box {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 6px 16px;
+}
+
+.hud-level-val {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.hud-level-sub {
+  font-size: 12px;
+  color: #ffecb3;
+  opacity: 0.92;
+}
+
+.hud-pigs-box {
+  background: linear-gradient(180deg, rgba(27, 94, 32, 0.94) 0%, rgba(16, 61, 20, 0.96) 100%);
+  border-color: #76ff03;
+}
+
+.hud-pigs-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.hud-pigs-count {
+  font-size: 22px;
+  font-weight: 900;
+  color: #b2ff59;
+}
+
+.hud-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.wood-btn {
+  background: linear-gradient(180deg, #ffca28 0%, #f57c00 100%);
+  border: 2.5px solid #fff8e1;
+  border-radius: 14px;
+  color: #3e2723;
+  padding: 8px 15px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.14s ease, filter 0.14s ease;
+  box-shadow: 0 5px 0 #b25000, 0 8px 16px rgba(0, 0, 0, 0.45);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wood-btn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+}
+
+.wood-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #b25000, 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.wood-btn.secondary {
+  background: linear-gradient(180deg, #546e7a 0%, #37474f 100%);
+  border-color: #cfd8dc;
+  color: #ffffff;
+  box-shadow: 0 5px 0 #1c262b, 0 8px 16px rgba(0, 0, 0, 0.45);
+}
+
+/* =========================================================================
+   BOTTOM BAR: DIE-CUT BIRDS QUEUE & SKILL TRIGGER BUTTON
+   ========================================================================= */
+.bottom-hud {
+  position: absolute;
+  bottom: 12px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.bottom-left-deck {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+.active-bird-panel {
+  background: rgba(24, 15, 12, 0.88);
+  border: 2px solid #ffb300;
+  border-radius: 16px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+.active-bird-sprite {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.6));
+}
+
+.active-bird-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.active-bird-meta strong {
+  font-size: 14px;
+  color: #ffd54f;
+}
+
+.active-bird-meta span {
+  font-size: 12px;
+  color: #eceff1;
+}
+
+.birds-strip-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(24, 15, 12, 0.82);
+  padding: 6px 14px;
+  border-radius: 16px;
+  border: 1.5px solid rgba(255, 213, 79, 0.35);
+}
+
+.birds-strip-title {
+  font-size: 12px;
+  color: #ffe082;
+  font-weight: 700;
+}
+
+.birds-queue-items {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Die-cut transparent character slot — NO circle clipping! */
+.queue-bird-slot {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  padding: 3px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.queue-bird-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.55));
+}
+
+.queue-bird-slot.active {
+  background: rgba(255, 213, 79, 0.18);
+  border-color: #ffd54f;
+  transform: scale(1.12);
+}
+
+.skill-action-btn {
+  pointer-events: auto;
+  background: linear-gradient(180deg, #ff5252 0%, #c62828 100%);
+  border: 3px solid #fff8e1;
+  border-radius: 18px;
+  color: #ffffff;
+  padding: 12px 24px;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #7f0000, 0 10px 24px rgba(0, 0, 0, 0.6);
+  opacity: 0.45;
+  transform: scale(0.95);
+  transition: all 0.16s ease;
+}
+
+.skill-action-btn.ready {
+  opacity: 1;
+  transform: scale(1);
+  animation: skillPulse 0.7s infinite alternate;
+}
+
+@keyframes skillPulse {
+  from { transform: scale(1); box-shadow: 0 6px 0 #7f0000, 0 0 18px rgba(255, 82, 82, 0.6); }
+  to { transform: scale(1.06); box-shadow: 0 6px 0 #7f0000, 0 0 32px rgba(255, 213, 79, 0.95); }
+}
+
+/* =========================================================================
+   MODALS (VICTORY, DEFEAT, LEVEL SELECT, CHARACTER ROSTER)
+   ========================================================================= */
+.modal-layer {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 12, 20, 0.82);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+}
+
+.modal-layer.hidden {
+  display: none;
+}
+
+.modal-box {
+  background: linear-gradient(180deg, #4e342e 0%, #2d1b16 100%);
+  border: 4px solid #ffb300;
+  border-radius: 24px;
+  width: 92%;
+  max-width: 540px;
+  padding: 28px 26px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  animation: popIn 0.24s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.86); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-hero-sprite {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
+}
+
+.modal-h1 {
+  font-size: 30px;
+  font-weight: 800;
+  color: #ffd54f;
+  margin-bottom: 6px;
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.65);
+}
+
+.modal-h1.defeat {
+  color: #ff8a80;
+}
+
+.stars-row {
+  font-size: 56px;
+  letter-spacing: 10px;
+  color: #ffd54f;
+  margin: 8px 0;
+  text-shadow: 0 4px 18px rgba(255, 213, 79, 0.65);
+}
+
+.modal-score-wrap {
+  background: rgba(0, 0, 0, 0.42);
+  border: 1.5px solid rgba(255, 213, 79, 0.28);
+  border-radius: 16px;
+  padding: 14px 18px;
+  margin: 14px 0 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modal-score-label {
+  font-size: 13px;
+  color: #ffe082;
+}
+
+.modal-score-val {
+  font-family: 'Inter', sans-serif;
+  font-size: 40px;
+  font-weight: 900;
+  color: #76ff03;
+  line-height: 1.1;
+}
+
+.modal-score-bonus {
+  font-size: 13px;
+  color: #b2ff59;
+  font-weight: 600;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* --- LEVEL SELECT 10-STAGE GRID --- */
+.level-select-box {
+  max-width: 760px;
+}
+
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin: 18px 0 22px;
+  max-height: 410px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.lvl-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 2.5px solid rgba(255, 213, 79, 0.35);
+  border-radius: 16px;
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.lvl-card:hover {
+  background: rgba(255, 213, 79, 0.18);
+  border-color: #ffd54f;
+  transform: translateY(-3px);
+}
+
+.lvl-card.current {
+  background: rgba(255, 179, 0, 0.25);
+  border-color: #ffd54f;
+  box-shadow: 0 0 16px rgba(255, 213, 79, 0.45);
+}
+
+.lvl-num {
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffd54f;
+}
+
+.lvl-thumb-sprite {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.55));
+}
+
+.lvl-title {
+  font-size: 12px;
+  color: #fff8e1;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lvl-stars {
+  font-size: 16px;
+  color: #ffd54f;
+  letter-spacing: 2px;
+}
+
+/* --- CHARACTER ROSTER MODAL --- */
+.roster-modal-box {
+  max-width: 880px;
+}
+
+.roster-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 16px 0 20px;
+  max-height: 430px;
+  overflow-y: auto;
+  padding: 6px;
+  text-align: left;
+}
+
+.roster-card {
+  background: rgba(0, 0, 0, 0.38);
+  border: 2px solid rgba(255, 213, 79, 0.35);
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.roster-card.pig-card {
+  border-color: rgba(118, 255, 3, 0.4);
+}
+
+.roster-sprite-wrap {
+  width: 78px;
+  height: 78px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.roster-sprite-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+}
+
+.roster-info h4 {
+  font-size: 16px;
+  color: #ffd54f;
+  margin: 2px 0;
+}
+
+.roster-skill {
+  font-size: 12px;
+  font-weight: 700;
+  color: #81d4fa;
+  margin-bottom: 4px;
+}
+
+.roster-info p {
+  font-size: 12px;
+  color: #eceff1;
+  line-height: 1.35;
+}
+
+.roster-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.bird-tag {
+  background: #e65100;
+  color: #fff;
+}
+
+.pig-tag {
+  background: #2e7d32;
+  color: #fff;
+}

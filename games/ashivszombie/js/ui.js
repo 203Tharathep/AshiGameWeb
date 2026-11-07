@@ -14,29 +14,15 @@ class UIManager {
 
     loadProgress() {
         try {
-            const saved = localStorage.getItem('ashi_vs_zombie_progress');
-            if (saved) {
-                const data = JSON.parse(saved);
-                this.unlockedPlants = Array.isArray(data.unlockedPlants) ? data.unlockedPlants : ['sunflower', 'peashooter'];
-                this.currentLevelIndex = typeof data.currentLevelIndex === 'number' ? data.currentLevelIndex : 0;
-            }
-        } catch (e) {
-            this.unlockedPlants = ['sunflower', 'peashooter'];
-            this.currentLevelIndex = 0;
-        }
-
-        // Guarantee basic starters
-        if (!this.unlockedPlants.includes('sunflower')) this.unlockedPlants.push('sunflower');
-        if (!this.unlockedPlants.includes('peashooter')) this.unlockedPlants.push('peashooter');
+            // ลบเซฟเดิมในเครื่องออก เพื่อให้เริ่มใหม่จากด่านแรกเสมอเมื่อเปิดหรือรีเฟรช
+            localStorage.removeItem('ashi_vs_zombie_progress');
+        } catch (e) {}
+        this.unlockedPlants = ['sunflower', 'peashooter'];
+        this.currentLevelIndex = 0;
     }
 
     saveProgress() {
-        try {
-            localStorage.setItem('ashi_vs_zombie_progress', JSON.stringify({
-                unlockedPlants: this.unlockedPlants,
-                currentLevelIndex: this.currentLevelIndex
-            }));
-        } catch (e) {}
+        // ปิดการบันทึกเซฟลง localStorage เพื่อไม่ให้จำด่านเมื่อกดออกหรือรีเฟรชหน้าเว็บ
     }
 
     unlockPlant(plantId) {
@@ -60,7 +46,7 @@ class UIManager {
         if (!modal) return;
         const playBtnText = document.getElementById('title-play-btn-text');
         if (playBtnText) {
-            if (this.currentLevelIndex > 0 && window.LEVELS_CONFIG && window.LEVELS_CONFIG[this.currentLevelIndex]) {
+            if (this.game && this.game.isRunning && this.currentLevelIndex > 0 && window.LEVELS_CONFIG && window.LEVELS_CONFIG[this.currentLevelIndex]) {
                 const lvl = window.LEVELS_CONFIG[this.currentLevelIndex];
                 playBtnText.textContent = `เล่นต่อ ด่าน ${lvl.id} ▶️`;
             } else {

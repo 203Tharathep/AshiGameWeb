@@ -262,6 +262,19 @@ try {
         );
         fs.writeFileSync(gameJsPath, gj, 'utf8');
       }
+      const uiJsPath = path.join(destDir, 'js', 'ui.js');
+      if (fs.existsSync(uiJsPath)) {
+        let uj = fs.readFileSync(uiJsPath, 'utf8');
+        uj = uj.replace(
+          /loadProgress\(\)\s*\{[\s\S]*?saveProgress\(\)\s*\{[\s\S]*?\}/,
+          "loadProgress() {\n        try {\n            localStorage.removeItem('ashi_vs_zombie_progress');\n        } catch (e) {}\n        this.unlockedPlants = ['sunflower', 'peashooter'];\n        this.currentLevelIndex = 0;\n    }\n\n    saveProgress() {\n        // Disabled: do not save level or progress across sessions\n    }"
+        );
+        uj = uj.replace(
+          "if (this.currentLevelIndex > 0 && window.LEVELS_CONFIG && window.LEVELS_CONFIG[this.currentLevelIndex]) {",
+          "if (this.game && this.game.isRunning && this.currentLevelIndex > 0 && window.LEVELS_CONFIG && window.LEVELS_CONFIG[this.currentLevelIndex]) {"
+        );
+        fs.writeFileSync(uiJsPath, uj, 'utf8');
+      }
     }
 
     console.log(`Updated ${repo.name} -> ${repo.dest}`);

@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>Ashi Birds — หนังสติ๊กยิงถล่มปราสาทหมูอชิ</title>
-  <link rel="stylesheet" href="css/style.css?v=20">
+  <link rel="stylesheet" href="css/style.css?v=21">
 </head>
 <body>
   <div id="game-wrap">
@@ -62,6 +62,20 @@
       <button id="btn-trigger-skill" class="skill-action-btn" disabled title="กดใช้สกิลพิเศษขณะนกกำลังบิน [Space / แตะจอ]">
         ⚡ กดใช้สกิล! (SKILL)
       </button>
+    </div>
+
+    <!-- Start / Title Screen Modal (Shows on game launch) -->
+    <div id="title-modal" class="modal-layer">
+      <div class="modal-box title-modal-box">
+        <img src="assets/cover.jpg" class="title-cover-hero" alt="Ashi Birds Logo" />
+        <h1 class="modal-h1" style="margin-top: 10px;">Ashi Birds</h1>
+        <p style="color: #ffecb3; font-size: 15px; margin: 4px 0 20px;">หนังสติ๊กถล่มปราสาทหมูอชิ • 10 ด่านสุดมันส์</p>
+        <div class="modal-actions title-actions">
+          <button id="title-start-btn" class="wood-btn primary-start">▶ เริ่มเล่นเกม (PLAY)</button>
+          <button id="title-roster-btn" class="wood-btn secondary">📖 ตัวละคร</button>
+          <button id="title-levels-btn" class="wood-btn secondary">🗺️ เลือกด่าน</button>
+        </div>
+      </div>
     </div>
 
     <!-- Victory Modal -->
@@ -122,9 +136,9 @@
   </div>
 
   <!-- Physics Engine, Audio & Game Scripts -->
-  <script src="js/matter.min.js?v=20"></script>
-  <script src="js/audio.js?v=20"></script>
-  <script src="js/levels.js?v=20"></script>
-  <script src="js/game.js?v=20"></script>
+  <script src="js/matter.min.js?v=21"></script>
+  <script src="js/audio.js?v=21"></script>
+  <script src="js/levels.js?v=21"></script>
+  <script src="js/game.js?v=21"></script>
 </body>
 </html>

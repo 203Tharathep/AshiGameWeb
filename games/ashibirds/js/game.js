@@ -120,7 +120,8 @@ class AshiBirdsGame {
       'assets/sprites/eagle.png',
       'assets/sprites/pig_chef.png',
       'assets/sprites/pig_commander.png',
-      'assets/sprites/pig_king.png'
+      'assets/sprites/pig_king.png',
+      'assets/cover.jpg'
     ];
 
     urls.forEach((u) => {
@@ -1808,6 +1809,34 @@ class AshiBirdsGame {
       defeatRetryBtn.onclick = () => {
         document.getElementById('defeat-modal').classList.add('hidden');
         this.initLevel(this.currentLevelIndex);
+      };
+    }
+
+    // Title / Cover Screen Actions
+    const titleModal = document.getElementById('title-modal');
+    const startBtn = document.getElementById('title-start-btn');
+    if (startBtn && titleModal) {
+      startBtn.onclick = () => {
+        window.ashiAudio.ensureContext();
+        titleModal.classList.add('hidden');
+      };
+    }
+
+    const titleRosterBtn = document.getElementById('title-roster-btn');
+    if (titleRosterBtn && titleModal) {
+      titleRosterBtn.onclick = () => {
+        window.ashiAudio.ensureContext();
+        titleModal.classList.add('hidden');
+        this.openRosterModal();
+      };
+    }
+
+    const titleLevelsBtn = document.getElementById('title-levels-btn');
+    if (titleLevelsBtn && titleModal) {
+      titleLevelsBtn.onclick = () => {
+        window.ashiAudio.ensureContext();
+        titleModal.classList.add('hidden');
+        this.openLevelSelect();
       };
     }
   }

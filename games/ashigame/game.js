@@ -2103,7 +2103,8 @@ class MemeGame {
 
     const isMyTurn = (this.turn === playerKey);
     const totalCards = player.hand.length;
-    const stepX = Math.min(82, Math.floor(560 / Math.max(totalCards, 1)));
+    const availW = Math.max(170, Math.min(560, (container.clientWidth || window.innerWidth) - 92));
+    const stepX = Math.min(82, Math.floor(availW / Math.max(totalCards, 1)));
     player.hand.forEach((card, index) => {
       const cardEl = document.createElement('div');
       cardEl.className = 'card-item';
@@ -2162,6 +2163,40 @@ class MemeGame {
         cardEl.classList.remove('is-dragging');
         this.duelStage?.classList.remove('dragging-card');
         setTimeout(() => { this.suppressNextCardClick = false; }, 120);
+      });
+
+      let touchStartY = null;
+      let touchDragging = false;
+      cardEl.addEventListener('touchstart', (e) => {
+        if (!cardEl.draggable || !e.touches || !e.touches[0]) return;
+        touchStartY = e.touches[0].clientY;
+        touchDragging = false;
+      }, { passive: true });
+
+      cardEl.addEventListener('touchmove', (e) => {
+        if (touchStartY === null || !e.touches || !e.touches[0]) return;
+        const dy = e.touches[0].clientY - touchStartY;
+        if (dy < -36) {
+          touchDragging = true;
+          cardEl.classList.add('is-dragging');
+          this.duelStage?.classList.add('dragging-card');
+        }
+      }, { passive: true });
+
+      cardEl.addEventListener('touchend', (e) => {
+        if (touchDragging && touchStartY !== null && e.changedTouches && e.changedTouches[0]) {
+          const dy = e.changedTouches[0].clientY - touchStartY;
+          cardEl.classList.remove('is-dragging');
+          this.duelStage?.classList.remove('dragging-card');
+          if (dy < -48) {
+            e.preventDefault();
+            this.suppressNextCardClick = true;
+            this.playCard(card, playerKey);
+            setTimeout(() => { this.suppressNextCardClick = false; }, 180);
+          }
+        }
+        touchStartY = null;
+        touchDragging = false;
       });
 
       container.appendChild(cardEl);

@@ -2,20 +2,23 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Ashi vs Zombie: Defense of the Dorm (อชิ ปะทะ ซอมบี้)</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="assets/sprites/plant_peashooter.png">
 </head>
 <body>
+    <button id="rotate-screen-btn" class="rotate-screen-btn" type="button" title="สลับมุมมองแนวนอนเต็มจอบนมือถือ">🔄 หมุนจอ</button>
     <div id="game-wrapper">
         <!-- Top HUD Bar -->
         <div id="top-hud-bar">
             <!-- Left: Sun Bank + Seed Selection + Shovel -->
             <div class="hud-left">
-                <div class="sun-bank">
+                <div class="sun-bank" id="sun-bank-box" title="แต้มดวงอาทิตย์ (ใช้สำหรับปลูกพืช)">
                     <img src="assets/sprites/sun_token.png" alt="Sun" class="sun-icon-hud" />
-                    <span id="sun-count">25</span>
+                    <div class="sun-count-wrap">
+                        <span id="sun-count">25</span>
+                    </div>
                 </div>
 
                 <!-- Seed Cards Container -->
@@ -24,7 +27,7 @@
                 </div>
 
                 <!-- Shovel Tool -->
-                <div class="shovel-button" id="shovel-btn" title="พลั่วขุดพืช (คลิกพืชเพื่อขุด)">
+                <div class="shovel-button" id="shovel-btn" title="พลั่วขุดพืช (คลิกแล้วแตะพืชเพื่อขุดถอน)">
                     <img src="assets/sprites/ui_shovel.png" alt="Shovel" />
                     <span>พลั่ว</span>
                 </div>
@@ -33,18 +36,20 @@
             <!-- Right: Level Info, Wave Bar, Menu Buttons -->
             <div class="hud-right">
                 <div class="hud-buttons-row">
+                    <button class="hud-btn" id="home-btn" title="กลับสู่หน้าแรก">🏠 หน้าแรก</button>
                     <button class="hud-btn" id="speed-btn" title="ปรับความเร็วเกม">1x ⚡</button>
-                    <button class="hud-btn" id="music-btn" title="เปิด/ปิดดนตรีประกอบ">🎵 ดนตรี: เปิด</button>
-                    <button class="hud-btn" id="sound-btn" title="เปิด/ปิดเสียงเอฟเฟกต์">🔊 เสียง: เปิด</button>
+                    <button class="hud-btn" id="music-btn" title="เปิด/ปิดดนตรีประกอบ">🎵 ดนตรี</button>
+                    <button class="hud-btn" id="sound-btn" title="เปิด/ปิดเสียงเอฟเฟกต์">🔊 เสียง</button>
                     <button class="hud-btn" id="almanac-btn" title="สารานุกรมพืชและซอมบี้">📖 สารานุกรม</button>
-                    <button class="hud-btn" id="pause-btn" title="หยุดชั่วคราว / เลือกด่าน">⏸️ เมนู</button>
+                    <button class="hud-btn" id="pause-btn" title="หยุดชั่วคราว / เมนู">⏸️ เมนู</button>
                 </div>
 
                 <!-- Wave Progress Bar -->
-                <div class="wave-progress-wrap">
-                    <span class="wave-label">WAVE</span>
+                <div class="wave-progress-wrap" title="ความคืบหน้าของคลื่นซอมบี้">
+                    <span class="wave-label" id="wave-stage-text">WAVE</span>
                     <div class="wave-progress-bar">
                         <div id="wave-progress-fill"></div>
+                        <div class="wave-flags-container" id="wave-flags-container"></div>
                         <div id="wave-zombie-head">🧟</div>
                     </div>
                 </div>
@@ -53,13 +58,76 @@
 
         <!-- Stage Title Sub-bar -->
         <div id="stage-info-bar">
-            <span id="current-level-title">Stage 1-1: Welcome to Campus</span>
-            <span>💡 คลิกหรือชี้เมาส์ที่ดวงอาทิตย์ ☀️ เพื่อเก็บแต้ม | คลิกการ์ดแล้ววางในแปลงหญ้า</span>
+            <div class="stage-info-left">
+                <span class="stage-theme-icon" id="stage-theme-icon">☀️</span>
+                <span id="current-level-title">Stage 1-1: Welcome to Campus</span>
+            </div>
+            <div class="stage-info-tip" id="stage-info-tip">
+                <span>💡 คลิกหรือแตะดวงอาทิตย์ ☀️ เพื่อสะสมแต้ม | ลากหรือแตะการ์ดพืชเพื่อปลูกลงแปลง</span>
+            </div>
         </div>
 
         <!-- Canvas Viewport -->
         <div id="canvas-container">
             <canvas id="game-canvas"></canvas>
+        </div>
+
+        <!-- MODAL: Title / Welcome Screen -->
+        <div id="title-modal" class="modal">
+            <div class="modal-content title-modal-content">
+                <div class="title-cover-wrap">
+                    <img src="assets/cover.jpg" alt="Ashi vs Zombies" class="title-cover-img" />
+                    <div class="title-glow-effect"></div>
+                </div>
+                <div class="title-info-wrap">
+                    <h1 class="title-main-heading">ASHI VS. ZOMBIES</h1>
+                    <div class="title-sub-heading">🌱 มหาศึกพืชอชิ ปะทะ กองทัพซอมบี้กินสมอง 🧟</div>
+                    <p class="title-lead-text">วางแผนแนวป้องกันหอพักด้วยกองทัพพืชอชิ 14 ชนิด สกัดกั้นฝูงซอมบี้สุดป่วน!</p>
+                    <div class="title-btn-column">
+                        <button class="btn-primary title-btn-play" id="title-play-btn">
+                            <span class="btn-icon">▶️</span>
+                            <span class="btn-text" id="title-play-btn-text">เริ่มเล่นเกม (START)</span>
+                        </button>
+                        <div class="title-btn-subrow">
+                            <button class="btn-secondary-pvz" id="title-levels-btn">🗺️ เลือกด่าน</button>
+                            <button class="btn-secondary-pvz" id="title-almanac-btn">📖 สารานุกรม</button>
+                            <button class="btn-secondary-pvz" id="title-help-btn">❓ วิธีเล่น</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: How to Play / Guide -->
+        <div id="help-modal" class="modal hidden">
+            <div class="modal-content help-modal-content">
+                <h2>❓ วิธีการเล่น (How to Play)</h2>
+                <div class="help-cards-grid">
+                    <div class="help-card">
+                        <div class="help-card-icon">☀️</div>
+                        <h4>1. เก็บดวงอาทิตย์</h4>
+                        <p>แตะหรือเลื่อนเมาส์ผ่านดวงอาทิตย์ที่ตกลงมาหรือผลิตจาก Sun-Ashi เพื่อสะสมแต้ม</p>
+                    </div>
+                    <div class="help-card">
+                        <div class="help-card-icon">🌱</div>
+                        <h4>2. ปลูกพืชอชิ</h4>
+                        <p>คลิกการ์ดแล้ววางลงแปลงหญ้า หรือใช้นิ้วลากการ์ดมาวางได้โดยตรง</p>
+                    </div>
+                    <div class="help-card">
+                        <div class="help-card-icon">🛡️</div>
+                        <h4>3. วางผังป้องกัน</h4>
+                        <p>ปลูก Sun-Ashi ไว้แถวหลัง วางมือปืนยิงตรงกลาง และ Fat-Ashi กำแพงเลือดไว้แถวหน้า</p>
+                    </div>
+                    <div class="help-card">
+                        <div class="help-card-icon">🚜</div>
+                        <h4>4. อชิบินฉุกเฉิน</h4>
+                        <p>มีเครื่องตัดหญ้าอชิบินประจำท้ายทุกเลน ช่วยกวาดซอมบี้ทั้งแถวได้เลนละ 1 ครั้ง</p>
+                    </div>
+                </div>
+                <div class="modal-btn-row">
+                    <button class="btn-primary" id="help-close-btn">เข้าใจแล้ว ลุยเลย! 🚀</button>
+                </div>
+            </div>
         </div>
 
         <!-- MODAL: Pause / Settings -->
@@ -71,15 +139,22 @@
                     <button class="btn-primary" id="pause-resume-btn">เล่นต่อ ▶️</button>
                     <button class="btn-primary" id="pause-restart-btn">เริ่มด่านนี้ใหม่ 🔄</button>
                     <button class="btn-secondary" id="pause-level-select-btn">เลือกด่าน 🗺️</button>
+                    <button class="btn-secondary-pvz" id="pause-home-btn">🏠 หน้าแรก</button>
                 </div>
             </div>
         </div>
 
         <!-- MODAL: Level Select -->
         <div id="level-select-modal" class="modal hidden">
-            <div class="modal-content" style="max-width: 680px;">
+            <div class="modal-content" style="max-width: 740px;">
                 <h2>🗺️ เลือกด่านผจญภัย (Level Select)</h2>
-                <p>เลือกด่านที่ต้องการเล่น มีทั้งด่านกลางวัน กลางคืน สระน้ำ และบอสใหญ่!</p>
+                <div class="level-world-tabs" id="level-world-tabs">
+                    <button class="world-tab active" data-world="all">ทั้งหมด (All)</button>
+                    <button class="world-tab" data-world="1">🌞 Campus (ด่านกลางวัน)</button>
+                    <button class="world-tab" data-world="2">🌙 Night (ด่านกลางคืน)</button>
+                    <button class="world-tab" data-world="3">🏊 Pool (สระน้ำ)</button>
+                    <button class="world-tab" data-world="4">👑 Boss (ดาดฟ้าบอส)</button>
+                </div>
                 <div class="level-grid" id="level-grid">
                     <!-- Populated dynamically -->
                 </div>
@@ -124,18 +199,27 @@
         <!-- MODAL: Victory -->
         <div id="victory-modal" class="modal hidden">
             <div class="modal-content">
-                <h1>🏆 ชนะด่านแล้ว! (VICTORY)</h1>
+                <div class="victory-banner-badge">VICTORY</div>
+                <h1>🏆 ชนะด่านแล้ว!</h1>
+                <div class="victory-stars" id="victory-stars">
+                    <span class="star star-active">⭐</span>
+                    <span class="star star-active">⭐</span>
+                    <span class="star star-active">⭐</span>
+                </div>
                 <p>คุณปกป้องหอพักจากกองทัพซอมบี้ได้สำเร็จ!</p>
                 <div class="stats-grid">
                     <div class="stat-box">
+                        <div class="stat-icon">🧟</div>
                         <div class="val" id="stat-zombies-killed">0</div>
                         <div class="lbl">ซอมบี้ที่กำจัด</div>
                     </div>
                     <div class="stat-box">
+                        <div class="stat-icon">☀️</div>
                         <div class="val" id="stat-sun-collected">0</div>
                         <div class="lbl">ดวงอาทิตย์ที่เก็บ</div>
                     </div>
                     <div class="stat-box">
+                        <div class="stat-icon">🌱</div>
                         <div class="val" id="stat-plants-planted">0</div>
                         <div class="lbl">พืชที่ปลูก</div>
                     </div>
@@ -143,18 +227,21 @@
                 <div class="modal-btn-row">
                     <button class="btn-primary" id="victory-next-btn">ด่านถัดไป ⏩</button>
                     <button class="btn-secondary" id="victory-replay-btn">เล่นซ้ำ 🔄</button>
+                    <button class="btn-secondary-pvz" id="victory-home-btn">🏠 หน้าแรก</button>
                 </div>
             </div>
         </div>
 
         <!-- MODAL: Game Over -->
         <div id="gameover-modal" class="modal hidden">
-            <div class="modal-content">
-                <h1 style="color: #ff3333;">🧟 GAME OVER 🧟</h1>
+            <div class="modal-content gameover-modal-content">
+                <div class="gameover-icon">🧟💀🧟</div>
+                <h1 style="color: #ff3333;">THE ZOMBIES ATE YOUR BRAINS!</h1>
                 <h3 style="color: #ff9999; margin: 10px 0;">ซอมบี้บุกเข้าหอพัก และกินสมองอชิไปแล้ว!</h3>
                 <p>อย่าเพิ่งยอมแพ้ วางแผนแนวป้องกันใหม่แล้วลุยอีกครั้ง!</p>
                 <div class="modal-btn-row">
                     <button class="btn-primary" id="gameover-retry-btn">ลองใหม่อีกครั้ง 🔄</button>
+                    <button class="btn-secondary-pvz" id="gameover-home-btn">🏠 หน้าแรก</button>
                 </div>
             </div>
         </div>
@@ -170,16 +257,54 @@
     <script src="js/game.js"></script>
 
     <script>
+        window.isLandscapeRotated = false;
+        let userSetRotation = false;
+
         function fitGameWrapper() {
             const wrap = document.getElementById('game-wrapper');
+            const rotBtn = document.getElementById('rotate-screen-btn');
             if (!wrap) return;
+            const vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
+            const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+            const isPortrait = vh > vw * 1.05 && vw <= 820;
+
+            if (rotBtn) {
+                rotBtn.style.display = (isPortrait || window.isLandscapeRotated) ? 'inline-flex' : 'none';
+                rotBtn.classList.toggle('active', window.isLandscapeRotated);
+            }
+
+            if (!isPortrait && !userSetRotation) {
+                window.isLandscapeRotated = false;
+            }
+
             const targetW = 1060;
             const targetH = 728;
-            const scale = Math.min(window.innerWidth / targetW, window.innerHeight / targetH);
-            wrap.style.transform = `scale(${scale})`;
+            if (window.isLandscapeRotated) {
+                const scale = Math.min(vw / targetH, vh / targetW);
+                wrap.style.transform = `rotate(90deg) scale(${scale})`;
+            } else {
+                const scale = Math.min(vw / targetW, vh / targetH);
+                wrap.style.transform = `scale(${scale})`;
+            }
         }
+
         window.addEventListener('resize', fitGameWrapper);
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', fitGameWrapper);
+        }
         window.addEventListener('DOMContentLoaded', () => {
+            const rotBtn = document.getElementById('rotate-screen-btn');
+            if (rotBtn) {
+                rotBtn.addEventListener('click', () => {
+                    userSetRotation = true;
+                    window.isLandscapeRotated = !window.isLandscapeRotated;
+                    try {
+                        window.parent?.postMessage({ type: 'ashi-stage-tall', active: window.isLandscapeRotated }, '*');
+                    } catch (e) {}
+                    setTimeout(fitGameWrapper, 60);
+                    fitGameWrapper();
+                });
+            }
             fitGameWrapper();
             window.gameInstance = new AshiVsZombieGame();
             window.gameInstance.init();

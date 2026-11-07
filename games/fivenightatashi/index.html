@@ -2,20 +2,68 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Five Nights at Ashi</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-drag: none; }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
   body {
     background: #000;
     color: #fff;
     font-family: 'Courier New', Courier, monospace;
     overflow: hidden;
+    touch-action: none;
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .rotate-screen-btn {
+    position: fixed;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+    right: calc(env(safe-area-inset-right, 0px) + 10px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    border: 2px solid #ffdd55;
+    background: rgba(15, 15, 20, 0.92);
+    color: #ffdd55;
+    font-family: system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+  }
+  .rotate-screen-btn.active {
+    background: #2e7d32;
+    border-color: #fff;
+    color: #fff;
+  }
+  .mobile-pan-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 58;
+    width: 54px;
+    height: 110px;
+    background: rgba(20, 20, 26, 0.48);
+    border: 2px solid rgba(255, 255, 255, 0.28);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mobile-pan-btn:active {
+    background: rgba(255, 255, 255, 0.28);
   }
   #game-wrap {
     position: relative;
@@ -752,7 +800,7 @@
 </style>
 </head>
 <body>
-
+<button id="rotate-screen-btn" class="rotate-screen-btn" type="button" onclick="toggleLandscapeRotate()">🔄 หมุนจอ</button>
 <div id="game-wrap">
   <div class="crt-overlay"></div>
   <canvas id="static-canvas" width="640" height="360"></canvas>
@@ -1021,6 +1069,8 @@
     <div id="monitor-toggle-bar" onclick="toggleMonitor()">
       &#x25B2; &#x25BC; MONITOR [SPACE]
     </div>
+    <button class="mobile-pan-btn" style="left:12px;" onmousedown="G.mouseX=120" onmouseup="G.mouseX=640" onmouseleave="G.mouseX=640" ontouchstart="G.mouseX=120;event.preventDefault()" ontouchend="G.mouseX=640;event.preventDefault()">&#x25C0;</button>
+    <button class="mobile-pan-btn" style="right:12px;" onmousedown="G.mouseX=1160" onmouseup="G.mouseX=640" onmouseleave="G.mouseX=640" ontouchstart="G.mouseX=1160;event.preventDefault()" ontouchend="G.mouseX=640;event.preventDefault()">&#x25B6;</button>
   </div>
 
   <!-- HALLUCINATION FLASH ("IT'S ME") -->
@@ -1578,13 +1628,39 @@ function honkNose() {
   playSound('honk');
 }
 
+window.isLandscapeRotated = false;
+let userSetRotation1 = false;
+
+function toggleLandscapeRotate() {
+  userSetRotation1 = true;
+  window.isLandscapeRotated = !window.isLandscapeRotated;
+  try { window.parent?.postMessage({ type: 'ashi-stage-tall', active: window.isLandscapeRotated }, '*'); } catch (e) {}
+  setTimeout(fitGameWrap, 60);
+  fitGameWrap();
+}
+
 function fitGameWrap() {
   const wrap = document.getElementById('game-wrap');
+  const rotBtn = document.getElementById('rotate-screen-btn');
   if (!wrap) return;
-  const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
-  wrap.style.transform = `scale(${scale})`;
+  const vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
+  const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  const isPortrait = vh > vw * 1.05 && vw <= 820;
+  if (rotBtn) {
+    rotBtn.style.display = (isPortrait || window.isLandscapeRotated) ? 'inline-flex' : 'none';
+    rotBtn.classList.toggle('active', window.isLandscapeRotated);
+  }
+  if (!isPortrait && !userSetRotation1) window.isLandscapeRotated = false;
+  if (window.isLandscapeRotated) {
+    const scale = Math.min(vw / 720, vh / 1280);
+    wrap.style.transform = `rotate(90deg) scale(${scale})`;
+  } else {
+    const scale = Math.min(vw / 1280, vh / 720);
+    wrap.style.transform = `scale(${scale})`;
+  }
 }
 window.addEventListener('resize', fitGameWrap);
+if (window.visualViewport) window.visualViewport.addEventListener('resize', fitGameWrap);
 window.addEventListener('DOMContentLoaded', fitGameWrap);
 fitGameWrap();
 
@@ -1597,13 +1673,41 @@ function switchToPart(e, gameId) {
 
 // Mouse & Touch Tracking for Office Panning
 const officeWrap1 = document.getElementById('game-wrap');
-function updateOfficePan1(clientX) {
+let touchDragLastX1 = null;
+function getGameX1(clientX, clientY) {
   const rect = officeWrap1.getBoundingClientRect();
-  G.mouseX = ((clientX - rect.left) / rect.width) * 1280;
+  if (!rect.width || !rect.height) return 640;
+  if (window.isLandscapeRotated) {
+    return ((clientY - rect.top) / rect.height) * 1280;
+  }
+  return ((clientX - rect.left) / rect.width) * 1280;
 }
-officeWrap1.addEventListener('mousemove', e => updateOfficePan1(e.clientX));
+officeWrap1.addEventListener('mousemove', e => {
+  G.mouseX = getGameX1(e.clientX, e.clientY);
+});
+officeWrap1.addEventListener('touchstart', e => {
+  if (e.touches && e.touches[0]) {
+    touchDragLastX1 = getGameX1(e.touches[0].clientX, e.touches[0].clientY);
+  }
+}, { passive: true });
 officeWrap1.addEventListener('touchmove', e => {
-  if (e.touches && e.touches[0]) updateOfficePan1(e.touches[0].clientX);
+  if (e.touches && e.touches[0]) {
+    const curX = getGameX1(e.touches[0].clientX, e.touches[0].clientY);
+    if (touchDragLastX1 !== null && G.running && !G.monitorOpen && !G.powerOut) {
+      const dx = curX - touchDragLastX1;
+      G.officePanX = Math.max(-320, Math.min(0, G.officePanX + dx * 0.85));
+      document.getElementById('office-world').style.transform = `translateX(${G.officePanX}px)`;
+    }
+    touchDragLastX1 = curX;
+  }
+}, { passive: true });
+officeWrap1.addEventListener('touchend', () => {
+  touchDragLastX1 = null;
+  G.mouseX = 640;
+}, { passive: true });
+officeWrap1.addEventListener('touchcancel', () => {
+  touchDragLastX1 = null;
+  G.mouseX = 640;
 }, { passive: true });
 
 // Keyboard Shortcuts

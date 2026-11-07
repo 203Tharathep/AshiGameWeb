@@ -2413,26 +2413,17 @@ main {
     padding-top: 4px;
   }
   .enemy-hand-strip {
-    left: calc(50% - 48px);
-    transform: translate(-100%, -50%) scale(0.8);
+    display: none;
   }
   .hero-status-callout {
-    left: calc(50% + 42px);
-    max-width: 120px;
-    padding: 2px 5px;
-  }
-  .hero-status-callout .callout-label {
-    font-size: 7.5px;
-  }
-  .hero-status-callout .callout-text {
-    font-size: 8.5px;
+    display: none;
   }
   .center-battleground {
-    grid-template-columns: 32px minmax(0, 1fr) 32px;
+    grid-template-columns: 28px minmax(0, 1fr) 28px;
     gap: 4px;
   }
   .tabletop-slot {
-    transform: scale(0.6);
+    transform: scale(0.55);
   }
   .turn-crown-btn {
     width: 78px;
@@ -2442,6 +2433,7 @@ main {
   .minion-token {
     width: 44px;
     height: 56px;
+    flex: 0 0 44px;
   }
   .minion-stat {
     width: 19px;
@@ -2472,6 +2464,52 @@ main {
   }
   .skill-description {
     font-size: 6px;
+  }
+}
+
+@media (max-width: 420px) {
+  :root {
+    --card-width: 74px;
+    --card-height: 108px;
+  }
+  .center-battleground {
+    grid-template-columns: 1fr;
+  }
+  .tabletop-slot {
+    display: none;
+  }
+  .hero-meta {
+    max-width: 112px;
+    min-width: 98px;
+  }
+  .mana-Gem-list {
+    display: none;
+  }
+}
+
+@media (max-height: 560px) and (orientation: landscape) {
+  :root {
+    --card-width: 76px;
+    --card-height: 108px;
+  }
+  header {
+    padding: 2px 10px;
+  }
+  .top-control-bar {
+    padding: 2px 8px;
+    margin: 1px auto 2px;
+  }
+  .hero-portrait-socket {
+    width: 52px;
+    height: 60px;
+  }
+  .minion-token {
+    width: 46px;
+    height: 54px;
+    flex: 0 0 46px;
+  }
+  .fanned-hand-zone {
+    height: calc(var(--card-height) + 6px);
   }
 }
 

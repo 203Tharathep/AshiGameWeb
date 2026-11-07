@@ -1,4 +1,4 @@
-﻿import * as THREE from "three";
+import * as THREE from "three";
 import { ANOMALIES, DIFFICULTY_TIERS, POSTER_SLOTS, StageDirector } from "./anomalies.js";
 import { TunnelAudio } from "./audio.js";
 import { TextureManager } from "./textures.js";
@@ -111,11 +111,27 @@ class AshiTunnelGame {
 
     this.texMgr = new TextureManager(this.renderer);
 
-    window.addEventListener("resize", () => {
-      this.camera.aspect = window.innerWidth / window.innerHeight;
+    const updateAspectFov = () => {
+      const aspect = window.innerWidth / Math.max(1, window.innerHeight);
+      this.baseFov = aspect < 1 ? Math.min(86, Math.round(68 / Math.max(0.68, aspect * 1.08))) : 68;
+      this.zoomFov = aspect < 1 ? 34 : 27;
+      this.camera.aspect = aspect;
+      this.camera.fov = this.isZoomed ? this.zoomFov : this.baseFov;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(window.innerWidth, window.innerHeight);
-    });
+    };
+    updateAspectFov();
+
+    window.addEventListener("resize", updateAspectFov);
+    window.addEventListener(
+      "touchstart",
+      () => {
+        if (!this.touchUIEnabled) {
+          this.setTouchUIVisible(true);
+        }
+      },
+      { once: true, passive: true }
+    );
   }
 
   setTouchUIVisible(show) {
@@ -236,6 +252,10 @@ class AshiTunnelGame {
 
     document.getElementById("btn-hud-pause").addEventListener("click", () => {
       if (this.state === "PLAYING") this.pauseGame();
+    });
+
+    document.getElementById("mistake-card")?.addEventListener("click", () => {
+      document.getElementById("mistake-card").classList.add("hidden");
     });
 
     document.getElementById("btn-open-gallery-title").addEventListener("click", () => openGal("TITLE"));

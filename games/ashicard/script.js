@@ -561,18 +561,33 @@ function closeRevealModal() {
   revealModal.classList.add('hide');
 }
 
-// 3D Tilt Effect on Holographic Card
-holoToyCard.addEventListener('mousemove', (e) => {
+// 3D Tilt Effect on Holographic Card (Mouse & Touch)
+const updateHoloCardTilt = (clientX, clientY) => {
   const rect = holoToyCard.getBoundingClientRect();
-  const x = e.clientX - rect.left - rect.width / 2;
-  const y = e.clientY - rect.top - rect.height / 2;
-  const rotX = -(y / (rect.height / 2)) * 14;
-  const rotY = (x / (rect.width / 2)) * 14;
+  if (!rect.width || !rect.height) return;
+  const x = clientX - rect.left - rect.width / 2;
+  const y = clientY - rect.top - rect.height / 2;
+  const rotX = Math.max(-18, Math.min(18, -(y / (rect.height / 2)) * 14));
+  const rotY = Math.max(-18, Math.min(18, (x / (rect.width / 2)) * 14));
 
   holoToyCard.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.02)`;
+};
+
+holoToyCard.addEventListener('mousemove', (e) => {
+  updateHoloCardTilt(e.clientX, e.clientY);
 });
 
 holoToyCard.addEventListener('mouseleave', () => {
+  holoToyCard.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+});
+
+holoToyCard.addEventListener('touchmove', (e) => {
+  if (e.touches && e.touches[0]) {
+    updateHoloCardTilt(e.touches[0].clientX, e.touches[0].clientY);
+  }
+}, { passive: true });
+
+holoToyCard.addEventListener('touchend', () => {
   holoToyCard.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
 });
 

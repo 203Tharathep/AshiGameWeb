@@ -81,6 +81,8 @@ class AshiVsZombieGame {
         this.setupEventListeners();
         this.startLevel(this.ui.currentLevelIndex || 0);
         this.ui.initUI();
+        this.isRunning = false;
+        this.ui.showTitleModal();
 
         // Main animation loop
         let lastTime = performance.now();
@@ -210,10 +212,16 @@ class AshiVsZombieGame {
         // UI & BGM
         if (this.ui) {
             this.ui.renderSeedBank();
-            this.ui.updateWaveProgress(0);
+            this.ui.renderWaveFlags();
+            this.ui.updateWaveProgress(0, 1, this.totalWaves, false);
         }
         const titleEl = document.getElementById('current-level-title');
         if (titleEl) titleEl.textContent = this.currentLevel.nameTh;
+        const iconEl = document.getElementById('stage-theme-icon');
+        if (iconEl) {
+            const icons = { day: '☀️', night: '🌙', pool: '🏊', roof: '🏠', boss: '👑' };
+            iconEl.textContent = icons[this.currentLevel.theme] || '🌱';
+        }
 
         window.AudioMgr.startBGM(this.currentLevel.theme);
         this.isRunning = true;
@@ -403,7 +411,8 @@ class AshiVsZombieGame {
 
             this.waveIndex++;
             const pct = (this.waveIndex / this.totalWaves) * 100;
-            if (this.ui) this.ui.updateWaveProgress(pct);
+            const isFinal = this.waveIndex >= this.totalWaves;
+            if (this.ui) this.ui.updateWaveProgress(pct, this.waveIndex, this.totalWaves, isFinal);
         }
     }
 
@@ -547,13 +556,14 @@ class AshiVsZombieGame {
         this.particles.addFireworks(this.canvasWidth, this.canvasHeight);
 
         const reward = this.currentLevel ? this.currentLevel.rewardPlant : null;
+        const mowersLost = this.mowers ? this.mowers.filter(m => m.used).length : 0;
         if (reward && this.ui && !this.ui.unlockedPlants.includes(reward)) {
             this.ui.unlockPlant(reward);
             this.ui.showNewPlantModal(reward, () => {
-                this.ui.showVictoryModal(this.stats, () => this.nextLevel(), () => this.restartLevel());
+                this.ui.showVictoryModal(this.stats, () => this.nextLevel(), () => this.restartLevel(), mowersLost);
             });
         } else if (this.ui) {
-            this.ui.showVictoryModal(this.stats, () => this.nextLevel(), () => this.restartLevel());
+            this.ui.showVictoryModal(this.stats, () => this.nextLevel(), () => this.restartLevel(), mowersLost);
         }
     }
 
@@ -567,10 +577,16 @@ class AshiVsZombieGame {
     setupEventListeners() {
         const handleMove = (clientX, clientY) => {
             const rect = this.canvas.getBoundingClientRect();
-            const scaleX = rect.width ? (this.canvasWidth / rect.width) : 1;
-            const scaleY = rect.height ? (this.canvasHeight / rect.height) : 1;
-            this.mouseX = (clientX - rect.left) * scaleX;
-            this.mouseY = (clientY - rect.top) * scaleY;
+            if (!rect.width || !rect.height) return;
+            if (window.isLandscapeRotated) {
+                this.mouseX = ((clientY - rect.top) / rect.height) * this.canvasWidth;
+                this.mouseY = ((rect.right - clientX) / rect.width) * this.canvasHeight;
+            } else {
+                const scaleX = this.canvasWidth / rect.width;
+                const scaleY = this.canvasHeight / rect.height;
+                this.mouseX = (clientX - rect.left) * scaleX;
+                this.mouseY = (clientY - rect.top) * scaleY;
+            }
 
             // Calculate grid cell
             if (this.mouseX >= this.gridLeft && this.mouseX < this.gridLeft + this.gridCols * this.tileWidth &&
@@ -585,24 +601,33 @@ class AshiVsZombieGame {
             // Auto collect suns on hover with magnetic attraction!
             this.particles.suns.forEach(sun => {
                 const dist = Math.hypot(this.mouseX - sun.x, this.mouseY - sun.y);
-                if (dist < 65 && !sun.collected) {
+                if (dist < 72 && !sun.collected) {
                     this.particles.collectSun(sun);
-                } else if (dist < 110 && !sun.collected) {
+                } else if (dist < 115 && !sun.collected) {
                     sun.x += (this.mouseX - sun.x) * 0.08;
                     sun.y += (this.mouseY - sun.y) * 0.08;
                 }
             });
         };
 
+        this.handleCanvasMove = handleMove;
+
         this.canvas.addEventListener('mousemove', (e) => {
             handleMove(e.clientX, e.clientY);
         });
 
-        this.canvas.addEventListener('touchmove', (e) => {
+        this.canvas.addEventListener('touchstart', (e) => {
             if (e.touches && e.touches[0]) {
                 handleMove(e.touches[0].clientX, e.touches[0].clientY);
             }
-        });
+        }, { passive: true });
+
+        this.canvas.addEventListener('touchmove', (e) => {
+            if (e.touches && e.touches[0]) {
+                e.preventDefault();
+                handleMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: false });
 
         const handleClick = () => {
             window.AudioMgr.init();
@@ -611,7 +636,7 @@ class AshiVsZombieGame {
             let sunClicked = false;
             this.particles.suns.forEach(sun => {
                 const dist = Math.hypot(this.mouseX - sun.x, this.mouseY - sun.y);
-                if (dist < 55 && !sun.collected) {
+                if (dist < 75 && !sun.collected) {
                     this.particles.collectSun(sun);
                     sunClicked = true;
                 }
@@ -685,11 +710,16 @@ class AshiVsZombieGame {
             }
         };
 
+        this.handleCanvasClick = handleClick;
+
         this.canvas.addEventListener('click', handleClick);
         this.canvas.addEventListener('touchend', (e) => {
+            if (e.changedTouches && e.changedTouches[0]) {
+                handleMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+            }
             e.preventDefault();
             handleClick();
-        });
+        }, { passive: false });
 
         this.canvas.addEventListener('contextmenu', (e) => {
             e.preventDefault();
@@ -909,6 +939,14 @@ class AshiVsZombieGame {
                 ctx.fill();
             }
 
+            if (p.hp < p.maxHp && p.typeId !== 'wallnut') {
+                const hpPct = Math.max(0, p.hp / p.maxHp);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(-22, -44, 44, 5);
+                ctx.fillStyle = hpPct > 0.5 ? '#44ff44' : (hpPct > 0.25 ? '#ffaa00' : '#ff3333');
+                ctx.fillRect(-22, -44, 44 * hpPct, 5);
+            }
+
             if (p.typeId === 'wallnut') {
                 const hpPct = p.hp / p.maxHp;
                 if (hpPct < 0.66) {
@@ -1082,19 +1120,54 @@ class AshiVsZombieGame {
             } else if (this.ui && this.ui.selectedSeed) {
                 const plant = window.PLANT_TYPES[this.ui.selectedSeed];
                 if (plant) {
-                    ctx.strokeStyle = '#00ffcc';
-                    ctx.lineWidth = 2.5;
-                    ctx.setLineDash([6, 4]);
-                    ctx.strokeRect(x + 2, y + 2, this.tileWidth - 4, this.tileHeight - 4);
-                    ctx.setLineDash([]);
-                    ctx.fillStyle = 'rgba(0, 255, 200, 0.15)';
-                    ctx.fillRect(x + 2, y + 2, this.tileWidth - 4, this.tileHeight - 4);
+                    const isRowActive = this.currentLevel.activeRows.includes(this.hoverRow);
+                    const isWaterRow = this.currentLevel.waterRows && this.currentLevel.waterRows.includes(this.hoverRow);
+                    const existingPlant = this.plants.find(p => p.row === this.hoverRow && p.col === this.hoverCol);
 
-                    const img = this.images[plant.sprite];
-                    if (img) {
-                        ctx.globalAlpha = 0.72;
-                        ctx.drawImage(img, x + 8, y + 8, 68, 68);
-                        ctx.globalAlpha = 1.0;
+                    let isValid = isRowActive;
+                    if (isValid) {
+                        if (isWaterRow) {
+                            if (plant.id === 'lilypad') {
+                                isValid = !existingPlant;
+                            } else {
+                                isValid = !!existingPlant && existingPlant.type.id === 'lilypad';
+                            }
+                        } else {
+                            isValid = !existingPlant;
+                        }
+                    }
+
+                    if (isValid) {
+                        ctx.strokeStyle = '#2ecc71';
+                        ctx.lineWidth = 3;
+                        ctx.fillStyle = 'rgba(46, 204, 113, 0.22)';
+                        ctx.strokeRect(x + 2, y + 2, this.tileWidth - 4, this.tileHeight - 4);
+                        ctx.fillRect(x + 2, y + 2, this.tileWidth - 4, this.tileHeight - 4);
+
+                        const img = this.images[plant.sprite];
+                        if (img) {
+                            ctx.globalAlpha = 0.85;
+                            ctx.drawImage(img, x + 8, y + 8, 68, 68);
+                            ctx.globalAlpha = 1.0;
+                        }
+                    } else {
+                        ctx.strokeStyle = '#e74c3c';
+                        ctx.lineWidth = 2.5;
+                        ctx.setLineDash([5, 4]);
+                        ctx.fillStyle = 'rgba(231, 76, 60, 0.25)';
+                        ctx.strokeRect(x + 2, y + 2, this.tileWidth - 4, this.tileHeight - 4);
+                        ctx.fillRect(x + 2, y + 2, this.tileWidth - 4, this.tileHeight - 4);
+                        ctx.setLineDash([]);
+
+                        // Red X indicator
+                        ctx.strokeStyle = '#ff3333';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.moveTo(x + 25, y + 25);
+                        ctx.lineTo(x + this.tileWidth - 25, y + this.tileHeight - 25);
+                        ctx.moveTo(x + this.tileWidth - 25, y + 25);
+                        ctx.lineTo(x + 25, y + this.tileHeight - 25);
+                        ctx.stroke();
                     }
                 }
             }

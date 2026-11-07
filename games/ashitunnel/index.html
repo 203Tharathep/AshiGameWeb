@@ -14,9 +14,10 @@
     <link
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;800&family=Prompt:wght@400;600;700;800;900&display=swap"
       rel="stylesheet"
-    />
+    />
     <script type="module" crossorigin src="./assets/index-BnySADXK.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-CKzNx5Gf.css">
+    <link rel="stylesheet" href="./src/style.css">
   </head>
   <body>
     <div id="canvas-container"></div>
@@ -284,6 +285,30 @@
         <button id="btn-close-qr" class="btn-primary" style="width: 100%">✕ ปิดหน้าต่าง</button>
       </div>
     </div>
-
+
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        const syncResponsiveTunnel = () => {
+          const g = window.ashiGame;
+          if (!g || !g.camera) return;
+          const aspect = window.innerWidth / Math.max(1, window.innerHeight);
+          g.baseFov = aspect < 1 ? Math.min(86, Math.round(68 / Math.max(0.68, aspect * 1.08))) : 68;
+          g.zoomFov = aspect < 1 ? 34 : 27;
+          g.camera.aspect = aspect;
+          g.camera.fov = g.isZoomed ? g.zoomFov : g.baseFov;
+          g.camera.updateProjectionMatrix();
+        };
+        setTimeout(syncResponsiveTunnel, 120);
+        window.addEventListener('resize', syncResponsiveTunnel);
+        window.addEventListener('touchstart', () => {
+          if (window.ashiGame && !window.ashiGame.touchUIEnabled) {
+            window.ashiGame.setTouchUIVisible(true);
+          }
+        }, { once: true, passive: true });
+        document.getElementById('mistake-card')?.addEventListener('click', () => {
+          document.getElementById('mistake-card').classList.add('hidden');
+        });
+      });
+    </script>
   </body>
 </html>

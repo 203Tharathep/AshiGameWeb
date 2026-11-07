@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Five Nights at Ashi's: Sister Location — Full Story Edition</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
@@ -10,15 +10,41 @@
   html, body {
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     margin: 0;
     padding: 0;
     overflow: hidden;
+    touch-action: none;
     background: #000;
     color: #eef6ff;
     font-family: 'Share Tech Mono', monospace;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .rotate-screen-btn {
+    position: fixed;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+    right: calc(env(safe-area-inset-right, 0px) + 10px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    border: 2px solid #ff2e55;
+    background: rgba(12, 18, 32, 0.92);
+    color: #ff88aa;
+    font-family: system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+  }
+  .rotate-screen-btn.active {
+    background: #2e7d32;
+    border-color: #fff;
+    color: #fff;
   }
 
   #game-wrap {
@@ -237,6 +263,7 @@
 </style>
 </head>
 <body>
+<button id="rotate-screen-btn" class="rotate-screen-btn" type="button" onclick="toggleLandscapeRotateSL()">🔄 หมุนจอ</button>
 <div id="game-wrap">
   <div class="crt-lines"></div>
 
@@ -1619,13 +1646,39 @@ function boopBonnetNose() {
 }
 
 // Keyboard Shortcuts (Including typing L-O-L for Lolbit!)
+window.isLandscapeRotated = false;
+let userSetRotationSL = false;
+
+function toggleLandscapeRotateSL() {
+  userSetRotationSL = true;
+  window.isLandscapeRotated = !window.isLandscapeRotated;
+  try { window.parent?.postMessage({ type: 'ashi-stage-tall', active: window.isLandscapeRotated }, '*'); } catch (e) {}
+  setTimeout(fitGameWrap, 60);
+  fitGameWrap();
+}
+
 function fitGameWrap() {
   const wrap = document.getElementById('game-wrap');
+  const rotBtn = document.getElementById('rotate-screen-btn');
   if (!wrap) return;
-  const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
-  wrap.style.transform = `scale(${scale})`;
+  const vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
+  const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  const isPortrait = vh > vw * 1.05 && vw <= 820;
+  if (rotBtn) {
+    rotBtn.style.display = (isPortrait || window.isLandscapeRotated) ? 'inline-flex' : 'none';
+    rotBtn.classList.toggle('active', window.isLandscapeRotated);
+  }
+  if (!isPortrait && !userSetRotationSL) window.isLandscapeRotated = false;
+  if (window.isLandscapeRotated) {
+    const scale = Math.min(vw / 720, vh / 1280);
+    wrap.style.transform = `rotate(90deg) scale(${scale})`;
+  } else {
+    const scale = Math.min(vw / 1280, vh / 720);
+    wrap.style.transform = `scale(${scale})`;
+  }
 }
 window.addEventListener('resize', fitGameWrap);
+if (window.visualViewport) window.visualViewport.addEventListener('resize', fitGameWrap);
 window.addEventListener('DOMContentLoaded', fitGameWrap);
 fitGameWrap();
 

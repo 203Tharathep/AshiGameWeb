@@ -219,6 +219,21 @@ class CleanGamePortal {
       if (e.key === 'Escape') {
         document.body.classList.remove('lights-off');
         this.dom.lightboxModal.classList.add('hidden');
+        if (this.dom.gameStageWrapper.classList.contains('is-pseudo-fullscreen')) {
+          this.togglePseudoFullscreen(false);
+        }
+      }
+    });
+
+    window.addEventListener('message', (e) => {
+      if (!e.data || typeof e.data !== 'object') return;
+      if (e.data.type === 'ashi-stage-tall') {
+        this.isMobileAspect = Boolean(e.data.active);
+        this.dom.gameStageWrapper.classList.toggle('aspect-mobile', this.isMobileAspect);
+        this.dom.gameStageWrapper.classList.toggle('aspect-wide', !this.isMobileAspect);
+        this.dom.mobileAspectBtn.classList.toggle('active', this.isMobileAspect);
+      } else if (e.data.type === 'ashi-toggle-fullscreen') {
+        this.toggleStageFullscreen();
       }
     });
 
@@ -252,6 +267,7 @@ class CleanGamePortal {
     });
 
     this.dom.mobileAspectBtn.addEventListener('click', () => {
+      this.userToggledAspect = true;
       this.isMobileAspect = !this.isMobileAspect;
       this.dom.gameStageWrapper.classList.toggle('aspect-mobile', this.isMobileAspect);
       this.dom.gameStageWrapper.classList.toggle('aspect-wide', !this.isMobileAspect);
@@ -259,10 +275,13 @@ class CleanGamePortal {
     });
 
     window.addEventListener('resize', () => {
-      if (this.currentGame && this.currentGame.allowMobileAspect) {
+      if (this.currentGame && this.currentGame.allowMobileAspect && !this.userToggledAspect) {
         const isMobilePortrait = window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
-        if (isMobilePortrait !== this.isMobileAspect) {
-          this.isMobileAspect = isMobilePortrait;
+        const shouldBeMobile = Boolean(
+          this.currentGame.defaultMobileAspect !== false && isMobilePortrait
+        );
+        if (shouldBeMobile !== this.isMobileAspect) {
+          this.isMobileAspect = shouldBeMobile;
           this.dom.gameStageWrapper.classList.toggle('aspect-mobile', this.isMobileAspect);
           this.dom.gameStageWrapper.classList.toggle('aspect-wide', !this.isMobileAspect);
           this.dom.mobileAspectBtn.classList.toggle('active', this.isMobileAspect);
@@ -286,18 +305,14 @@ class CleanGamePortal {
     });
 
     this.dom.fullscreenBtn.addEventListener('click', () => {
-      const stage = this.dom.gameStageWrapper;
-      if (!document.fullscreenElement) {
-        stage.requestFullscreen?.().catch(() => {
-          window.open(this.currentGame?.playUrl, '_blank');
-        });
-      } else {
-        document.exitFullscreen?.();
-      }
+      this.toggleStageFullscreen();
     });
 
     this.dom.exitFullscreenBtn.addEventListener('click', () => {
-      if (document.fullscreenElement) document.exitFullscreen();
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
+      }
+      this.togglePseudoFullscreen(false);
     });
 
     this.dom.closeLightboxBtn.addEventListener('click', () => {
@@ -401,7 +416,12 @@ class CleanGamePortal {
         const isFav = this.favorites.has(game.id);
         return `
           <article class="game-card js-card" data-id="${game.id}">
-            <div class="card-cover">
+            <div class="card-cover ${game.coverFit === 'contain' ? 'is-contain' : ''}">
+              ${
+                game.coverFit === 'contain'
+                  ? `<div class="card-cover-backdrop" style="background-image: url('${game.thumbnailBg}')"></div>`
+                  : ''
+              }
               <img class="card-cover-img" src="${game.thumbnailBg}" alt="${game.title}" loading="lazy" />
               ${
                 game.characterOverlay
@@ -459,9 +479,12 @@ class CleanGamePortal {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     if (!isSame) {
+      this.userToggledAspect = false;
       // Auto-adapt aspect ratio based on platform / screen orientation
       const isMobilePortrait = window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
-      this.isMobileAspect = Boolean(game.allowMobileAspect && isMobilePortrait);
+      this.isMobileAspect = Boolean(
+        game.allowMobileAspect && game.defaultMobileAspect !== false && isMobilePortrait
+      );
 
       this.dom.gameStageWrapper.classList.toggle('aspect-mobile', this.isMobileAspect);
       this.dom.gameStageWrapper.classList.toggle('aspect-wide', !this.isMobileAspect);
@@ -518,7 +541,7 @@ class CleanGamePortal {
     this.dom.relatedGamesList.innerHTML = others
       .map(
         (g) => `
-        <div class="other-game-row" data-id="${g.id}">
+        <div class="other-game-row ${g.coverFit === 'contain' ? 'is-contain' : ''}" data-id="${g.id}">
           <img src="${g.thumbnailBg}" alt="${g.title}" loading="lazy" />
           <div class="other-game-info">
             <strong>${g.title}</strong>
@@ -543,8 +566,53 @@ class CleanGamePortal {
     this.dom.playerFavIconWrap.innerHTML = isFav ? SVG_HEART_SOLID : SVG_HEART_OUTLINE;
   }
 
+  togglePseudoFullscreen(forceState) {
+    const stage = this.dom.gameStageWrapper;
+    if (!stage) return;
+    const nextState =
+      typeof forceState === 'boolean'
+        ? forceState
+        : !stage.classList.contains('is-pseudo-fullscreen');
+    stage.classList.toggle('is-pseudo-fullscreen', nextState);
+    document.body.classList.toggle('has-pseudo-fullscreen', nextState);
+    try {
+      this.dom.gameIframe.focus();
+    } catch {
+      // Ignore focus errors
+    }
+  }
+
+  toggleStageFullscreen() {
+    const stage = this.dom.gameStageWrapper;
+    if (!stage) return;
+    const fsElement = document.fullscreenElement || document.webkitFullscreenElement;
+    if (fsElement) {
+      (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
+      this.togglePseudoFullscreen(false);
+      return;
+    }
+    if (stage.classList.contains('is-pseudo-fullscreen')) {
+      this.togglePseudoFullscreen(false);
+      return;
+    }
+    const reqFs = stage.requestFullscreen || stage.webkitRequestFullscreen;
+    if (reqFs) {
+      try {
+        const res = reqFs.call(stage);
+        if (res && typeof res.catch === 'function') {
+          res.catch(() => this.togglePseudoFullscreen(true));
+        }
+      } catch {
+        this.togglePseudoFullscreen(true);
+      }
+    } else {
+      this.togglePseudoFullscreen(true);
+    }
+  }
+
   unmountPlayer() {
     document.body.classList.remove('lights-off');
+    this.togglePseudoFullscreen(false);
     if (this.currentGame) {
       this.dom.gameIframe.src = 'about:blank';
       this.currentGame = null;

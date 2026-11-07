@@ -494,6 +494,31 @@ body.lights-off #lightsToggleBtn {
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.card-cover.is-contain {
+  background: #160803;
+}
+
+.card-cover-backdrop {
+  position: absolute;
+  inset: -15px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(14px) brightness(0.62) saturate(1.4);
+  transform: scale(1.15);
+  pointer-events: none;
+}
+
+.card-cover.is-contain .card-cover-img {
+  position: relative;
+  z-index: 1;
+  object-fit: contain;
+}
+
+.other-game-row.is-contain img {
+  object-fit: contain;
+  background: #160803;
+}
+
 .game-card:hover .card-cover-img {
   transform: scale(1.035);
 }
@@ -726,35 +751,51 @@ body.lights-off #lightsToggleBtn {
   display: block;
 }
 
-.stage-frame:fullscreen {
+.stage-frame:fullscreen,
+.stage-frame:-webkit-full-screen,
+.stage-frame.is-pseudo-fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 0 !important;
   max-height: none !important;
-  border: none;
-  border-radius: 0;
+  aspect-ratio: auto !important;
+  z-index: 9999 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
 }
 
-.stage-frame:fullscreen iframe {
+.stage-frame:fullscreen iframe,
+.stage-frame:-webkit-full-screen iframe,
+.stage-frame.is-pseudo-fullscreen iframe {
   width: 100% !important;
   height: 100% !important;
-  border: none;
-  border-radius: 0;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+body.has-pseudo-fullscreen {
+  overflow: hidden !important;
+  touch-action: none;
 }
 
 .exit-fs-btn {
   display: none;
   position: absolute;
-  top: 14px;
-  right: 16px;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  right: calc(env(safe-area-inset-right, 0px) + 14px);
   z-index: 20;
-  background: rgba(9, 9, 11, 0.72);
+  background: rgba(9, 9, 11, 0.78);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  padding: 5px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 6px 14px;
   border-radius: 99px;
   font-size: 0.78rem;
   cursor: pointer;
-  opacity: 0.35;
+  opacity: 0.65;
   transition: opacity 0.2s ease;
 }
 
@@ -762,7 +803,9 @@ body.lights-off #lightsToggleBtn {
   opacity: 1;
 }
 
-.stage-frame:fullscreen .exit-fs-btn {
+.stage-frame:fullscreen .exit-fs-btn,
+.stage-frame:-webkit-full-screen .exit-fs-btn,
+.stage-frame.is-pseudo-fullscreen .exit-fs-btn {
   display: block;
 }
 

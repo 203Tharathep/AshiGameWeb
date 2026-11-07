@@ -142,6 +142,8 @@ class ParticleSystem {
 
                 if (s.collectProgress >= 1.0) {
                     game.addSun(25);
+                    this.addText(targetHUDX + 25, targetHUDY + 20, '+25 ☀️', '#ffee44', 20);
+                    this.addSparks(targetHUDX + 10, targetHUDY + 10, 8, '#ffea00');
                     this.suns.splice(i, 1);
                     continue;
                 }

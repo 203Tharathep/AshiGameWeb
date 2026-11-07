@@ -62,6 +62,71 @@ export const OFFICIAL_GAMES = [
     ]
   },
   {
+    id: 'fivenightatashisisterlocation',
+    title: 'Five Nights at Ashi: Sister Location',
+    subtitle: 'สัมผัสเนื้อเรื่องเต็ม 5 คืน ลิฟต์ใต้ดิน กล่องควบคุม บันทึกเสียง HandUnit และห้องลับ Ennard',
+    playUrl: './games/fivenightatashisisterlocation/index.html',
+    author: 'AkashiZai',
+    category: 'horror',
+    categoryLabel: 'สยองขวัญ / เอาชีวิตรอด',
+    badge: 'Horror · Sister Location',
+    thumbnailBg: './games/fivenightatashisisterlocation/assets5/cams/control_module.jpg',
+    characterOverlay: './games/fivenightatashisisterlocation/assets5/sprites/baby.png',
+    icon: './games/fivenightatashisisterlocation/assets5/sprites/ennard.png',
+    screenshots: [
+      { src: './games/fivenightatashisisterlocation/assets5/cams/control_module.jpg', caption: 'Primary Control Module ห้องควบคุมส่วนกลาง ส่องไฟและช็อกกระตุ้นเวที' },
+      { src: './games/fivenightatashisisterlocation/assets5/cams/parts_freddy_closed.jpg', caption: 'Night 3: ผ่าตัดปลดชนวน Funtime Freddy และจับ Bon-Bon ในห้องซ่อม' },
+      { src: './games/fivenightatashisisterlocation/assets5/cams/springlock_gameplay.jpg', caption: 'Night 4: เอาชีวิตรอดในชุด Springlock หมุนสลักไขลานไม่ให้ดีดหลุด' },
+      { src: './games/fivenightatashisisterlocation/assets5/cams/private_room_office.jpg', caption: 'Secret Private Room ศึกชี้ชะตากับ Ennard สไตล์ FNaF 1 แบบคลาสสิก' }
+    ],
+    likes: 2510,
+    dislikes: 15,
+    plays: 34800,
+    allowMobileAspect: false,
+    description:
+      'ภาคเนื้อเรื่องสุดยิ่งใหญ่และน่าสะพรึงกลัวที่สุดของมหากาพย์ Five Nights at Ashi! สวมบทบาทเป็นช่างเทคนิคกะดึก Eggs Benedict ลงลิฟต์สู่ศูนย์วิจัยใต้ดิน Circus Baby’s Entertainment and Rental รับฟังคำแนะนำสุดป่วนจาก HandUnit คลานผ่าน Ballora Gallery โดยฟังเสียงเพลงเต้นรำ ใช้ Flash Beacon ส่องไฟเป็นจังหวะใน Funtime Auditorium ผ่าตัดถอดชิป Funtime Freddy และ Bon-Bon เอาชีวิตรอดจากการถูกบีบอัดในชุด Springlock และเลือกเส้นทางสู่ตอนจบ 2 แบบ: Real Ending ในห้อง Scooping Room หรือ Fake Ending ในห้องลับ Private Room ต่อกรกับ Ennard ด้วยรหัส 1-9-8-3!',
+    controls: [
+      { key: 'Space / คลิกปุ่ม', action: 'ข้ามบทสนทนา / ส่องไฟ / กดช็อกไฟฟ้า / ดึงประตูกล่องใต้โต๊ะ' },
+      { key: 'A / D (ในคืนที่ 4)', action: 'สลัดตัว Minireena ที่ปีนขึ้นชุด Springlock Suit' },
+      { key: 'คลิกสลักไขลาน (คืนที่ 4)', action: 'คลิกค้างเพื่อหมุนไขลาน Springlocks ทั้ง 10 จุดไม่ให้หลุด' },
+      { key: 'A / W / D (ในห้อง Private Room)', action: 'ปิด–เปิดประตูซ้าย, ท่อระบายอากาศบน, และประตูด้านขวา' },
+      { key: 'พิมพ์คำว่า L-O-L', action: 'แก้ภาพบั๊กไวรัส Lolbit บนหน้าจอคอมพิวเตอร์' }
+    ]
+  },
+  {
+    id: 'fivenightatashi4',
+    title: 'Five Nights at Ashi 4',
+    subtitle: 'บทสรุปแห่งฝันร้าย The Final Chapter คอยฟังเสียงหายใจที่ประตู ซุ่มดูตู้เสื้อผ้า และไล่ Freddles บนเตียง',
+    playUrl: './games/fivenightatashi4/index.html',
+    author: 'AkashiZai',
+    category: 'horror',
+    categoryLabel: 'สยองขวัญ / เอาชีวิตรอด',
+    badge: 'Horror · Part 4',
+    thumbnailBg: './games/fivenightatashi4/assets4/cams/bedroom_normal.jpg',
+    characterOverlay: './games/fivenightatashi4/assets4/sprites/n_fredbear.png',
+    icon: './games/fivenightatashi4/assets4/sprites/plushtrap.png',
+    screenshots: [
+      { src: './games/fivenightatashi4/assets4/cams/bedroom_normal.jpg', caption: 'ห้องนอนยามค่ำคืน หมุนตัวสำรวจประตูซ้าย ขวา ตู้เสื้อผ้า และเตียงนอน' },
+      { src: './games/fivenightatashi4/assets4/cams/left_hall_bonnie_close.jpg', caption: 'Nightmare Bonnie โผล่ประชิดประตูซ้าย ต้องรีบปิดประตูก่อนส่องไฟ' },
+      { src: './games/fivenightatashi4/assets4/cams/plushtrap_chair.jpg', caption: 'มินิเกม Fun with Plushtrap ส่องไฟให้หยุดตรงจุด X เพื่อเริ่มคืนถัดไปที่ตี 2 (+2 ชม.)' },
+      { src: './games/fivenightatashi4/assets4/cams/bed_nightmare.jpg', caption: 'Nightmare Ashi บอสเงาสุดหลอนบนเตียงนอน' }
+    ],
+    likes: 2340,
+    dislikes: 13,
+    plays: 32100,
+    allowMobileAspect: false,
+    description:
+      'บทสรุปสุดท้ายแห่งฝันร้าย The Final Chapter! คืนนี้ไม่มีทั้งห้องทำงานและกล้องวงจรปิด คุณติดอยู่ในห้องนอนที่มีประตู 2 ข้าง ตู้เสื้อผ้า และเตียงนอนข้างหลัง จงตั้งใจฟัง "เสียงหายใจ (Breathing)" ให้ดี หากได้ยินเสียงหายใจที่ประตู ห้ามเปิดไฟฉายเด็ดขาด ให้รีบปิดประตูค้างไว้จนกว่ามันจะเดินจากไป ส่องไฟไล่ลูกหมี Freddles บนเตียงก่อนที่ Nightmare Freddy จะรวมร่าง ปิดตู้เสื้อผ้าไล่ Nightmare Foxy และเผชิญหน้ากับ Nightmare Fredbear และ Nightmare ในคืนที่ 5-7 พร้อมมินิเกมดัก Plushtrap บนเก้าอี้เพื่อชิงโบนัส 2 ชั่วโมง!',
+    controls: [
+      { key: 'A / ลูกศรซ้าย', action: 'วิ่งไปสำรวจและเฝ้าระวังที่ประตูซ้าย (Left Door)' },
+      { key: 'D / ลูกศรขวา', action: 'วิ่งไปสำรวจและเฝ้าระวังที่ประตูขวา (Right Door)' },
+      { key: 'W / ลูกศรขึ้น', action: 'วิ่งไปสำรวจตู้เสื้อผ้ากลางห้อง (Closet)' },
+      { key: 'S / ลูกศรลง', action: 'หันหลังกลับมาดูเตียงนอน (Bed) หรือกลับเข้าห้องนอน' },
+      { key: 'Space / Z (กดค้าง)', action: 'ส่องไฟฉาย (ห้ามส่องถ้าได้ยินเสียงหายใจประชิดประตู!)' },
+      { key: 'Shift / X (กดค้าง)', action: 'ดึงปิดประตูบานนั้นค้างไว้เพื่อกันหุ่นบุก' }
+    ]
+  },
+  {
     id: 'fivenightatashi3',
     title: 'Five Nights at Ashi 3',
     subtitle: '30 ปีต่อมาในบ้านผีสิง Fazbear’s Fright เปิดเสียงล่อ ปิดท่อแอร์ และรีบูตระบบหนี Springtrap',

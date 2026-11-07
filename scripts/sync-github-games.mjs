@@ -35,6 +35,18 @@ const REPOS = [
     copyItems: ['index.html', 'assets3']
   },
   {
+    name: 'FiveNightsAtAshi4',
+    url: 'https://github.com/AkashiZai/fivenightatashi4.git',
+    dest: 'games/fivenightatashi4',
+    copyItems: ['index.html', 'assets4']
+  },
+  {
+    name: 'FiveNightsAtAshiSisterLocation',
+    url: 'https://github.com/AkashiZai/fivenightatashisisterlocation.git',
+    dest: 'games/fivenightatashisisterlocation',
+    copyItems: ['index.html', 'assets5']
+  },
+  {
     name: 'AshiGame',
     url: 'https://github.com/AkashiZai/AshiGame.git',
     dest: 'games/ashigame',
@@ -77,52 +89,46 @@ try {
     if (
       repo.name === 'FiveNightsAtAshi' ||
       repo.name === 'FiveNightsAtAshi2' ||
-      repo.name === 'FiveNightsAtAshi3'
+      repo.name === 'FiveNightsAtAshi3' ||
+      repo.name === 'FiveNightsAtAshi4' ||
+      repo.name === 'FiveNightsAtAshiSisterLocation'
     ) {
       const fnafHtmlPath = path.join(destDir, 'index.html');
       let html = fs.readFileSync(fnafHtmlPath, 'utf8');
+
+      // Responsive wrapper scaling
       html = html.replace(
         /max-width:\s*100vw;\s*max-height:\s*100vh;\s*aspect-ratio:\s*16\s*\/\s*9;/,
         'flex-shrink: 0;\n    transform-origin: center center;'
       );
-      if (repo.name === 'FiveNightsAtAshi' && !html.includes('fitGameWrap')) {
-        html = html.replace(
-          '// Mouse Tracking for Office Panning',
-          `function fitGameWrap() {\n  const wrap = document.getElementById('game-wrap');\n  const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);\n  wrap.style.transform = \`scale(\${scale})\`;\n}\nwindow.addEventListener('resize', fitGameWrap);\nfitGameWrap();\n\n// Mouse Tracking for Office Panning`
-        );
-      }
-      if (repo.name === 'FiveNightsAtAshi2') {
-        html = html.replace(
-          '<a href="https://github.com/AkashiZai/fivenightatashi" target="_blank" class="switch-game-btn">',
-          '<a href="../fivenightatashi/index.html" onclick="switchToPart1(event)" class="switch-game-btn">'
-        );
-        html = html.replace(
-          '<a href="index.html" class="tool-pill" style="text-decoration:none;">Switch to FNaA 1</a>',
-          '<a href="../fivenightatashi/index.html" onclick="switchToPart1(event)" class="tool-pill" style="text-decoration:none;">Switch to FNaA 1</a>'
-        );
-        if (!html.includes('fitGameWrap')) {
-          html = html.replace(
-            '// Mouse & Keyboard Input',
-            `function fitGameWrap() {\n  const wrap = document.getElementById('game-wrap');\n  const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);\n  wrap.style.transform = \`scale(\${scale})\`;\n}\nwindow.addEventListener('resize', fitGameWrap);\nfitGameWrap();\n\nfunction switchToPart1(e) {\n  if (window.top && window.top !== window) {\n    e.preventDefault();\n    window.top.location.hash = '#play/fivenightatashi';\n  }\n}\n\n// Mouse & Keyboard Input`
-          );
+      html = html.replace(
+        /max-width:\s*177\.78vh;\s*max-height:\s*56\.25vw;\s*margin:\s*auto;\s*top:\s*50%;\s*transform:\s*translateY\(-50%\);/,
+        'width: 1280px; height: 720px; flex-shrink: 0; transform-origin: center center;'
+      );
+      html = html.replace(
+        /html,\s*body\s*\{\s*width:\s*100vw;\s*height:\s*100vh;\s*overflow:\s*hidden;\s*background:\s*#000;\s*color:\s*([^;]+);\s*font-family:\s*([^;]+);\s*\}/,
+        'html, body { width: 100vw; height: 100vh; margin: 0; padding: 0; overflow: hidden; background: #000; color: $1; font-family: $2; display: flex; align-items: center; justify-content: center; }'
+      );
+
+      // Replace switch links across all FNAA games with portal internal links
+      html = html.replaceAll('href="fnaf.html"', 'href="../fivenightatashi/index.html" onclick="switchToPart(event, \'fivenightatashi\')"');
+      html = html.replaceAll('href="fnaf1.html"', 'href="../fivenightatashi/index.html" onclick="switchToPart(event, \'fivenightatashi\')"');
+      html = html.replaceAll('href="fnaf2.html"', 'href="../fivenightatashi2/index.html" onclick="switchToPart(event, \'fivenightatashi2\')"');
+      html = html.replaceAll('href="fnaf3.html"', 'href="../fivenightatashi3/index.html" onclick="switchToPart(event, \'fivenightatashi3\')"');
+      html = html.replaceAll('href="fnaf4.html"', 'href="../fivenightatashi4/index.html" onclick="switchToPart(event, \'fivenightatashi4\')"');
+      html = html.replaceAll('href="fnafsl.html"', 'href="../fivenightatashisisterlocation/index.html" onclick="switchToPart(event, \'fivenightatashisisterlocation\')"');
+      html = html.replaceAll('href="index.html" class="switch-game-btn"', 'href="../fivenightatashi/index.html" onclick="switchToPart(event, \'fivenightatashi\')" class="switch-game-btn"');
+      html = html.replaceAll('href="index.html" class="tool-pill"', 'href="../fivenightatashi/index.html" onclick="switchToPart(event, \'fivenightatashi\')" class="tool-pill"');
+
+      // Inject fitGameWrap and switchToPart helper
+      if (!html.includes('fitGameWrap')) {
+        const scriptCloseIndex = html.lastIndexOf('</script>');
+        if (scriptCloseIndex !== -1) {
+          const helperCode = `\nfunction fitGameWrap() {\n  const wrap = document.getElementById('game-wrap');\n  if (!wrap) return;\n  const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);\n  wrap.style.transform = \`scale(\${scale})\`;\n}\nwindow.addEventListener('resize', fitGameWrap);\nwindow.addEventListener('DOMContentLoaded', fitGameWrap);\nfitGameWrap();\n\nfunction switchToPart(e, gameId) {\n  if (window.top && window.top !== window) {\n    e.preventDefault();\n    window.top.location.hash = '#play/' + gameId;\n  }\n}\n`;
+          html = html.slice(0, scriptCloseIndex) + helperCode + html.slice(scriptCloseIndex);
         }
       }
-      if (repo.name === 'FiveNightsAtAshi3') {
-        html = html.replaceAll(
-          'href="https://github.com/AkashiZai/fivenightatashi" target="_blank"',
-          'href="../fivenightatashi/index.html" onclick="switchToPart(event, \'fivenightatashi\')"'
-        );
-        html = html.replaceAll(
-          'href="https://github.com/AkashiZai/fivenightatashi2" target="_blank"',
-          'href="../fivenightatashi2/index.html" onclick="switchToPart(event, \'fivenightatashi2\')"'
-        );
-        if (!html.includes('fitGameWrap')) {
-          html = html.replace(
-            '// Mouse & Keyboard Input',
-            `function fitGameWrap() {\n  const wrap = document.getElementById('game-wrap');\n  const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);\n  wrap.style.transform = \`scale(\${scale})\`;\n}\nwindow.addEventListener('resize', fitGameWrap);\nfitGameWrap();\n\nfunction switchToPart(e, gameId) {\n  if (window.top && window.top !== window) {\n    e.preventDefault();\n    window.top.location.hash = '#play/' + gameId;\n  }\n}\n\n// Mouse & Keyboard Input`
-          );
-        }
-      }
+
       fs.writeFileSync(fnafHtmlPath, html, 'utf8');
     }
 
@@ -264,4 +270,4 @@ try {
   fs.rmSync(tmpRoot, { recursive: true, force: true });
 }
 
-console.log('\nAll 8 GitHub games synced successfully!');
+console.log('\nAll 10 GitHub games synced successfully!');

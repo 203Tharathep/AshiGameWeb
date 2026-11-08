@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=5">
+  <script src="../common/rotate-helper.js" defer></script>
 </head>
 <body>
 
@@ -68,14 +69,17 @@
         </div>
 
         <div class="ctrl-group-right">
+          <button id="cardDexQuickBtn" class="btn-tactile btn-wood-sub" title="เปิดดูสารานุกรมการ์ด (Card Dex)">
+            📖 <span class="hide-mobile">สารานุกรม</span>
+          </button>
           <button id="soundToggleBtn" class="btn-tactile btn-wood-sub">
-            เสียง: เปิด
+            <span class="btn-sound-icon">🔊</span> <span class="btn-sound-text">เสียง: เปิด</span>
           </button>
           <button id="rulesBtn" class="btn-tactile btn-wood-sub">
-            กติกา
+            📜 <span class="hide-mobile">กติกา</span>
           </button>
           <button id="restartBtn" class="btn-tactile btn-wood-sub">
-            เริ่มใหม่
+            🔄 <span class="hide-mobile">เริ่มใหม่</span>
           </button>
         </div>
       </div>

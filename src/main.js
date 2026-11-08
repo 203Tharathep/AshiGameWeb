@@ -123,6 +123,9 @@ class CleanGamePortal {
       playerFavBtn: document.getElementById('playerFavBtn'),
       playerFavIconWrap: document.getElementById('playerFavIconWrap'),
       mobileAspectBtn: document.getElementById('mobileAspectBtn'),
+      landscapeToggleBtn: document.getElementById('landscapeToggleBtn'),
+      stageRotateLandscapeBtn: document.getElementById('stageRotateLandscapeBtn'),
+      stageRotateLandscapeText: document.getElementById('stageRotateLandscapeText'),
       lightsToggleBtn: document.getElementById('lightsToggleBtn'),
       lightsOffOverlay: document.getElementById('lightsOffOverlay'),
       reloadGameBtn: document.getElementById('reloadGameBtn'),
@@ -234,6 +237,8 @@ class CleanGamePortal {
         this.dom.mobileAspectBtn.classList.toggle('active', this.isMobileAspect);
       } else if (e.data.type === 'ashi-toggle-fullscreen') {
         this.toggleStageFullscreen();
+      } else if (e.data.type === 'ashi-toggle-landscape') {
+        this.toggleLandscape();
       }
     });
 
@@ -274,7 +279,18 @@ class CleanGamePortal {
       this.dom.mobileAspectBtn.classList.toggle('active', this.isMobileAspect);
     });
 
+    this.dom.landscapeToggleBtn?.addEventListener('click', () => {
+      this.toggleLandscape();
+    });
+
+    this.dom.stageRotateLandscapeBtn?.addEventListener('click', () => {
+      this.toggleLandscape();
+    });
+
     const handleOrientationOrResize = () => {
+      if (window.innerWidth > window.innerHeight && this.dom.gameStageWrapper.classList.contains('is-rotated-landscape')) {
+        this.toggleLandscape(false);
+      }
       if (this.currentGame && this.currentGame.allowMobileAspect && !this.userToggledAspect) {
         const isMobilePortrait = window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
         const shouldBeMobile = Boolean(
@@ -646,9 +662,53 @@ class CleanGamePortal {
     }, 150);
   }
 
+  toggleLandscape(forceState) {
+    const stage = this.dom.gameStageWrapper;
+    if (!stage) return;
+    const isCurrentlyRotated = stage.classList.contains('is-rotated-landscape');
+    const nextState = typeof forceState === 'boolean' ? forceState : !isCurrentlyRotated;
+
+    stage.classList.toggle('is-rotated-landscape', nextState);
+    document.body.classList.toggle('has-rotated-landscape', nextState);
+
+    if (this.dom.stageRotateLandscapeBtn) {
+      this.dom.stageRotateLandscapeBtn.classList.toggle('active', nextState);
+    }
+    if (this.dom.landscapeToggleBtn) {
+      this.dom.landscapeToggleBtn.classList.toggle('active', nextState);
+    }
+    if (this.dom.stageRotateLandscapeText) {
+      this.dom.stageRotateLandscapeText.textContent = nextState ? 'แนวตั้ง' : 'แนวนอน';
+    }
+
+    if (nextState) {
+      try {
+        if (screen.orientation && typeof screen.orientation.lock === 'function') {
+          screen.orientation.lock('landscape').catch(() => {});
+        }
+      } catch (e) {}
+      this.showToast('สลับจอเป็นแนวนอนเรียบร้อย');
+    } else {
+      try {
+        if (screen.orientation && typeof screen.orientation.unlock === 'function') {
+          screen.orientation.unlock();
+        }
+      } catch (e) {}
+      this.showToast('กลับสู่แนวปกติ');
+    }
+
+    setTimeout(() => {
+      try {
+        this.dom.gameIframe?.contentWindow?.dispatchEvent(new Event('resize'));
+      } catch (e) {}
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
+  }
+
   unmountPlayer() {
     document.body.classList.remove('lights-off');
     this.togglePseudoFullscreen(false);
+    this.toggleLandscape(false);
     if (this.currentGame) {
       this.dom.gameIframe.src = 'about:blank';
       this.currentGame = null;

@@ -292,7 +292,13 @@ class MemeGame {
 
     this.soundToggleBtn.addEventListener('click', () => {
       const isMuted = sfx.toggleMute();
-      this.soundToggleBtn.innerHTML = isMuted ? '🔇 เสียง: ปิด' : '🔊 เสียง: เปิด';
+      this.soundToggleBtn.innerHTML = isMuted
+        ? '<span class="btn-sound-icon">🔇</span> <span class="btn-sound-text">ปิด</span>'
+        : '<span class="btn-sound-icon">🔊</span> <span class="btn-sound-text">เปิด</span>';
+    });
+
+    document.getElementById('cardDexQuickBtn')?.addEventListener('click', () => {
+      document.querySelector('.nav-btn[data-tab="tab-dex"]')?.click();
     });
 
     this.rulesBtn.addEventListener('click', () => {
@@ -332,6 +338,18 @@ class MemeGame {
     this.endTurnBtn.addEventListener('click', () => this.endCurrentTurn());
 
     // Navigation Tabs
+    const headerEl = document.querySelector('header');
+    const updateHeaderVisibility = (activeTabId) => {
+      const isCompactScreen = window.innerWidth <= 768 || window.innerHeight <= 520;
+      if (isCompactScreen) {
+        if (headerEl) {
+          headerEl.style.display = (activeTabId === 'tab-arena') ? 'none' : 'flex';
+        }
+      } else if (headerEl) {
+        headerEl.style.display = '';
+      }
+    };
+
     document.querySelectorAll('.nav-tabs .nav-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         document.querySelectorAll('.nav-tabs .nav-btn').forEach(b => b.classList.remove('active'));
@@ -339,7 +357,14 @@ class MemeGame {
         btn.classList.add('active');
         const targetTab = document.getElementById(btn.dataset.tab);
         if (targetTab) targetTab.classList.add('active');
+        updateHeaderVisibility(btn.dataset.tab);
       });
+    });
+
+    updateHeaderVisibility('tab-arena');
+    window.addEventListener('resize', () => {
+      const activeBtn = document.querySelector('.nav-tabs .nav-btn.active');
+      updateHeaderVisibility(activeBtn ? activeBtn.dataset.tab : 'tab-arena');
     });
 
     // Card preview / summon button
@@ -2027,8 +2052,11 @@ class MemeGame {
     const readyCount = myPlayer.board.filter((m) => m.canAttack).length;
     const noActionsLeft = isMyTurn && playableCount === 0 && readyCount === 0;
 
+    const isMobile = window.innerWidth <= 768;
     if (isMyTurn) {
-      this.turnBanner.innerText = `⚔️ เทิร์นที่ ${this.p1TurnCount} • ตาของคุณ (${myPlayer.name})`;
+      this.turnBanner.innerText = isMobile
+        ? `⚔️ ตาของคุณ (T${this.p1TurnCount})`
+        : `⚔️ เทิร์นที่ ${this.p1TurnCount} • ตาของคุณ (${myPlayer.name})`;
       this.turnBanner.style.borderColor = '#22c55e';
       this.turnBanner.style.color = '#4ade80';
       if (p1Wrap) p1Wrap.classList.add('active-turn');
@@ -2040,7 +2068,9 @@ class MemeGame {
         ? `<span>จบเทิร์น ✓<br><small style="font-size:9px;letter-spacing:0.5px;opacity:0.95;">ครบแอคชันแล้ว</small></span>`
         : `<span>จบเทิร์น<br><small style="font-size:9.5px;letter-spacing:1px;opacity:0.9;">END TURN</small></span>`;
     } else {
-      this.turnBanner.innerText = `⏳ เทิร์นที่ ${this.p1TurnCount} • ตาของ ${oppPlayer.name}`;
+      this.turnBanner.innerText = isMobile
+        ? `⏳ ตาบ็อต (T${this.p1TurnCount})`
+        : `⏳ เทิร์นที่ ${this.p1TurnCount} • ตาของ ${oppPlayer.name}`;
       this.turnBanner.style.borderColor = 'var(--gold-dark)';
       this.turnBanner.style.color = 'var(--gold-highlight)';
       if (p1Wrap) p1Wrap.classList.remove('active-turn');
@@ -2103,8 +2133,10 @@ class MemeGame {
 
     const isMyTurn = (this.turn === playerKey);
     const totalCards = player.hand.length;
-    const availW = Math.max(170, Math.min(560, (container.clientWidth || window.innerWidth) - 92));
-    const stepX = Math.min(82, Math.floor(availW / Math.max(totalCards, 1)));
+    const isMobileView = (window.innerWidth <= 768 || (container.clientWidth && container.clientWidth <= 768));
+    const maxStep = isMobileView ? 38 : 82;
+    const availW = Math.max(140, Math.min(600, (container.clientWidth || window.innerWidth) - (isMobileView ? 40 : 92)));
+    const stepX = Math.min(maxStep, Math.floor(availW / Math.max(totalCards, 1)));
     player.hand.forEach((card, index) => {
       const cardEl = document.createElement('div');
       cardEl.className = 'card-item';
@@ -2117,8 +2149,8 @@ class MemeGame {
       // Gentle Arc Fan Geometry with clear horizontal separation
       const mid = (totalCards - 1) / 2;
       const offset = index - mid;
-      const rotateDeg = offset * 2.2;
-      const translateY = Math.abs(offset) * 3;
+      const rotateDeg = offset * (isMobileView ? 1.2 : 2.2);
+      const translateY = Math.abs(offset) * (isMobileView ? 1.5 : 3);
       const translateX = offset * stepX;
 
       cardEl.style.setProperty('--card-tx', `${translateX}px`);

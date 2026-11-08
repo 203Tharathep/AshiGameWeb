@@ -2338,178 +2338,756 @@ main {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   :root {
-    --card-width: 82px;
-    --card-height: 118px;
+    --card-width: 50px;
+    --card-height: 70px;
   }
+
+  .hide-mobile, .btn-sound-text {
+    display: none !important;
+  }
+
+  /* Ultra compact mobile header */
   header {
-    padding: 3px 8px;
-    flex-wrap: wrap;
+    padding: 2px 8px;
+    height: 32px;
+    min-height: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     gap: 4px;
+  }
+  .logo-area {
+    gap: 6px;
+  }
+  .tcg-emblem {
+    width: 20px;
+    height: 20px;
   }
   .logo-text h1 {
-    font-size: 13px;
+    font-size: 11px;
+    letter-spacing: 0.2px;
   }
-  .top-control-bar {
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 3px 6px;
-    margin: 2px auto 4px auto;
+  .logo-text span {
+    display: none;
   }
-  .tabletop-board {
-    padding: 4px 8px 2px;
-    min-height: 0;
-    border-width: 6px;
-    border-radius: 16px;
-  }
-  .hero-meta {
-    left: 6px;
-    min-width: 118px;
-    max-width: 135px;
-    padding: 3px 6px;
-    gap: 2px;
-  }
-  .hero-meta-top {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1px;
-  }
-  .hero-title-name {
-    font-size: 10px;
-  }
-  .hero-sub-status {
-    font-size: 8px;
-  }
-  .hero-hp-track {
-    height: 12px;
-  }
-  .hero-hp-label {
-    font-size: 8.5px;
-  }
-  .status-pill {
-    font-size: 8px;
-    padding: 0 4px;
-  }
-  .mana-tray {
-    right: 6px;
-    padding: 3px 6px;
+  .nav-tabs {
     gap: 3px;
   }
-  .mana-counter-label {
-    font-size: 11px;
+  .nav-btn {
+    padding: 3px 7px;
+    font-size: 9.5px;
+    gap: 3px;
+    border-radius: 6px;
+  }
+  .nav-btn[data-tab="tab-print"] {
+    display: none !important; /* Mobile doesn't do physical A4 printing */
+  }
+  .nav-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  main {
+    padding: 2px 4px 2px 4px;
+    overflow: hidden;
+  }
+
+  /* Single-row compact top control bar - ZERO MULTI-ROW CLUTTER */
+  .top-control-bar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 2px 6px !important;
+    margin: 1px auto 2px auto !important;
+    gap: 4px !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+  .ctrl-group-left {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 3px !important;
+    flex: 0 0 auto !important;
+    min-width: 0 !important;
+  }
+  .ctrl-group-left label {
+    display: none !important;
+  }
+  #gameModeSelect {
+    max-width: 84px !important;
+    font-size: 9px !important;
+    padding: 2px 4px !important;
+    height: 24px !important;
+    border-radius: 6px !important;
+  }
+  #openRoomModalBtn {
+    display: none !important;
+  }
+  .active-room-pill {
+    font-size: 8.5px !important;
+    padding: 2px 4px !important;
+    height: 24px !important;
+  }
+  #turnBanner {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: 0 !important;
+    font-size: 8.5px !important;
+    padding: 2px 6px !important;
+    height: 24px !important;
+    line-height: 20px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: center !important;
+    border-radius: 999px !important;
+  }
+  .ctrl-group-right {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 3px !important;
+    flex: 0 0 auto !important;
+  }
+  .ctrl-group-right .btn-tactile {
+    font-size: 11px !important;
+    padding: 2px 5px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    line-height: 20px !important;
+    border-radius: 6px !important;
+  }
+
+  /* Board layout: no stone frame bloat, strict spacing */
+  .tabletop-board {
+    padding: 2px 4px 2px 4px !important;
+    min-height: 0 !important;
+    flex: 1 !important;
+    border-width: 2px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7) !important;
+    gap: 1px !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  /* Compact Hero Zones: never collide or push board */
+  .hero-zone {
+    min-height: 42px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  #p2Panel {
+    min-height: 42px !important;
+    height: 42px !important;
+  }
+  #p1Panel {
+    min-height: 42px !important;
+    height: 42px !important;
+    margin-bottom: 2px !important;
+    position: relative !important;
+    z-index: 40 !important;
+  }
+  .hero-frame-wrap {
+    padding: 2px 6px !important;
+    border-radius: 20px 20px 10px 10px !important;
+    border-width: 2px !important;
   }
   .hero-portrait-socket {
-    width: 58px;
-    height: 68px;
+    width: 36px !important;
+    height: 42px !important;
+    border-radius: 16px !important;
   }
   .hero-avatar-icon {
-    font-size: 28px;
+    font-size: 19px !important;
+  }
+  .hero-avatar img {
+    width: 34px !important;
+    height: 40px !important;
+    border-radius: 14px !important;
   }
   .health-orb {
-    width: 28px;
-    height: 32px;
-    font-size: 13px;
-    padding-top: 4px;
+    width: 19px !important;
+    height: 22px !important;
+    font-size: 10px !important;
+    line-height: 19px !important;
+    padding-top: 1px !important;
+    right: -7px !important;
+    bottom: -4px !important;
   }
-  .enemy-hand-strip {
-    display: none;
+  .armor-crest {
+    width: 17px !important;
+    height: 19px !important;
+    font-size: 9px !important;
+    line-height: 17px !important;
+    left: -7px !important;
+    bottom: -4px !important;
   }
+  .hero-meta {
+    left: 4px !important;
+    min-width: 78px !important;
+    max-width: 98px !important;
+    padding: 1px 4px !important;
+    gap: 1px !important;
+    border-radius: 6px !important;
+  }
+  .hero-meta-top {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0 !important;
+  }
+  .hero-title-name {
+    font-size: 8px !important;
+    line-height: 1.1 !important;
+  }
+  .hero-sub-status {
+    font-size: 7px !important;
+    line-height: 1.1 !important;
+  }
+  .hero-hp-track {
+    height: 7px !important;
+    border-radius: 4px !important;
+  }
+  .hero-hp-label {
+    font-size: 6.5px !important;
+  }
+  .mana-tray {
+    right: 4px !important;
+    padding: 2px 5px !important;
+    gap: 2px !important;
+    border-radius: 6px !important;
+  }
+  .mana-counter-label {
+    font-size: 9.5px !important;
+  }
+  .mana-crystals-row {
+    display: none !important;
+  }
+  .enemy-hand-strip,
   .hero-status-callout {
-    display: none;
+    display: none !important;
   }
+
+  /* Center Battleground & Lanes */
   .center-battleground {
-    grid-template-columns: 28px minmax(0, 1fr) 28px;
-    gap: 4px;
+    grid-template-columns: 1fr !important;
+    gap: 2px !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+    flex: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
   }
   .tabletop-slot {
-    transform: scale(0.55);
+    display: none !important;
   }
-  .turn-crown-btn {
-    width: 78px;
-    height: 32px;
-    font-size: 9.5px;
+  .duel-clash-stage {
+    padding: 2px 4px !important;
+    gap: 2px !important;
+    min-height: 0 !important;
+    flex: 1 !important;
+    max-height: none !important;
+    border-radius: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+  .battlefield-lane {
+    min-height: 44px !important;
+    flex: 1 !important;
+    justify-content: center !important;
+  }
+  .lane-caption {
+    top: 0px !important;
+    font-size: 7px !important;
+    line-height: 1 !important;
+  }
+  .lane-caption > span {
+    padding: 1px 5px !important;
+  }
+  .minion-row {
+    min-height: 44px !important;
+    height: auto !important;
+    padding: 2px 4px !important;
+    gap: 3px !important;
+    border-radius: 8px !important;
   }
   .minion-token {
-    width: 44px;
-    height: 56px;
-    flex: 0 0 44px;
+    width: 34px !important;
+    height: 44px !important;
+    flex: 0 0 34px !important;
+    border-radius: 6px !important;
   }
   .minion-stat {
-    width: 19px;
-    height: 20px;
-    font-size: 10.5px;
+    width: 14px !important;
+    height: 15px !important;
+    font-size: 8px !important;
   }
+  .lane-empty-hint {
+    font-size: 8px !important;
+    padding: 2px 6px !important;
+  }
+
+  /* Midline & Safe End Turn placement - FULL SCREEN PINNED */
+  .battlefield-midline {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 1px 4px !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    overflow: hidden !important;
+  }
+  .lane-divider-rune {
+    display: none !important;
+  }
+  .battle-ticker-msg {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 8px !important;
+    padding: 2px 8px !important;
+    line-height: 20px !important;
+    height: 22px !important;
+  }
+  .turn-crown-btn {
+    flex: 0 0 62px !important;
+    width: 62px !important;
+    min-width: 62px !important;
+    max-width: 62px !important;
+    height: 24px !important;
+    font-size: 8px !important;
+    padding: 1px 2px !important;
+    border-radius: 6px !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .turn-crown-btn span {
+    line-height: 1.1 !important;
+  }
+  .turn-crown-btn span small {
+    font-size: 6px !important;
+    display: block !important;
+    line-height: 1 !important;
+  }
+
+  /* Fanned Hand Zone: docked cleanly at bottom, NO OVERLAPPING HERO */
   .fanned-hand-zone {
-    height: calc(var(--card-height) + 10px);
+    height: 78px !important;
+    min-height: 78px !important;
+    flex-shrink: 0 !important;
+    margin-top: 0 !important;
+    padding-bottom: 0 !important;
+    position: relative !important;
+    z-index: 30 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-end !important;
   }
   .fanned-hand-zone .card-item {
-    bottom: 4px;
+    bottom: 0px !important;
+    border-radius: 5px !important;
+    border-width: 1.5px !important;
+  }
+  .fanned-hand-zone .card-item:not(.unplayable) {
+    bottom: 2px !important;
+  }
+  .fanned-hand-zone .card-item:hover,
+  .fanned-hand-zone .card-item:active {
+    transform: translateY(-8px) scale(1.1) !important;
+    z-index: 100 !important;
   }
   .card-mana-gem {
-    width: 22px;
-    height: 26px;
-    font-size: 12px;
+    width: 14px !important;
+    height: 17px !important;
+    font-size: 9px !important;
+    top: -3px !important;
+    left: -3px !important;
+    border-radius: 3px !important;
   }
-  .stat-crest {
-    width: 20px;
-    height: 22px;
-    font-size: 10.5px;
+  .card-class-seal {
+    display: none !important;
+  }
+  .card-art-frame {
+    height: 34px !important;
+    border-radius: 3px !important;
   }
   .card-banner-ribbon {
-    font-size: 7.5px;
+    font-size: 6px !important;
+    padding: 0 2px !important;
+    height: 10px !important;
+    line-height: 10px !important;
+  }
+  .card-rules-parchment {
+    padding: 1px 2px !important;
   }
   .skill-headline {
-    font-size: 7px;
+    font-size: 5px !important;
+    line-height: 1 !important;
   }
   .skill-description {
-    font-size: 6px;
+    display: none !important;
+  }
+  .stat-crest {
+    width: 13px !important;
+    height: 15px !important;
+    font-size: 8px !important;
+    bottom: -2px !important;
+  }
+  .attack-crest {
+    left: -2px !important;
+  }
+  .defense-crest {
+    right: -2px !important;
+  }
+
+  /* Card inspection modal on mobile */
+  .action-card-detail {
+    max-width: 92vw !important;
+    max-height: 88vh !important;
+    padding: 12px !important;
+    gap: 8px !important;
+    border-radius: 14px !important;
+    overflow-y: auto !important;
+  }
+  .detail-img-wrap {
+    height: 130px !important;
+  }
+  .act-btn {
+    padding: 8px !important;
+    font-size: 12px !important;
   }
 }
 
 @media (max-width: 420px) {
   :root {
-    --card-width: 74px;
-    --card-height: 108px;
-  }
-  .center-battleground {
-    grid-template-columns: 1fr;
-  }
-  .tabletop-slot {
-    display: none;
+    --card-width: 52px;
+    --card-height: 74px;
   }
   .hero-meta {
-    max-width: 112px;
-    min-width: 98px;
+    max-width: 82px;
+    min-width: 70px;
   }
-  .mana-Gem-list {
-    display: none;
+  .hero-title-name {
+    font-size: 7.5px;
+  }
+  #gameModeSelect {
+    max-width: 76px;
+    font-size: 8.5px;
+  }
+  #turnBanner {
+    max-width: 100px;
+    font-size: 8.5px;
+  }
+  .turn-crown-btn {
+    width: 50px;
+    font-size: 7px;
   }
 }
 
-@media (max-height: 560px) and (orientation: landscape) {
+@media (orientation: landscape) and (max-height: 600px) {
   :root {
-    --card-width: 76px;
-    --card-height: 108px;
+    --card-width: 50px;
+    --card-height: 66px;
+  }
+  .hide-mobile, .btn-sound-text {
+    display: none !important;
   }
   header {
-    padding: 2px 10px;
+    display: none !important; /* Zero combat arena vertical waste */
   }
   .top-control-bar {
-    padding: 2px 8px;
-    margin: 1px auto 2px;
+    height: 26px !important;
+    min-height: 26px !important;
+    padding: 1px 8px !important;
+    margin: 1px auto 2px auto !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    border-radius: 8px !important;
+  }
+  .ctrl-group-left {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 3px !important;
+    flex: 0 0 auto !important;
+  }
+  .ctrl-group-left label {
+    display: none !important;
+  }
+  #gameModeSelect {
+    max-width: 86px !important;
+    font-size: 9px !important;
+    padding: 1px 4px !important;
+    height: 22px !important;
+    border-radius: 5px !important;
+  }
+  #openRoomModalBtn {
+    display: none !important;
+  }
+  #turnBanner {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: 0 !important;
+    font-size: 8.5px !important;
+    padding: 1px 6px !important;
+    height: 22px !important;
+    line-height: 18px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: center !important;
+    border-radius: 999px !important;
+  }
+  .ctrl-group-right {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 3px !important;
+    flex: 0 0 auto !important;
+  }
+  .ctrl-group-right .btn-tactile {
+    font-size: 10px !important;
+    padding: 1px 5px !important;
+    height: 22px !important;
+    min-width: 22px !important;
+    line-height: 18px !important;
+    border-radius: 5px !important;
+  }
+  .tabletop-board {
+    padding: 2px 14px 2px 14px !important;
+    gap: 1px !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    border-width: 2px !important;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+  .hero-zone, #p2Panel, #p1Panel {
+    min-height: 36px !important;
+    height: 36px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .hero-frame-wrap {
+    padding: 2px 5px !important;
+    border-radius: 16px 16px 8px 8px !important;
+    border-width: 2px !important;
   }
   .hero-portrait-socket {
-    width: 52px;
-    height: 60px;
+    width: 32px !important;
+    height: 36px !important;
+    border-radius: 14px !important;
+  }
+  .hero-avatar-icon {
+    font-size: 17px !important;
+  }
+  .hero-avatar img {
+    width: 30px !important;
+    height: 34px !important;
+    border-radius: 12px !important;
+  }
+  .health-orb {
+    width: 18px !important;
+    height: 20px !important;
+    font-size: 9.5px !important;
+    line-height: 18px !important;
+    right: -6px !important;
+    bottom: -3px !important;
+  }
+  .hero-meta {
+    left: 8px !important;
+    min-width: 82px !important;
+    max-width: 105px !important;
+    padding: 1px 4px !important;
+    border-radius: 5px !important;
+  }
+  .hero-meta-top {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0 !important;
+  }
+  .hero-title-name {
+    font-size: 8px !important;
+    line-height: 1 !important;
+  }
+  .hero-sub-status {
+    font-size: 7px !important;
+    line-height: 1 !important;
+  }
+  .hero-hp-track {
+    height: 6px !important;
+  }
+  .hero-hp-label {
+    font-size: 6px !important;
+  }
+  .mana-tray {
+    right: 8px !important;
+    padding: 1px 5px !important;
+    gap: 2px !important;
+    border-radius: 5px !important;
+  }
+  .mana-counter-label {
+    font-size: 9px !important;
+  }
+  .mana-crystals-row,
+  .enemy-hand-strip,
+  .hero-status-callout {
+    display: none !important;
+  }
+  .center-battleground {
+    grid-template-columns: 36px minmax(0, 1fr) 36px !important;
+    gap: 6px !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+  .tabletop-slot {
+    display: flex !important;
+    transform: scale(0.65) !important;
+  }
+  .duel-clash-stage {
+    padding: 1px 4px !important;
+    gap: 2px !important;
+    min-height: 0 !important;
+    flex: 1 !important;
+    max-height: none !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+  }
+  .battlefield-lane {
+    min-height: 40px !important;
+    flex: 1 !important;
+  }
+  .lane-caption {
+    top: 0px !important;
+    font-size: 6.5px !important;
+  }
+  .minion-row {
+    min-height: 40px !important;
+    height: auto !important;
+    padding: 1px 6px !important;
+    gap: 4px !important;
+    border-radius: 6px !important;
   }
   .minion-token {
-    width: 46px;
-    height: 54px;
-    flex: 0 0 46px;
+    width: 32px !important;
+    height: 40px !important;
+    flex: 0 0 32px !important;
+    border-radius: 5px !important;
+  }
+  .minion-stat {
+    width: 13px !important;
+    height: 14px !important;
+    font-size: 7.5px !important;
+  }
+  .battlefield-midline {
+    min-height: 22px !important;
+    height: 22px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    padding: 0 4px !important;
+    overflow: hidden !important;
+  }
+  .lane-divider-rune {
+    display: none !important;
+  }
+  .battle-ticker-msg {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: 0 !important;
+    font-size: 7.5px !important;
+    padding: 1px 6px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    height: 20px !important;
+    line-height: 18px !important;
+  }
+  .turn-crown-btn {
+    flex: 0 0 62px !important;
+    width: 62px !important;
+    min-width: 62px !important;
+    height: 22px !important;
+    font-size: 7.5px !important;
+    padding: 0 2px !important;
+    border-radius: 5px !important;
+  }
+  .turn-crown-btn span small {
+    font-size: 5.5px !important;
   }
   .fanned-hand-zone {
-    height: calc(var(--card-height) + 6px);
+    height: 72px !important;
+    min-height: 72px !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+    z-index: 30 !important;
+  }
+  .fanned-hand-zone .card-item {
+    bottom: 0px !important;
+    border-radius: 4px !important;
+  }
+  .card-mana-gem {
+    width: 13px !important;
+    height: 16px !important;
+    font-size: 8.5px !important;
+  }
+  .card-art-frame {
+    height: 32px !important;
+  }
+  .card-banner-ribbon {
+    font-size: 5.5px !important;
+    height: 9px !important;
+    line-height: 9px !important;
+  }
+  .skill-headline {
+    font-size: 4.5px !important;
+  }
+  .skill-description, .card-class-seal {
+    display: none !important;
+  }
+  .stat-crest {
+    width: 12px !important;
+    height: 14px !important;
+    font-size: 7.5px !important;
   }
 }
 

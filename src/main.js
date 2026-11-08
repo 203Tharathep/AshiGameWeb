@@ -123,6 +123,8 @@ class CleanGamePortal {
       playerFavBtn: document.getElementById('playerFavBtn'),
       playerFavIconWrap: document.getElementById('playerFavIconWrap'),
       mobileAspectBtn: document.getElementById('mobileAspectBtn'),
+      topNavLandscapeBtn: document.getElementById('topNavLandscapeBtn'),
+      topNavLandscapeText: document.getElementById('topNavLandscapeText'),
       landscapeToggleBtn: document.getElementById('landscapeToggleBtn'),
       stageRotateLandscapeBtn: document.getElementById('stageRotateLandscapeBtn'),
       stageRotateLandscapeText: document.getElementById('stageRotateLandscapeText'),
@@ -258,7 +260,7 @@ class CleanGamePortal {
       if (this.dom.gameIframe.src && !this.dom.gameIframe.src.endsWith('about:blank')) {
         this.dom.iframeLoader.style.display = 'none';
         try {
-          this.dom.gameIframe.focus();
+          this.dom.gameIframe.focus({ preventScroll: true });
         } catch {
           // Ignore focus restrictions
         }
@@ -279,6 +281,10 @@ class CleanGamePortal {
       this.dom.mobileAspectBtn.classList.toggle('active', this.isMobileAspect);
     });
 
+    this.dom.topNavLandscapeBtn?.addEventListener('click', () => {
+      this.toggleLandscape();
+    });
+
     this.dom.landscapeToggleBtn?.addEventListener('click', () => {
       this.toggleLandscape();
     });
@@ -286,6 +292,19 @@ class CleanGamePortal {
     this.dom.stageRotateLandscapeBtn?.addEventListener('click', () => {
       this.toggleLandscape();
     });
+
+    const wakeExitFsBtn = () => {
+      const isFs =
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        this.dom.gameStageWrapper?.classList.contains('is-pseudo-fullscreen') ||
+        this.dom.gameStageWrapper?.classList.contains('is-rotated-landscape');
+      if (isFs) {
+        this.showExitFsBtnTemporarily();
+      }
+    };
+    this.dom.gameStageWrapper?.addEventListener('mousemove', wakeExitFsBtn, { passive: true });
+    this.dom.gameStageWrapper?.addEventListener('touchstart', wakeExitFsBtn, { passive: true });
 
     const handleOrientationOrResize = () => {
       if (window.innerWidth > window.innerHeight && this.dom.gameStageWrapper.classList.contains('is-rotated-landscape')) {
@@ -501,7 +520,15 @@ class CleanGamePortal {
 
     this.dom.homeView.classList.add('hidden');
     this.dom.playerView.classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Instant scroll to top of game stage without jumping down on mobile/tablet
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    if (this.dom.playerView) {
+      this.dom.playerView.scrollIntoView({ behavior: 'instant', block: 'start' });
+    }
+    requestAnimationFrame(() => window.scrollTo(0, 0));
+    setTimeout(() => window.scrollTo(0, 0), 80);
+    setTimeout(() => window.scrollTo(0, 0), 250);
 
     if (!isSame) {
       this.userToggledAspect = false;
@@ -591,6 +618,22 @@ class CleanGamePortal {
     this.dom.playerFavIconWrap.innerHTML = isFav ? SVG_HEART_SOLID : SVG_HEART_OUTLINE;
   }
 
+  showExitFsBtnTemporarily() {
+    if (!this.dom.exitFullscreenBtn) return;
+    this.dom.exitFullscreenBtn.classList.remove('is-hidden-peek');
+    clearTimeout(this.exitFsPeekTimer);
+    this.exitFsPeekTimer = setTimeout(() => {
+      const isFs =
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        this.dom.gameStageWrapper?.classList.contains('is-pseudo-fullscreen') ||
+        this.dom.gameStageWrapper?.classList.contains('is-rotated-landscape');
+      if (isFs) {
+        this.dom.exitFullscreenBtn.classList.add('is-hidden-peek');
+      }
+    }, 3200);
+  }
+
   togglePseudoFullscreen(forceState) {
     const stage = this.dom.gameStageWrapper;
     if (!stage) return;
@@ -600,8 +643,11 @@ class CleanGamePortal {
         : !stage.classList.contains('is-pseudo-fullscreen');
     stage.classList.toggle('is-pseudo-fullscreen', nextState);
     document.body.classList.toggle('has-pseudo-fullscreen', nextState);
+    if (nextState) {
+      this.showExitFsBtnTemporarily();
+    }
     try {
-      this.dom.gameIframe.focus();
+      this.dom.gameIframe.focus({ preventScroll: true });
     } catch {
       // Ignore focus errors
     }
@@ -641,6 +687,8 @@ class CleanGamePortal {
         const res = reqFs.call(stage);
         if (res && typeof res.catch === 'function') {
           res.catch(() => this.togglePseudoFullscreen(true));
+        } else {
+          this.showExitFsBtnTemporarily();
         }
       } catch {
         this.togglePseudoFullscreen(true);
@@ -671,6 +719,12 @@ class CleanGamePortal {
     stage.classList.toggle('is-rotated-landscape', nextState);
     document.body.classList.toggle('has-rotated-landscape', nextState);
 
+    if (this.dom.topNavLandscapeBtn) {
+      this.dom.topNavLandscapeBtn.classList.toggle('active', nextState);
+    }
+    if (this.dom.topNavLandscapeText) {
+      this.dom.topNavLandscapeText.textContent = nextState ? 'แนวตั้ง' : 'แนวนอน';
+    }
     if (this.dom.stageRotateLandscapeBtn) {
       this.dom.stageRotateLandscapeBtn.classList.toggle('active', nextState);
     }
@@ -682,6 +736,7 @@ class CleanGamePortal {
     }
 
     if (nextState) {
+      this.showExitFsBtnTemporarily();
       try {
         if (screen.orientation && typeof screen.orientation.lock === 'function') {
           screen.orientation.lock('landscape').catch(() => {});

@@ -21,8 +21,9 @@
     style.textContent = `
       .ashi-rotate-btn-pill {
         position: fixed !important;
-        top: calc(env(safe-area-inset-top, 0px) + 10px) !important;
-        right: calc(env(safe-area-inset-right, 0px) + 12px) !important;
+        top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
         z-index: 9999999 !important;
         display: inline-flex !important;
         align-items: center !important;
@@ -30,7 +31,7 @@
         background: rgba(15, 17, 23, 0.88) !important;
         color: #f8fafc !important;
         border: 1px solid rgba(255, 255, 255, 0.28) !important;
-        padding: 6px 13px !important;
+        padding: 5px 13px !important;
         border-radius: 999px !important;
         font-family: 'Kanit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
         font-size: 12px !important;
@@ -40,12 +41,12 @@
         backdrop-filter: blur(8px) !important;
         -webkit-backdrop-filter: blur(8px) !important;
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5) !important;
-        transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease !important;
+        transition: transform 0.25s ease, opacity 0.25s ease, background 0.15s ease, border-color 0.15s ease !important;
         user-select: none !important;
         -webkit-tap-highlight-color: transparent !important;
       }
       .ashi-rotate-btn-pill:hover, .ashi-rotate-btn-pill:active {
-        transform: scale(1.05) !important;
+        transform: translateX(-50%) scale(1.05) !important;
         background: rgba(30, 35, 50, 0.96) !important;
         border-color: #f59e0b !important;
       }
@@ -53,6 +54,11 @@
         background: #2563eb !important;
         border-color: #60a5fa !important;
         color: #ffffff !important;
+      }
+      .ashi-rotate-btn-pill.is-hidden-peek {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: translateX(-50%) translateY(-14px) !important;
       }
       .ashi-rotate-btn-pill svg {
         width: 14px !important;
@@ -95,6 +101,18 @@
 
     document.body.appendChild(btn);
 
+    let peekTimer = null;
+    function showBtnBriefly() {
+      btn.classList.remove('is-hidden-peek');
+      clearTimeout(peekTimer);
+      peekTimer = setTimeout(() => {
+        btn.classList.add('is-hidden-peek');
+      }, 3500);
+    }
+    showBtnBriefly();
+    window.addEventListener('mousemove', showBtnBriefly, { passive: true });
+    window.addEventListener('touchstart', showBtnBriefly, { passive: true });
+
     const textSpan = btn.querySelector('.rotate-text');
     let isForced = false;
 
@@ -106,6 +124,7 @@
       }
       document.documentElement.classList.toggle('ashi-force-landscape', isForced);
       document.body.classList.toggle('ashi-force-landscape', isForced);
+      showBtnBriefly();
 
       setTimeout(() => {
         window.dispatchEvent(new Event('resize'));

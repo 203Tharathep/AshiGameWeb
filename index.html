@@ -100,19 +100,28 @@
          ===================================================== -->
     <section id="playerView" class="view-fade hidden">
       <div class="player-nav">
-        <button id="backToHomeBtn" class="back-link">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          <span>หน้าหลัก</span>
-        </button>
+        <div class="player-nav-left">
+          <button id="backToHomeBtn" class="back-link">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>หน้าหลัก</span>
+          </button>
 
-        <div class="player-crumb">
-          <span id="crumbCategory">หมวดหมู่</span>
-          <span class="crumb-sep">/</span>
-          <strong id="crumbTitle">ชื่อเกม</strong>
+          <div class="player-crumb">
+            <span id="crumbCategory">หมวดหมู่</span>
+            <span class="crumb-sep">/</span>
+            <strong id="crumbTitle">ชื่อเกม</strong>
+          </div>
         </div>
+
+        <button id="topNavLandscapeBtn" class="nav-rotate-btn" title="หมุนหน้าจอแนวนอน / แนวตั้ง">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          <span id="topNavLandscapeText">แนวนอน</span>
+        </button>
       </div>
 
       <!-- Pure Rounded Theater Viewport -->
@@ -129,14 +138,13 @@
           allowfullscreen
         ></iframe>
 
-        <button id="stageRotateLandscapeBtn" class="stage-rotate-btn" title="หมุนหน้าจอแนวนอน/แนวตั้ง">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        <button id="exitFullscreenBtn" class="exit-fs-btn" title="ออกจากเต็มจอ (ESC หรือแตะที่นี่)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
-          <span id="stageRotateLandscapeText">แนวนอน</span>
+          <span>ออกจากเต็มจอ</span>
         </button>
-
-        <button id="exitFullscreenBtn" class="exit-fs-btn">ออกจากเต็มจอ (ESC)</button>
       </div>
 
       <!-- Minimal Action Bar -->

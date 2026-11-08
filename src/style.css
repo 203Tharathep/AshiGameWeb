@@ -582,6 +582,8 @@ body.lights-off #lightsToggleBtn {
   justify-content: center;
   opacity: 0;
   transition: opacity 0.22s ease;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .game-card:hover .card-play-overlay {

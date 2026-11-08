@@ -450,8 +450,19 @@ class MemeGame {
         }
       }
     };
+    const triggerInGameFs = (e) => {
+      if (e) {
+        if (typeof e.preventDefault === 'function') e.preventDefault();
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+      }
+      toggleArenaFs();
+    };
     arenaFsBtn?.addEventListener('click', toggleArenaFs);
-    inGameExitFs?.addEventListener('click', toggleArenaFs);
+    if (inGameExitFs) {
+      inGameExitFs.addEventListener('pointerdown', triggerInGameFs);
+      inGameExitFs.addEventListener('touchstart', triggerInGameFs, { passive: false });
+      inGameExitFs.addEventListener('click', triggerInGameFs);
+    }
   }
 
   getServerBaseUrl() {

@@ -821,7 +821,6 @@ body.lights-off #lightsToggleBtn {
 body.has-pseudo-fullscreen,
 body.has-rotated-landscape {
   overflow: hidden !important;
-  touch-action: none;
 }
 
 /* Rotated Landscape Mode (Simulated landscape for phones/tablets with portrait lock) */
@@ -854,27 +853,41 @@ body.has-rotated-landscape {
   display: none;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 6px;
   position: absolute;
-  top: calc(env(safe-area-inset-top, 0px) + 8px);
-  right: calc(env(safe-area-inset-right, 0px) + 10px);
-  z-index: 9999999;
-  background: rgba(15, 17, 23, 0.78);
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  right: calc(env(safe-area-inset-right, 0px) + 12px);
+  z-index: 99999999 !important;
+  background: rgba(15, 17, 23, 0.85);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  height: 28px;
-  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  height: 32px;
+  min-height: 32px;
+  padding: 0 12px;
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
   cursor: pointer;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation !important;
+  pointer-events: auto !important;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.4) !important;
   transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
-  opacity: 0.82;
+  opacity: 0.9;
+}
+
+.exit-fs-btn::before {
+  content: '';
+  position: absolute;
+  inset: -12px -12px -12px -12px;
+  pointer-events: auto;
+}
+
+.exit-fs-btn * {
+  pointer-events: none;
 }
 
 .stage-frame:fullscreen .exit-fs-btn,
@@ -887,15 +900,15 @@ body.has-rotated-landscape {
 .exit-fs-btn:hover,
 .exit-fs-btn:active {
   opacity: 1;
-  background: rgba(220, 38, 38, 0.92);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: scale(1.05);
+  background: rgba(220, 38, 38, 0.95);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.06);
 }
 
 .exit-fs-btn.is-hidden-peek {
-  opacity: 0.45 !important;
+  opacity: 0.55 !important;
   pointer-events: auto !important;
-  transform: scale(0.92) !important;
+  transform: scale(0.95) !important;
 }
 
 .stage-loader {

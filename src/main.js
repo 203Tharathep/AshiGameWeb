@@ -125,9 +125,6 @@ class CleanGamePortal {
       mobileAspectBtn: document.getElementById('mobileAspectBtn'),
       topNavLandscapeBtn: document.getElementById('topNavLandscapeBtn'),
       topNavLandscapeText: document.getElementById('topNavLandscapeText'),
-      landscapeToggleBtn: document.getElementById('landscapeToggleBtn'),
-      stageRotateLandscapeBtn: document.getElementById('stageRotateLandscapeBtn'),
-      stageRotateLandscapeText: document.getElementById('stageRotateLandscapeText'),
       lightsToggleBtn: document.getElementById('lightsToggleBtn'),
       lightsOffOverlay: document.getElementById('lightsOffOverlay'),
       reloadGameBtn: document.getElementById('reloadGameBtn'),
@@ -224,9 +221,7 @@ class CleanGamePortal {
       if (e.key === 'Escape') {
         document.body.classList.remove('lights-off');
         this.dom.lightboxModal.classList.add('hidden');
-        if (this.dom.gameStageWrapper.classList.contains('is-pseudo-fullscreen')) {
-          this.togglePseudoFullscreen(false);
-        }
+        this.exitAllFullscreenModes();
       }
     });
 
@@ -241,6 +236,8 @@ class CleanGamePortal {
         this.toggleStageFullscreen();
       } else if (e.data.type === 'ashi-toggle-landscape') {
         this.toggleLandscape();
+      } else if (e.data.type === 'ashi-exit-fullscreen') {
+        this.exitAllFullscreenModes();
       }
     });
 
@@ -282,14 +279,6 @@ class CleanGamePortal {
     });
 
     this.dom.topNavLandscapeBtn?.addEventListener('click', () => {
-      this.toggleLandscape();
-    });
-
-    this.dom.landscapeToggleBtn?.addEventListener('click', () => {
-      this.toggleLandscape();
-    });
-
-    this.dom.stageRotateLandscapeBtn?.addEventListener('click', () => {
       this.toggleLandscape();
     });
 
@@ -352,12 +341,30 @@ class CleanGamePortal {
       this.toggleStageFullscreen();
     });
 
-    this.dom.exitFullscreenBtn.addEventListener('click', () => {
-      if (document.fullscreenElement || document.webkitFullscreenElement) {
-        (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
+    const triggerExitFs = (e) => {
+      if (e) {
+        if (typeof e.preventDefault === 'function') e.preventDefault();
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
       }
-      this.togglePseudoFullscreen(false);
-    });
+      this.exitAllFullscreenModes();
+    };
+
+    if (this.dom.exitFullscreenBtn) {
+      this.dom.exitFullscreenBtn.addEventListener('pointerdown', triggerExitFs);
+      this.dom.exitFullscreenBtn.addEventListener('touchstart', triggerExitFs, { passive: false });
+      this.dom.exitFullscreenBtn.addEventListener('click', triggerExitFs);
+    }
+
+    const onNativeFullscreenChange = () => {
+      const isNativeFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+      if (!isNativeFs) {
+        if (this.dom.gameStageWrapper?.classList.contains('is-pseudo-fullscreen')) {
+          this.togglePseudoFullscreen(false);
+        }
+      }
+    };
+    document.addEventListener('fullscreenchange', onNativeFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', onNativeFullscreenChange);
 
     this.dom.closeLightboxBtn.addEventListener('click', () => {
       this.dom.lightboxModal.classList.add('hidden');
@@ -657,30 +664,14 @@ class CleanGamePortal {
     const stage = this.dom.gameStageWrapper;
     if (!stage) return;
     const fsElement = document.fullscreenElement || document.webkitFullscreenElement;
-    if (fsElement) {
-      (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
-      this.togglePseudoFullscreen(false);
-      try {
-        if (screen.orientation && typeof screen.orientation.unlock === 'function') {
-          screen.orientation.unlock();
-        }
-      } catch (e) {}
-      setTimeout(() => {
-        try {
-          this.dom.gameIframe?.contentWindow?.dispatchEvent(new Event('resize'));
-        } catch (e) {}
-      }, 150);
+    const isRotated = stage.classList.contains('is-rotated-landscape');
+    const isPseudo = stage.classList.contains('is-pseudo-fullscreen');
+
+    if (fsElement || isRotated || isPseudo) {
+      this.exitAllFullscreenModes();
       return;
     }
-    if (stage.classList.contains('is-pseudo-fullscreen')) {
-      this.togglePseudoFullscreen(false);
-      setTimeout(() => {
-        try {
-          this.dom.gameIframe?.contentWindow?.dispatchEvent(new Event('resize'));
-        } catch (e) {}
-      }, 150);
-      return;
-    }
+
     const reqFs = stage.requestFullscreen || stage.webkitRequestFullscreen;
     if (reqFs) {
       try {
@@ -697,17 +688,51 @@ class CleanGamePortal {
       this.togglePseudoFullscreen(true);
     }
 
+    setTimeout(() => {
+      try {
+        this.dom.gameIframe?.contentWindow?.dispatchEvent(new Event('resize'));
+      } catch (e) {}
+    }, 150);
+  }
+
+  exitAllFullscreenModes() {
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      try {
+        (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
+      } catch (e) {}
+    }
+
+    const stage = this.dom.gameStageWrapper;
+    if (stage) {
+      stage.classList.remove('is-pseudo-fullscreen');
+      stage.classList.remove('is-rotated-landscape');
+    }
+    document.body.classList.remove('has-pseudo-fullscreen');
+    document.body.classList.remove('has-rotated-landscape');
+
+    if (this.dom.topNavLandscapeBtn) {
+      this.dom.topNavLandscapeBtn.classList.remove('active');
+    }
+    if (this.dom.topNavLandscapeText) {
+      this.dom.topNavLandscapeText.textContent = 'แนวนอน';
+    }
+
     try {
       if (screen.orientation && typeof screen.orientation.unlock === 'function') {
         screen.orientation.unlock();
       }
     } catch (e) {}
 
+    if (this.dom.exitFullscreenBtn) {
+      this.dom.exitFullscreenBtn.classList.remove('is-hidden-peek');
+    }
+
     setTimeout(() => {
       try {
         this.dom.gameIframe?.contentWindow?.dispatchEvent(new Event('resize'));
       } catch (e) {}
-    }, 150);
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
   }
 
   toggleLandscape(forceState) {
@@ -724,15 +749,6 @@ class CleanGamePortal {
     }
     if (this.dom.topNavLandscapeText) {
       this.dom.topNavLandscapeText.textContent = nextState ? 'แนวตั้ง' : 'แนวนอน';
-    }
-    if (this.dom.stageRotateLandscapeBtn) {
-      this.dom.stageRotateLandscapeBtn.classList.toggle('active', nextState);
-    }
-    if (this.dom.landscapeToggleBtn) {
-      this.dom.landscapeToggleBtn.classList.toggle('active', nextState);
-    }
-    if (this.dom.stageRotateLandscapeText) {
-      this.dom.stageRotateLandscapeText.textContent = nextState ? 'แนวตั้ง' : 'แนวนอน';
     }
 
     if (nextState) {
@@ -762,8 +778,7 @@ class CleanGamePortal {
 
   unmountPlayer() {
     document.body.classList.remove('lights-off');
-    this.togglePseudoFullscreen(false);
-    this.toggleLandscape(false);
+    this.exitAllFullscreenModes();
     if (this.currentGame) {
       this.dom.gameIframe.src = 'about:blank';
       this.currentGame = null;

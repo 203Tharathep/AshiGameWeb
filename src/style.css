@@ -853,27 +853,28 @@ body.has-rotated-landscape {
 .exit-fs-btn {
   display: none;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 5px;
   position: absolute;
   top: calc(env(safe-area-inset-top, 0px) + 8px);
-  left: 50%;
-  transform: translateX(-50%);
+  right: calc(env(safe-area-inset-right, 0px) + 10px);
   z-index: 9999999;
-  background: rgba(15, 17, 23, 0.88);
+  background: rgba(15, 17, 23, 0.78);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.28);
-  padding: 5px 14px;
+  height: 28px;
+  padding: 0 10px;
   border-radius: 999px;
-  font-size: 0.76rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   cursor: pointer;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  opacity: 0.92;
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  opacity: 0.82;
 }
 
 .stage-frame:fullscreen .exit-fs-btn,
@@ -883,15 +884,18 @@ body.has-rotated-landscape {
   display: inline-flex;
 }
 
-.exit-fs-btn:hover {
+.exit-fs-btn:hover,
+.exit-fs-btn:active {
   opacity: 1;
-  transform: translateX(-50%) scale(1.04);
+  background: rgba(220, 38, 38, 0.92);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
 }
 
 .exit-fs-btn.is-hidden-peek {
-  opacity: 0 !important;
-  pointer-events: none !important;
-  transform: translateX(-50%) translateY(-14px) !important;
+  opacity: 0.45 !important;
+  pointer-events: auto !important;
+  transform: scale(0.92) !important;
 }
 
 .stage-loader {

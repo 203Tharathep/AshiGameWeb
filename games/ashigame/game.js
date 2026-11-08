@@ -225,6 +225,8 @@ class MemeGame {
     this.gameOverModal = document.getElementById('gameOverModal');
     this.winnerTitle = document.getElementById('winnerTitle');
     this.winnerMessage = document.getElementById('winnerMessage');
+
+    this.selectedHandCard = null;
   }
 
   bindEvents() {
@@ -415,6 +417,41 @@ class MemeGame {
         if (minion) this.attackWithMinion(minion.playerKey, minion.minionId, { type: 'hero', targetPlayerKey: heroWrap === this.p1HeroWrap ? this.getMyPlayerKey() : this.getOpponentPlayerKey() });
       });
     });
+
+    // Deselect hand card if clicking outside cards and board
+    document.addEventListener('click', (e) => {
+      if (this.selectedHandCard && !e.target.closest('.card-item') && !e.target.closest('#p1BoardZone')) {
+        this.selectedHandCard = null;
+        this.p1BoardZone?.classList.remove('is-drop-active');
+        this.updateUI();
+      }
+    });
+
+    // In-game Fullscreen handlers
+    const arenaFsBtn = document.getElementById('arenaFsBtn');
+    const inGameExitFs = document.getElementById('inGameExitFsBtn');
+    const updateFsStatus = () => {
+      const isFs = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+      const fsIcon = document.getElementById('arenaFsIcon');
+      if (fsIcon) fsIcon.innerText = isFs ? '✕' : '⛶';
+      if (inGameExitFs) inGameExitFs.style.display = isFs ? 'inline-flex' : 'none';
+    };
+    document.addEventListener('fullscreenchange', updateFsStatus);
+    document.addEventListener('webkitfullscreenchange', updateFsStatus);
+
+    const toggleArenaFs = () => {
+      if (window.parent && window.self !== window.top) {
+        window.parent.postMessage({ type: 'ashi-toggle-fullscreen' }, '*');
+      } else {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          (document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen)?.call(document.documentElement).catch(() => {});
+        } else {
+          (document.exitFullscreen || document.webkitExitFullscreen)?.call(document).catch(() => {});
+        }
+      }
+    };
+    arenaFsBtn?.addEventListener('click', toggleArenaFs);
+    inGameExitFs?.addEventListener('click', toggleArenaFs);
   }
 
   getServerBaseUrl() {
@@ -995,6 +1032,7 @@ class MemeGame {
   startTurn(playerKey) {
     this.turn = playerKey;
     this.selectedAttacker = null;
+    this.selectedHandCard = null;
     const player = playerKey === 'p1' ? this.p1 : this.p2;
     const opponent = playerKey === 'p1' ? this.p2 : this.p1;
 
@@ -1044,6 +1082,8 @@ class MemeGame {
 
   endCurrentTurn(isLocal = true) {
     if (this.gameOver || this.isBotThinking || this.isResolvingCombat) return;
+    this.selectedHandCard = null;
+    this.selectedAttacker = null;
 
     if (this.isMultiplayer && isLocal && this.turn !== this.getMyPlayerKey()) {
       this.addLog(`⏳ ยังไม่ใช่เทิร์นของคุณ!`);
@@ -1116,6 +1156,10 @@ class MemeGame {
 
   executeCardAction(actionData, _choice, isLocal = true) {
     this.summonMinion(actionData.card, actionData.playerKey, isLocal);
+  }
+
+  playCard(card, playerKey, isLocal = true, sharedId = null) {
+    return this.summonMinion(card, playerKey, isLocal, sharedId);
   }
 
   summonMinion(card, playerKey, isLocal = true, sharedId = null) {
@@ -1193,8 +1237,23 @@ class MemeGame {
   }
 
   handleMinionLaneClick(event, lane) {
+    if (this.selectedHandCard && lane.dataset.playerKey === this.selectedHandCard.playerKey) {
+      event.stopPropagation();
+      const { card, playerKey } = this.selectedHandCard;
+      this.selectedHandCard = null;
+      this.p1BoardZone?.classList.remove('is-drop-active');
+      this.summonMinion(card, playerKey);
+      return;
+    }
     const token = event.target.closest('.minion-token');
-    if (!token) return;
+    if (!token) {
+      if (this.selectedHandCard) {
+        this.selectedHandCard = null;
+        this.p1BoardZone?.classList.remove('is-drop-active');
+        this.updateUI();
+      }
+      return;
+    }
     this.handleMinionClick(token.dataset.playerKey, token.dataset.minionId);
   }
 
@@ -2110,9 +2169,17 @@ class MemeGame {
         ? `🎯 เลือก "${unit.card.name}" (ATK ${unit.atk}) — แตะเป้าหมายกรอบสีแดงเพื่อโจมตี (แตะซ้ำเพื่อยกเลิก)`
         : '🎯 เลือกมินเนียนพร้อมโจมตี แล้วแตะเป้าหมาย';
       this.battleTickerMsg.classList.add('targeting');
+    } else if (this.selectedHandCard) {
+      this.p1HeroWrap.classList.remove('valid-target');
+      this.p2HeroWrap.classList.remove('valid-target');
+      const { card } = this.selectedHandCard;
+      this.battleTickerMsg.innerText = `⚡ เลือก "${card.name}" (${card.cost} มานา) — แตะสนามเพื่ออัญเชิญ หรือแตะการ์ดซ้ำเพื่อดูข้อมูล`;
+      this.battleTickerMsg.classList.add('targeting');
+      this.p1BoardZone?.classList.add('is-drop-active');
     } else {
       this.p1HeroWrap.classList.remove('valid-target');
       this.p2HeroWrap.classList.remove('valid-target');
+      this.p1BoardZone?.classList.remove('is-drop-active');
       this.battleTickerMsg.innerText = this.tickerFlashMsg || this.getIdleGuidance(myPlayer, oppPlayer, isMyTurn);
       this.battleTickerMsg.classList.remove('targeting');
     }
@@ -2158,6 +2225,11 @@ class MemeGame {
       cardEl.style.setProperty('--card-rot', `${rotateDeg}deg`);
       cardEl.style.zIndex = index + 1;
 
+      const isSelected = this.selectedHandCard && this.selectedHandCard.card.id === card.id;
+      if (isSelected) {
+        cardEl.classList.add('is-selected');
+      }
+
       cardEl.innerHTML = `
         <div class="card-mana-gem">${card.cost}</div>
         <div class="card-class-seal">${card.category}</div>
@@ -2175,9 +2247,26 @@ class MemeGame {
         <div class="stat-crest defense-crest" title="พลังชีวิต (HP)">${card.def}</div>
       `;
 
-      cardEl.addEventListener('click', () => {
+      cardEl.addEventListener('click', (e) => {
         if (this.suppressNextCardClick) return;
-        this.openCardAction(card, playerKey);
+        e.stopPropagation();
+
+        if (!cardEl.draggable) {
+          // Unplayable: open preview modal directly
+          this.openCardAction(card, playerKey);
+          return;
+        }
+
+        // Playable card
+        if (this.selectedHandCard && this.selectedHandCard.card.id === card.id) {
+          // Second tap: open inspect modal
+          this.openCardAction(card, playerKey);
+        } else {
+          // First tap: select card and prompt to tap battlefield
+          this.selectedHandCard = { card, playerKey };
+          this.selectedAttacker = null;
+          this.updateUI();
+        }
       });
 
       cardEl.addEventListener('dragstart', (event) => {
@@ -2197,38 +2286,57 @@ class MemeGame {
         setTimeout(() => { this.suppressNextCardClick = false; }, 120);
       });
 
-      let touchStartY = null;
-      let touchDragging = false;
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchIsDragging = false;
+
       cardEl.addEventListener('touchstart', (e) => {
         if (!cardEl.draggable || !e.touches || !e.touches[0]) return;
-        touchStartY = e.touches[0].clientY;
-        touchDragging = false;
+        const t = e.touches[0];
+        touchStartX = t.clientX;
+        touchStartY = t.clientY;
+        touchIsDragging = false;
       }, { passive: true });
 
       cardEl.addEventListener('touchmove', (e) => {
-        if (touchStartY === null || !e.touches || !e.touches[0]) return;
-        const dy = e.touches[0].clientY - touchStartY;
-        if (dy < -36) {
-          touchDragging = true;
-          cardEl.classList.add('is-dragging');
-          this.duelStage?.classList.add('dragging-card');
+        if (!cardEl.draggable || !e.touches || !e.touches[0]) return;
+        const t = e.touches[0];
+        const dx = t.clientX - touchStartX;
+        const dy = t.clientY - touchStartY;
+
+        if (dy < -12) {
+          if (!touchIsDragging) {
+            touchIsDragging = true;
+            this.suppressNextCardClick = true;
+            cardEl.classList.add('is-touch-dragging');
+            this.duelStage?.classList.add('dragging-card');
+            this.p1BoardZone?.classList.add('is-drop-active');
+          }
+          if (e.cancelable) e.preventDefault();
+          cardEl.style.transform = `translateX(calc(var(--card-tx, 0px) + ${dx * 0.9}px)) translateY(calc(var(--card-ty, 0px) + ${dy}px)) scale(1.18)`;
         }
-      }, { passive: true });
+      }, { passive: false });
 
       cardEl.addEventListener('touchend', (e) => {
-        if (touchDragging && touchStartY !== null && e.changedTouches && e.changedTouches[0]) {
-          const dy = e.changedTouches[0].clientY - touchStartY;
-          cardEl.classList.remove('is-dragging');
+        if (touchIsDragging) {
+          cardEl.classList.remove('is-touch-dragging');
           this.duelStage?.classList.remove('dragging-card');
-          if (dy < -48) {
-            e.preventDefault();
-            this.suppressNextCardClick = true;
-            this.playCard(card, playerKey);
-            setTimeout(() => { this.suppressNextCardClick = false; }, 180);
+          this.p1BoardZone?.classList.remove('is-drop-active');
+          cardEl.style.transform = '';
+
+          const endTouch = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0] : null;
+          const dy = endTouch ? endTouch.clientY - touchStartY : -999;
+
+          if (dy < -42) {
+            if (e.cancelable) e.preventDefault();
+            this.selectedHandCard = null;
+            this.summonMinion(card, playerKey);
+            setTimeout(() => { this.suppressNextCardClick = false; }, 280);
+            return;
           }
+          setTimeout(() => { this.suppressNextCardClick = false; }, 180);
+          return;
         }
-        touchStartY = null;
-        touchDragging = false;
       });
 
       container.appendChild(cardEl);

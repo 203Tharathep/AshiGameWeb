@@ -38,7 +38,7 @@ export const OFFICIAL_GAMES = [
     id: 'ashivszombie',
     title: 'Ashi vs Zombie: Defense of the Dorm',
     subtitle: 'เกมกันป้อมสไตล์ Plants vs Zombies วางแนวพืชอชิ 14 ชนิด สกัดกั้นกองทัพซอมบี้บุกหอพัก',
-    playUrl: './games/ashivszombie/index.html',
+    playUrl: './games/ashivszombie/index.html?v=22',
     author: '203Tharathep',
     category: 'defense',
     categoryLabel: 'กันป้อม / วางแผน',

@@ -28,9 +28,10 @@
 }
 
 html, body {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -47,8 +48,8 @@ html, body {
 /* Floating Landscape Rotation Button for Mobile */
 .rotate-screen-btn {
     position: fixed;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
-    right: calc(env(safe-area-inset-right, 0px) + 12px);
+    bottom: max(14px, calc(env(safe-area-inset-bottom, 0px) + 14px));
+    right: max(14px, calc(env(safe-area-inset-right, 0px) + 14px));
     z-index: 9999;
     display: none;
     align-items: center;
@@ -83,6 +84,9 @@ html, body {
     flex-direction: column;
     align-items: center;
     width: 1060px;
+    height: 734px;
+    max-width: none;
+    max-height: none;
     flex-shrink: 0;
     border-radius: 16px;
     overflow: hidden;
@@ -100,6 +104,7 @@ html, body {
 #top-hud-bar {
     width: 1060px;
     height: 100px;
+    flex-shrink: 0;
     background: 
         linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, transparent 4%),
         linear-gradient(180deg, #623616 0%, #44220b 45%, #2a1305 100%);
@@ -532,6 +537,9 @@ html, body {
 /* ==================== Stage Title Sub-bar ==================== */
 #stage-info-bar {
     width: 1060px;
+    height: 34px;
+    flex-shrink: 0;
+    box-sizing: border-box;
     background: 
         linear-gradient(90deg, #180d04 0%, #2f1808 50%, #180d04 100%);
     padding: 6px 18px;
@@ -576,6 +584,7 @@ html, body {
     position: relative;
     width: 1060px;
     height: 600px;
+    flex-shrink: 0;
     background: #000;
 }
 
@@ -1270,8 +1279,5 @@ html, body {
 }
 
 /* ==================== Responsive Queries ==================== */
-@media (max-width: 1080px) {
-    #top-hud-bar, #stage-info-bar, #canvas-container, #game-wrapper {
-        width: 100%;
-    }
-}
+/* Fixed coordinate space maintained: scaling is handled cleanly by fitGameWrapper() transform: scale() */
+

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Ashi vs Zombie: Defense of the Dorm (อชิ ปะทะ ซอมบี้)</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=22">
     <link rel="icon" href="assets/sprites/plant_peashooter.png">
 </head>
 <body>
@@ -264,26 +264,39 @@
             const wrap = document.getElementById('game-wrapper');
             const rotBtn = document.getElementById('rotate-screen-btn');
             if (!wrap) return;
+
             const vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
             const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
-            const isPortrait = vh > vw * 1.05 && vw <= 820;
+
+            const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            const isScreenPortrait = Boolean(window.screen && window.screen.width < window.screen.height);
+            const isWindowPortrait = vh > vw * 1.02;
+            const isSmallScreen = vw <= 900 || vh <= 600;
+
+            const shouldShowRotBtn = isTouch || isScreenPortrait || isWindowPortrait || isSmallScreen || window.isLandscapeRotated;
 
             if (rotBtn) {
-                rotBtn.style.display = (isPortrait || window.isLandscapeRotated) ? 'inline-flex' : 'none';
+                rotBtn.style.display = shouldShowRotBtn ? 'inline-flex' : 'none';
                 rotBtn.classList.toggle('active', window.isLandscapeRotated);
             }
 
-            if (!isPortrait && !userSetRotation) {
+            if (!isWindowPortrait && !isScreenPortrait && !userSetRotation) {
                 window.isLandscapeRotated = false;
             }
 
             const targetW = 1060;
-            const targetH = 728;
+            const targetH = 734;
+
+            const padW = vw < 600 ? 6 : 0;
+            const padH = vh < 600 ? 6 : 0;
+            const availW = Math.max(vw - padW * 2, 240);
+            const availH = Math.max(vh - padH * 2, 240);
+
             if (window.isLandscapeRotated) {
-                const scale = Math.min(vw / targetH, vh / targetW);
+                const scale = Math.min(availW / targetH, availH / targetW);
                 wrap.style.transform = `rotate(90deg) scale(${scale})`;
             } else {
-                const scale = Math.min(vw / targetW, vh / targetH);
+                const scale = Math.min(availW / targetW, availH / targetH);
                 wrap.style.transform = `scale(${scale})`;
             }
         }

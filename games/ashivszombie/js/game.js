@@ -578,15 +578,10 @@ class AshiVsZombieGame {
         const handleMove = (clientX, clientY) => {
             const rect = this.canvas.getBoundingClientRect();
             if (!rect.width || !rect.height) return;
-            if (window.isLandscapeRotated) {
-                this.mouseX = ((clientY - rect.top) / rect.height) * this.canvasWidth;
-                this.mouseY = ((rect.right - clientX) / rect.width) * this.canvasHeight;
-            } else {
-                const scaleX = this.canvasWidth / rect.width;
-                const scaleY = this.canvasHeight / rect.height;
-                this.mouseX = (clientX - rect.left) * scaleX;
-                this.mouseY = (clientY - rect.top) * scaleY;
-            }
+            const scaleX = this.canvasWidth / rect.width;
+            const scaleY = this.canvasHeight / rect.height;
+            this.mouseX = (clientX - rect.left) * scaleX;
+            this.mouseY = (clientY - rect.top) * scaleY;
 
             // Calculate grid cell
             if (this.mouseX >= this.gridLeft && this.mouseX < this.gridLeft + this.gridCols * this.tileWidth &&

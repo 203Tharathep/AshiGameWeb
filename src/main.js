@@ -274,7 +274,7 @@ class CleanGamePortal {
       this.dom.mobileAspectBtn.classList.toggle('active', this.isMobileAspect);
     });
 
-    window.addEventListener('resize', () => {
+    const handleOrientationOrResize = () => {
       if (this.currentGame && this.currentGame.allowMobileAspect && !this.userToggledAspect) {
         const isMobilePortrait = window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
         const shouldBeMobile = Boolean(
@@ -287,6 +287,15 @@ class CleanGamePortal {
           this.dom.mobileAspectBtn.classList.toggle('active', this.isMobileAspect);
         }
       }
+      try {
+        this.dom.gameIframe?.contentWindow?.dispatchEvent(new Event('resize'));
+      } catch (e) {}
+    };
+
+    window.addEventListener('resize', handleOrientationOrResize);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(handleOrientationOrResize, 80);
+      setTimeout(handleOrientationOrResize, 280);
     });
 
     this.dom.lightsToggleBtn.addEventListener('click', () => {
@@ -589,10 +598,25 @@ class CleanGamePortal {
     if (fsElement) {
       (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
       this.togglePseudoFullscreen(false);
+      try {
+        if (screen.orientation && typeof screen.orientation.unlock === 'function') {
+          screen.orientation.unlock();
+        }
+      } catch (e) {}
+      setTimeout(() => {
+        try {
+          this.dom.gameIframe?.contentWindow?.dispatchEvent(new Event('resize'));
+        } catch (e) {}
+      }, 150);
       return;
     }
     if (stage.classList.contains('is-pseudo-fullscreen')) {
       this.togglePseudoFullscreen(false);
+      setTimeout(() => {
+        try {
+          this.dom.gameIframe?.contentWindow?.dispatchEvent(new Event('resize'));
+        } catch (e) {}
+      }, 150);
       return;
     }
     const reqFs = stage.requestFullscreen || stage.webkitRequestFullscreen;
@@ -608,6 +632,18 @@ class CleanGamePortal {
     } else {
       this.togglePseudoFullscreen(true);
     }
+
+    try {
+      if (screen.orientation && typeof screen.orientation.unlock === 'function') {
+        screen.orientation.unlock();
+      }
+    } catch (e) {}
+
+    setTimeout(() => {
+      try {
+        this.dom.gameIframe?.contentWindow?.dispatchEvent(new Event('resize'));
+      } catch (e) {}
+    }, 150);
   }
 
   unmountPlayer() {

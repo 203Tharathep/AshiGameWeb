@@ -914,6 +914,15 @@ window.addEventListener('resize', () => {
     card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
   });
 });
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    window.dispatchEvent(new Event('resize'));
+  });
+}
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => window.dispatchEvent(new Event('resize')), 60);
+  setTimeout(() => window.dispatchEvent(new Event('resize')), 250);
+});
 
 // Keyboard
 window.addEventListener('keydown', (e) => {

@@ -45,38 +45,6 @@ html, body {
     justify-content: center;
 }
 
-/* Floating Landscape Rotation Button for Mobile */
-.rotate-screen-btn {
-    position: fixed;
-    bottom: max(14px, calc(env(safe-area-inset-bottom, 0px) + 14px));
-    right: max(14px, calc(env(safe-area-inset-right, 0px) + 14px));
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    border-radius: 999px;
-    border: 2px solid var(--pvz-gold);
-    background: linear-gradient(180deg, #3a1e0b 0%, #1e0d04 100%);
-    color: var(--pvz-gold-light);
-    font-size: 13px;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 12px var(--pvz-gold-glow);
-    transition: transform 0.15s, box-shadow 0.15s;
-}
-
-.rotate-screen-btn:hover {
-    transform: scale(1.05);
-}
-
-.rotate-screen-btn.active {
-    background: linear-gradient(180deg, #43a047 0%, #1b5e20 100%);
-    border-color: #fff;
-    color: #fff;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 14px rgba(76, 175, 80, 0.8);
-}
-
 /* Main Outer Wrapper */
 #game-wrapper {
     position: relative;

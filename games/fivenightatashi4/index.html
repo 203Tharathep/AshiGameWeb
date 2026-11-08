@@ -1706,6 +1706,7 @@ function fitGameWrap() {
 }
 window.addEventListener('resize', fitGameWrap);
 if (window.visualViewport) window.visualViewport.addEventListener('resize', fitGameWrap);
+window.addEventListener('orientationchange', () => { setTimeout(fitGameWrap, 60); setTimeout(fitGameWrap, 250); });
 window.addEventListener('DOMContentLoaded', fitGameWrap);
 fitGameWrap();
 

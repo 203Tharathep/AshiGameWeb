@@ -300,6 +300,13 @@
         };
         setTimeout(syncResponsiveTunnel, 120);
         window.addEventListener('resize', syncResponsiveTunnel);
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener('resize', syncResponsiveTunnel);
+        }
+        window.addEventListener('orientationchange', () => {
+          setTimeout(syncResponsiveTunnel, 60);
+          setTimeout(syncResponsiveTunnel, 250);
+        });
         window.addEventListener('touchstart', () => {
           if (window.ashiGame && !window.ashiGame.touchUIEnabled) {
             window.ashiGame.setTouchUIVisible(true);

@@ -1963,11 +1963,24 @@ function fitGame() {
   if (!wrap) return;
   const targetW = 1280;
   const targetH = 720;
-  const scale = Math.min(window.innerWidth / targetW, window.innerHeight / targetH);
+  const vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
+  const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  const padW = vw < 600 ? 6 : 0;
+  const padH = vh < 600 ? 6 : 0;
+  const availW = Math.max(vw - padW * 2, 240);
+  const availH = Math.max(vh - padH * 2, 240);
+  const scale = Math.min(availW / targetW, availH / targetH);
   wrap.style.transform = `scale(${scale})`;
 }
 
 window.addEventListener('resize', fitGame);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', fitGame);
+}
+window.addEventListener('orientationchange', () => {
+  setTimeout(fitGame, 60);
+  setTimeout(fitGame, 250);
+});
 window.addEventListener('DOMContentLoaded', () => {
   fitGame();
   window.game = new AshiBirdsGame();

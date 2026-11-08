@@ -73,6 +73,13 @@ class AkiraVisualNovel {
     this.ctx = this.canvas.getContext('2d');
     this.resizeCanvas();
     window.addEventListener('resize', () => this.resizeCanvas());
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => this.resizeCanvas());
+    }
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => this.resizeCanvas(), 60);
+      setTimeout(() => this.resizeCanvas(), 250);
+    });
 
     // Create 35 sakura petals
     for (let i = 0; i < 35; i++) {

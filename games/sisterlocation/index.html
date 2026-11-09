@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Five Nights at Freddy's: Sister Location (Unity Re-creation)</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      touch-action: none;
+      background: #000;
+      color: #eef6ff;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #game-wrap {
+      position: relative;
+      width: 1280px;
+      height: 720px;
+      flex-shrink: 0;
+      transform-origin: center center;
+      background: #000000;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(14, 165, 233, 0.25);
+    }
+
+    #gameCanvas {
+      display: block;
+      width: 1280px;
+      height: 720px;
+      cursor: crosshair;
+    }
+
+    /* Mobile On-Screen Virtual Controls */
+    #mobile-controls {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .ctrl-group {
+      display: flex;
+      gap: 8px;
+      pointer-events: auto;
+    }
+
+    .v-btn {
+      width: 58px;
+      height: 58px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.78);
+      border: 2px solid rgba(56, 189, 248, 0.6);
+      color: #38bdf8;
+      font-size: 16px;
+      font-weight: 800;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+      touch-action: manipulation;
+    }
+
+    .v-btn:active, .v-btn.is-pressed {
+      background: rgba(56, 189, 248, 0.5);
+      color: #ffffff;
+      transform: scale(0.95);
+    }
+
+    @media (pointer: fine) and (min-width: 900px) {
+      #mobile-controls {
+        opacity: 0.25;
+        transition: opacity 0.2s;
+      }
+      #mobile-controls:hover {
+        opacity: 0.9;
+      }
+    }
+  </style>
+  <script src="../common/rotate-helper.js" defer></script>
+</head>
+<body>
+  <div id="game-wrap">
+    <canvas id="gameCanvas" width="1280" height="720"></canvas>
+
+    <!-- On-screen controls for mobile/tablet & desktop quick buttons -->
+    <div id="mobile-controls">
+      <div class="ctrl-group">
+        <button class="v-btn" id="btn-w" type="button" data-key="KeyW">W<br><span style="font-size:10px;">CRAWL</span></button>
+        <button class="v-btn" id="btn-a" type="button" data-key="KeyA">A<br><span style="font-size:10px;">LEFT</span></button>
+        <button class="v-btn" id="btn-s" type="button" data-key="KeyS">S<br><span style="font-size:10px;">CAM</span></button>
+        <button class="v-btn" id="btn-d" type="button" data-key="KeyD">D<br><span style="font-size:10px;">RIGHT</span></button>
+      </div>
+      <div class="ctrl-group">
+        <button class="v-btn" id="btn-e" type="button" data-key="KeyE">E<br><span style="font-size:10px;">ACT</span></button>
+        <button class="v-btn" id="btn-space" style="width: 100px;" type="button" data-key="Space">SPACE<br><span style="font-size:10px;">FLASH/SHOCK</span></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function fitGameWrap() {
+      const wrap = document.getElementById('game-wrap');
+      if (!wrap) return;
+      const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+      wrap.style.transform = `scale(${scale})`;
+    }
+    window.addEventListener('resize', fitGameWrap);
+    window.addEventListener('DOMContentLoaded', fitGameWrap);
+    fitGameWrap();
+
+    // Map virtual touch buttons to key state
+    document.querySelectorAll('.v-btn').forEach((btn) => {
+      const code = btn.dataset.key;
+      const activate = (e) => {
+        e.preventDefault();
+        window._fnafSlKeyHeld[code] = true;
+        btn.classList.add('is-pressed');
+        window.dispatchEvent(new KeyboardEvent('keydown', { code }));
+      };
+      const deactivate = (e) => {
+        e.preventDefault();
+        window._fnafSlKeyHeld[code] = false;
+        btn.classList.remove('is-pressed');
+        window.dispatchEvent(new KeyboardEvent('keyup', { code }));
+      };
+
+      btn.addEventListener('touchstart', activate, { passive: false });
+      btn.addEventListener('touchend', deactivate, { passive: false });
+      btn.addEventListener('mousedown', activate);
+      btn.addEventListener('mouseup', deactivate);
+      btn.addEventListener('mouseleave', deactivate);
+    });
+  </script>
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
+

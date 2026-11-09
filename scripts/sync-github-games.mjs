@@ -41,6 +41,12 @@ const REPOS = [
     copyItems: ['index.html', 'assets4']
   },
   {
+    name: 'SisterLocation',
+    url: 'https://github.com/AkashiZai/SisterLocation.git',
+    dest: 'games/sisterlocation',
+    copyItems: ['index.html', 'js', 'assets']
+  },
+  {
     name: 'FiveNightsAtAshiSisterLocation',
     url: 'https://github.com/AkashiZai/fivenightatashisisterlocation.git',
     dest: 'games/fivenightatashisisterlocation',
@@ -283,4 +289,4 @@ try {
   fs.rmSync(tmpRoot, { recursive: true, force: true });
 }
 
-console.log('\nAll 10 GitHub games synced successfully!');
+console.log('\nAll 11 GitHub games synced successfully!');

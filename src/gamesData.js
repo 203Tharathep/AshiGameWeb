@@ -138,6 +138,43 @@ export const OFFICIAL_GAMES = [
     ]
   },
   {
+    id: 'sisterlocation',
+    title: "Five Nights at Freddy's: Sister Location",
+    subtitle: 'ผลงานรีครีเอชัน Sister Location เต็มรูปแบบ 21 ฉาก! เนื้อเรื่อง 5 คืน, 2 ฉากจบ, มินิเกม 8-Bit Baby, Custom Night 10/20 และกราฟิก Procedural',
+    playUrl: './games/sisterlocation/index.html',
+    author: 'AkashiZai',
+    category: 'horror',
+    categoryLabel: 'สยองขวัญ / เอาชีวิตรอด',
+    badge: 'Unity Re-creation · 21 Scenes · 4 Stars',
+    coverFit: 'cover',
+    thumbnailBg: './games/sisterlocation/assets/cover.jpg',
+    characterOverlay: '',
+    icon: './games/sisterlocation/assets/icon.png',
+    screenshots: [
+      { src: './games/sisterlocation/assets/cover.jpg', caption: 'FNaF Sister Location: ปกเกมฉบับ Unity Re-creation สมบูรณ์แบบ' },
+      { src: './games/sisterlocation/assets/screenshot_1.jpg', caption: 'หน้าเมนูหลัก Title Screen พร้อมระบบปลดล็อก 4 ดาว และตัวละครขยับได้' },
+      { src: './games/sisterlocation/assets/screenshot_2.jpg', caption: 'Primary Control Module ห้องควบคุมส่วนกลาง ส่องไฟและช็อกไฟฟ้ากระตุ้นเวที' },
+      { src: './games/sisterlocation/assets/screenshot_3.jpg', caption: 'Private Room ศึกตัดสิน Ennard Boss Fight และโหมด Custom Night 10/20' },
+      { src: './games/sisterlocation/assets/screenshot_4.jpg', caption: 'มินิเกม 8-Bit Circus Baby เสิร์ฟคัพเค้ก 3 สี และรับไอศกรีมปลดล็อกดาวที่ 2' },
+      { src: './games/sisterlocation/assets/screenshot_5.jpg', caption: 'Night 4: เอาชีวิตรอดในชุดสปริงล็อก ไขลานทั้ง 10 จุด และสลัดมินิรีน่า' }
+    ],
+    likes: 5420,
+    dislikes: 8,
+    plays: 74200,
+    allowMobileAspect: true,
+    defaultMobileAspect: false,
+    description:
+      'ผลงานรีครีเอชันระดับมาสเตอร์พีซของ Five Nights at Freddy’s: Sister Location จาก AkashiZai ถ่ายทอดระบบเกมครบถ้วน 21 ฉากด้วย Procedural Graphics & Web Audio Synthesis! ตะลุยโหมดเนื้อเรื่องทั้ง 5 คืน: ไขปริศนาแป้นพิมพ์ HandUnit ไร้ปุ่ม B ในลิฟต์, คลานท่อแอร์, ส่องไฟควบคุมเวที Ballora & Funtime Foxy, หลบซ่อนใต้โต๊ะสู้แรงดึง Bidybab, ฟังเสียงกล่องดนตรีใน Ballora Gallery, รีบูตระบบไฟ Breaker Room พร้อมเปิดเสียง Bon-Bon กล่อม Funtime Freddy, ผ่าตัดบำรุงรักษาใน Parts & Service, เอาชีวิตรอดในชุด Springlock สลัด Minireena, และเลือกเส้นทางสู่ตอนจบ 2 แบบ: Real Ending ใน Scooping Room สู่ฉากกระจกห้องน้ำ หรือ Fake Ending บุกห้องลับ Private Room สู้ Ennard! แถมด้วย Circus Baby 8-Bit Minigame, โหมด Custom Night ครบทั้ง 10 แอนิมาทรอนิกส์ (0-20) 10 ชาเลนจ์พรีเซต, คัตซีน Michael Afton เน่าเปื่อย 7 สเตจ, ฉากจบ Springtrap ใน Fazbear’s Fright, ความลับพิมพ์เขียว 1/10,000 และแถบ DEV DEBUG อำนวยความสะดวกครบครัน!',
+    controls: [
+      { key: 'W / ปุ่มเสมือนบนจอ', action: 'คลานไปข้างหน้าในท่อแอร์, Ballora Gallery, Funtime Auditorium และกระโดดในมินิเกม 8-Bit' },
+      { key: 'Spacebar / ปุ่ม SPACE', action: 'ส่อง Flash Beacon / กดช็อกไฟฟ้า / กินป๊อปคอร์น / ยิงคัพเค้ก / บอนบอนกล่อม' },
+      { key: 'A / D / ปุ่ม A, D', action: 'เปิด–ปิดประตูด้านซ้ายและขวา (Private Room) / สลัดชุดสปริงล็อก / ดึงแผ่นเหล็กใต้โต๊ะ' },
+      { key: 'S / ปุ่ม S', action: 'เปิด–ปิดจอมอนิเตอร์กล้องวงจรปิด / ยกจอมอนิเตอร์ Breaker Room' },
+      { key: 'E / ปุ่ม E', action: 'กดช็อกไฟฟ้าฉุกเฉิน / สลับชนิดคัพเค้ก (ชมพู/ฟ้า/เขียว)' },
+      { key: 'เมาส์คลิก / ทัชสกรีน', action: 'กดปุ่มบนเวที, ไขลานสปริงล็อก, บีบจมูก Ennard/Bonnet, และควบคุมแป้นพิมพ์' }
+    ]
+  },
+  {
     id: 'fivenightatashisisterlocation',
     title: 'Five Nights at Ashi: Sister Location',
     subtitle: 'สัมผัสเนื้อเรื่องเต็ม 5 คืน ลิฟต์ใต้ดิน กล่องควบคุม บันทึกเสียง HandUnit และห้องลับ Ennard',

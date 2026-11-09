@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Ashi Combat: Mortal Kombat Edition</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="game-container">
+    <!-- Top Utility Bar -->
+    <div class="top-nav-bar">
+      <button id="btnToggleAudio" class="icon-btn" title="เปิด/ปิดเสียง">
+        <span id="audioIcon">🔊</span> เสียง
+      </button>
+      <button id="btnFullscreen" class="icon-btn" title="เต็มจอ">
+        ⛶ เต็มจอ
+      </button>
+    </div>
+
+    <!-- Main Canvas Wrapper (16:9 Aspect Ratio) -->
+    <div id="canvas-wrapper">
+      <canvas id="combatCanvas" width="1280" height="720"></canvas>
+
+      <!-- SCREEN 1: TITLE SCREEN -->
+      <div id="screen-title" class="screen-overlay">
+        <div class="title-content">
+          <!-- Mortal Kombat Dragon Emblem SVG -->
+          <svg class="dragon-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="46" stroke="#ffd700" stroke-width="4" fill="#150000" />
+            <path d="M50 15 C35 15 22 26 22 42 C22 55 31 66 42 70 C38 64 36 57 37 50 C41 53 47 52 50 48 C46 44 45 37 49 32 C54 36 60 38 65 37 C61 30 55 24 50 15 Z" fill="#ffd700" />
+            <path d="M52 48 C58 48 64 52 68 58 C72 64 74 72 73 80 C68 83 60 85 52 85 C42 85 33 80 27 73 C33 76 42 77 50 75 C56 73 60 68 59 62 C57 56 53 52 52 48 Z" fill="#ff2200" />
+            <circle cx="45" cy="28" r="3" fill="#ff0000" />
+          </svg>
+
+          <h1 class="main-title">ASHI COMBAT</h1>
+          <div class="main-subtitle">MORTAL KOMBAT EDITION · MEME DUEL</div>
+          <button id="btnStartGame" class="btn-arcade">ENTER THE ARENA</button>
+          <div class="press-start-blink">PRESS SPACE OR CLICK TO START</div>
+        </div>
+      </div>
+
+      <!-- SCREEN 2: MODE SELECT -->
+      <div id="screen-mode-select" class="screen-overlay hidden">
+        <h2 class="select-header">CHOOSE YOUR MODE</h2>
+        <div class="mode-cards">
+          <div id="btnMode1P" class="mode-card">
+            <div class="mode-icon">🏆</div>
+            <div class="mode-title">1P ARCADE TOWER</div>
+            <div class="mode-desc">ตะลุยหอคอยประลอง ไต่เต้าสู่จุดสูงสุด พิชิต 8 นักสู้และบอสใหญ่ Noob Shadow Ashi!</div>
+          </div>
+          <div id="btnMode2P" class="mode-card">
+            <div class="mode-icon">⚔️</div>
+            <div class="mode-title">2P LOCAL VERSUS</div>
+            <div class="mode-desc">ดวลกับเพื่อนตัวต่อตัว บนคีย์บอร์ดเดียวกัน (P1: WASD+J/K/U/I, P2: ลูกศร+NumPad/Z/X/C/V)</div>
+          </div>
+          <div id="btnModeTraining" class="mode-card">
+            <div class="mode-icon">🥋</div>
+            <div class="mode-title">TRAINING DOJO</div>
+            <div class="mode-desc">ห้องฝึกซ้อมคอมโบ สกิลพิเศษ และทดลองท่าไม้ตาย Fatality สังหารอย่างไร้ขีดจำกัด</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 3: CHARACTER SELECT SCREEN -->
+      <div id="screen-char-select" class="screen-overlay hidden">
+        <div class="char-select-container">
+          <!-- Left: P1 Profile -->
+          <div class="char-select-left">
+            <img id="p1PreviewImg" src="" alt="P1" class="char-preview-portrait" />
+            <div id="p1PreviewName" class="char-preview-name">SCORPION ASHI</div>
+            <div id="p1PreviewThai" class="char-preview-thai">อชิ สกอร์เปียนเพลิง</div>
+            <div id="p1PreviewTitle" class="char-preview-title">Hellfire Ninja of the Shirai Ryu</div>
+            <div id="p1Quote" class="char-quote">"GET OVER HERE!"</div>
+
+            <div class="stat-bars">
+              <div class="stat-row">
+                <span>พลังโจมตี (ATK)</span>
+                <div class="bar-track"><div id="p1AtkBar" class="bar-fill" style="width: 85%;"></div></div>
+              </div>
+              <div class="stat-row">
+                <span>ความเร็ว (SPD)</span>
+                <div class="bar-track"><div id="p1SpdBar" class="bar-fill" style="width: 80%;"></div></div>
+              </div>
+              <div class="stat-row">
+                <span>ความอึด (DEF)</span>
+                <div class="bar-track"><div id="p1DefBar" class="bar-fill" style="width: 75%;"></div></div>
+              </div>
+            </div>
+
+            <ul id="p1MovesList" class="moves-scroll"></ul>
+          </div>
+
+          <!-- Center: 8-Fighter Grid -->
+          <div class="char-select-center">
+            <div class="select-header">CHOOSE YOUR FIGHTER</div>
+            <div id="charGrid" class="char-grid"></div>
+            <button id="btnConfirmChar" class="btn-arcade" style="margin-top: 20px; font-size: 18px; padding: 10px 30px;">CONFIRM FIGHTER (ENTER)</button>
+          </div>
+
+          <!-- Right: P2 Profile -->
+          <div class="char-select-right">
+            <img id="p2PreviewImg" src="" alt="P2" class="char-preview-portrait" />
+            <div id="p2PreviewName" class="char-preview-name">SUB-ZERO ASHI</div>
+            <div id="p2PreviewThai" class="char-preview-thai">อชิ ซับซีโร่เยือกแข็ง</div>
+            <div id="p2PreviewTitle" class="char-preview-title">Lin Kuei Cryomancer</div>
+            <div class="char-quote">ศัตรูประจำด่าน หรือ ผู้เล่นคนที่ 2</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 4: STAGE SELECT SCREEN -->
+      <div id="screen-stage-select" class="screen-overlay hidden">
+        <div class="stages-wrapper">
+          <h2 class="select-header">CHOOSE ARENA</h2>
+          <div id="stageList" class="stage-list"></div>
+          <button id="btnConfirmStage" class="btn-arcade">FIGHT IN THIS ARENA (SPACE)</button>
+        </div>
+      </div>
+
+      <!-- SCREEN 5: VERSUS SCREEN -->
+      <div id="screen-versus" class="screen-overlay hidden">
+        <div class="versus-container">
+          <div class="vs-fighter">
+            <img id="vsP1Img" src="" alt="P1" class="vs-portrait" />
+            <div id="vsP1Name" class="vs-name">SCORPION</div>
+            <div id="vsP1Quote" class="vs-quote">"GET OVER HERE!"</div>
+          </div>
+          <div class="vs-center-logo">VS</div>
+          <div class="vs-fighter">
+            <img id="vsP2Img" src="" alt="P2" class="vs-portrait" />
+            <div id="vsP2Name" class="vs-name">SUB-ZERO</div>
+            <div id="vsP2Quote" class="vs-quote">"COLD AS ICE!"</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 6: TOWER LADDER SCREEN -->
+      <div id="screen-tower" class="screen-overlay hidden">
+        <div class="tower-container">
+          <h2 class="select-header">MORTAL KOMBAT TOWER</h2>
+          <div id="towerLadder" class="tower-ladder"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN 7: MATCH RESULT SCREEN -->
+      <div id="screen-match-result" class="screen-overlay hidden">
+        <h2 id="resultWinnerText" class="main-title" style="font-size: 54px;">SCORPION WINS!</h2>
+        <img id="resultWinnerImg" src="" alt="Winner" class="vs-portrait" style="margin: 20px 0;" />
+        <div style="display: flex; gap: 20px;">
+          <button id="btnRematch" class="btn-arcade">REMATCH</button>
+          <button id="btnChangeChar" class="btn-arcade" style="background: #333;">CHOOSE FIGHTER</button>
+        </div>
+      </div>
+
+      <!-- SCREEN 8: GRAND VICTORY SCREEN -->
+      <div id="screen-victory" class="screen-overlay hidden">
+        <h1 class="main-title" style="color: var(--mk-gold);">SUPREME CHAMPION</h1>
+        <img id="victoryChampImg" src="" alt="Champ" class="vs-portrait" style="margin: 20px 0; border-color: var(--mk-gold);" />
+        <div id="victoryChampName" class="vs-name" style="font-size: 42px;">SCORPION ASHI</div>
+        <p id="victoryEpilogue" style="max-width: 600px; text-align: center; font-size: 18px; color: #ffdd88; margin-bottom: 25px; line-height: 1.6;"></p>
+        <button onclick="window.location.reload()" class="btn-arcade">PLAY AGAIN</button>
+      </div>
+
+      <!-- SCREEN 9: GAME OVER SCREEN -->
+      <div id="screen-game-over" class="screen-overlay hidden">
+        <h1 class="main-title" style="color: var(--mk-red); font-size: 80px;">GAME OVER</h1>
+        <p style="font-size: 22px; color: #eedd88; margin-bottom: 30px;">คุณพ่ายแพ้ในศึกทัวร์นาเมนต์อชิ...</p>
+        <div style="display: flex; gap: 20px;">
+          <button onclick="window.location.reload()" class="btn-arcade">TRY AGAIN</button>
+        </div>
+      </div>
+
+      <!-- Mobile / Touch Virtual Gamepad Overlay -->
+      <div class="touch-controls">
+        <div class="dpad-container">
+          <button id="btn-up" class="touch-btn btn-up">▲</button>
+          <button id="btn-left" class="touch-btn btn-left">◀</button>
+          <button id="btn-right" class="touch-btn btn-right">▶</button>
+          <button id="btn-down" class="touch-btn btn-down">▼</button>
+        </div>
+
+        <div class="action-buttons">
+          <button id="btn-punch" class="touch-btn">ต่อย J</button>
+          <button id="btn-punch-heavy" class="touch-btn">อัปเปอร์ U</button>
+          <button id="btn-kick" class="touch-btn">เตะ K</button>
+          <button id="btn-kick-heavy" class="touch-btn">เตะหนัก</button>
+          <button id="btn-special" class="touch-btn">สกิล I</button>
+          <button id="btn-block" class="touch-btn">กัน L</button>
+          <button id="btn-super" class="touch-btn" style="color: var(--mk-gold);">FATAL SPACE</button>
+          <button id="btn-fatality" class="touch-btn btn-fatality-skull">💀 FATALITY F</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Keyboard Controls Guide Footer -->
+    <div class="controls-footer">
+      <strong>P1:</strong> [A/D] เดิน, [W] กระโดด, [S] ย่อ, [J] ต่อย, [K] เตะ, [U] อัปเปอร์คัต, [I] สกิลพิเศษ, [L] ป้องกัน, [Space] Fatal Blow, [F] FATALITY (ตอน Finish Him)
+    </div>
+  </div>
+
+  <script src="js/bundle.js"></script>
+</body>
+</html>

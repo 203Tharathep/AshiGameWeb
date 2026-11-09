@@ -1,5 +1,43 @@
 export const OFFICIAL_GAMES = [
   {
+    id: 'ashicombat',
+    title: 'Ashi Combat: ศึกมหากาพย์สังเวียนเลือด',
+    subtitle: 'เกมต่อสู้ 2D สไตล์ Mortal Kombat เลือก 8 นักสู้อชิ ปล่อยคลื่นพลัง คอมโบ อัปเปอร์คัต และท่าไม้ตายสังหาร FATALITY!',
+    playUrl: './games/ashicombat/index.html',
+    author: 'AshiTeam',
+    category: 'fighting',
+    categoryLabel: 'ต่อสู้ / Fighting',
+    badge: 'Mortal Kombat Style · Fatality',
+    coverFit: 'cover',
+    thumbnailBg: './games/ashicombat/assets/fighters/Gemini_Generated_Image_8ffdat8ffdat8ffd.jpg',
+    characterOverlay: '',
+    icon: './games/ashicombat/assets/fighters/Gemini_Generated_Image_8ffdat8ffdat8ffd.jpg',
+    screenshots: [
+      { src: './games/ashicombat/assets/fighters/Gemini_Generated_Image_8ffdat8ffdat8ffd.jpg', caption: 'Scorpion Ashi: อชิ นินจาเพลิงโลกันตร์ (Get Over Here!)' },
+      { src: './games/ashicombat/assets/fighters/Gemini_Generated_Image_4g9dic4g9dic4g9d.jpg', caption: 'Sub-Zero Ashi: อชิ ซับซีโร่เยือกแข็ง แช่แข็งศัตรู' },
+      { src: './games/ashicombat/assets/fighters/3.jpeg', caption: 'Gigachad Ashi: อชิ กิกะชาดกรามเพชร สันกรามมหาประลัย' },
+      { src: './games/ashicombat/assets/fighters/Gemini_Generated_Image_nkpk4ynkpk4ynkpk.jpeg', caption: 'Raiden Ashi: มหาเทพสายฟ้า พุ่งบินข้ามฉาก' },
+      { src: './games/ashicombat/assets/fighters/Gemini_Generated_Image_t2e45ct2e45ct2e4.jpeg', caption: 'Noob Shadow Ashi: บอสใหญ่ยมทูตเงาทมิฬ' }
+    ],
+    likes: 3450,
+    dislikes: 8,
+    plays: 52100,
+    allowMobileAspect: true,
+    defaultMobileAspect: false,
+    description:
+      'เกมต่อสู้สุดเดือดสไตล์ Mortal Kombat ในธีมมีมอชิ! เลือกนักสู้จาก 8 ตัวละครเอกที่มีเอกลักษณ์เฉพาะตัว ทั้ง Scorpion Ashi พ่นไฟลากโซ่, Sub-Zero Ashi แช่แข็ง, Gigachad Ashi สันกรามตัดอากาศ, Raiden Ashi เทพสายฟ้า และบอสใหญ่ Noob Shadow Ashi! ระบบต่อสู้จัดเต็มทั้ง หมัดหนัก อัปเปอร์คัตเตะลอยกลางอากาศ ท่าไม้ตายซูเปอร์ Fatal Blow และโหมด FINISH HIM เผด็จศึกด้วยท่าสังหารสุดโหด FATALITY! เล่นได้ทั้งโหมด 1P ตะลุยหอคอยไต่เต้า และ 2P ดวลกับเพื่อนบนจอเดียวกัน รองรับทั้งคีย์บอร์ดและทัชสกรีนมือถือ!',
+    controls: [
+      { key: 'A / D หรือ ปัดซ้ายขวา', action: 'เดินหน้า / ถอยหลัง' },
+      { key: 'W / S หรือ ปุ่ม ▲ / ▼', action: 'กระโดดลอยตัว / ย่อตัวป้องกันหมัดต่ำ' },
+      { key: 'J / K (มือถือมีปุ่มแตะ)', action: 'ต่อยเบา / เตะเบา คอมโบต่อเนื่อง' },
+      { key: 'U (หรือปุ่ม อัปเปอร์)', action: 'หมัดอัปเปอร์คัตเสยคางคู่ต่อสู้ลอยละลิ่วเปิดทางคอมโบกลางอากาศ' },
+      { key: 'I (หรือปุ่ม สกิล)', action: 'ปล่อยท่าพิเศษประจำตัว (โซ่คุไน / พ่นไฟ / แช่แข็ง / สายฟ้า / กรามโซนิค)' },
+      { key: 'L (หรือปุ่ม ป้องกัน)', action: 'ยกการ์ดป้องกัน ลดดาเมจลงอย่างมาก' },
+      { key: 'Space (แถบเกจเต็ม 100%)', action: 'FATAL BLOW: ปลดปล่อยอัลติเมทคอมโบถล่มฉาก' },
+      { key: 'F หรือปุ่มหัวกะโหลกแดง', action: 'FATALITY! สังหารฉลองชัยเมื่อศัตรูมึนงงในรอบชี้ชะตา' }
+    ]
+  },
+  {
     id: 'ashibirds',
     title: 'Ashi Birds: หนังสติ๊กถล่มปราสาทหมูอชิ',
     subtitle: 'เกมฟิสิกส์หนังสติ๊กสไตล์ Angry Birds ยิงฝูงนกอชิ 7 พลังพิเศษ ถล่มป้อมหมูอชิและถัง TNT 10 ด่าน',
@@ -360,6 +398,7 @@ export const OFFICIAL_GAMES = [
 
 export const CATEGORIES = [
   { id: 'all', label: 'ทั้งหมด' },
+  { id: 'fighting', label: 'ต่อสู้ / Fighting' },
   { id: 'physics', label: 'ฟิสิกส์ / หนังสติ๊ก' },
   { id: 'defense', label: 'กันป้อม / วางแผน' },
   { id: 'card-battle', label: 'การ์ดแบทเทิล' },

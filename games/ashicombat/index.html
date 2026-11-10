@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Ashi Kombat: Realm of Memes</title>
   <link rel="icon" href="./assets/icon.png" />
-  <link rel="stylesheet" href="./css/style.css?v=1" />
+  <link rel="stylesheet" href="./css/style.css?v=2" />
+  <!-- PeerJS WebRTC P2P Multiplayer -->
+  <script src="./js/peerjs.min.js"></script>
   <!-- Universal Mobile Landscape Switcher -->
   <script src="../common/rotate-helper.js"></script>
 </head>
@@ -32,6 +34,9 @@
           <button id="btnVs2P" class="mk-btn">
             <span>👥</span> 2 PLAYERS (ดวลกัน 2 คน)
           </button>
+          <button id="btnOnlineRoom" class="mk-btn mk-btn-online">
+            <span>🌐</span> ONLINE ROOM (สร้างห้องเล่นกับเพื่อน)
+          </button>
           <button id="btnTraining" class="mk-btn">
             <span>🥋</span> TRAINING DOJO (ฝึกซ้อมท่า)
           </button>
@@ -52,6 +57,10 @@
     <div id="charSelectScreen" class="screen-layer hidden">
       <div class="select-container">
         <div class="select-header">CHOOSE YOUR ASHI</div>
+        <div id="onlineLobbyBanner" class="online-lobby-bar hidden">
+          <span>🌐 โหมดออนไลน์: ห้อง [<strong id="onlineBannerCode">--</strong>]</span>
+          <span id="onlinePlayerRoleText" class="role-badge">คุณคือ Player 1 (โฮสต์)</span>
+        </div>
 
         <div class="select-main">
           <!-- P1 Preview -->
@@ -98,6 +107,9 @@
             </select>
           </div>
 
+          <button id="btnBackToTitle" class="mk-btn secondary" style="padding: 10px 20px;">
+            🔙 เมนูหลัก
+          </button>
           <button id="btnConfirmSelect" class="mk-btn mk-btn-primary" style="padding: 10px 28px;">
             ⚔️ เข้าสู่สังเวียน (FIGHT!)
           </button>
@@ -178,6 +190,49 @@
 
         <div id="btnActionFatality" class="act-btn fatal" style="grid-column: span 3; width: 100%; border-radius: 6px;" title="เผด็จศึก Fatality">
           ☠️ FINISH HIM / FATALITY ☠️
+        </div>
+      </div>
+    </div>
+
+    <!-- Online Room Modal -->
+    <div id="onlineRoomModal" class="modal-overlay hidden">
+      <div class="modal-box online-room-box">
+        <div class="modal-header">
+          <h3 class="modal-title">⚔️ ONLINE KOMBAT DUEL</h3>
+          <button class="close-modal" id="btnCloseOnlineModal">&times;</button>
+        </div>
+
+        <div class="online-tabs">
+          <button id="tabHostRoom" class="online-tab active">👑 สร้างห้อง (HOST)</button>
+          <button id="tabJoinRoom" class="online-tab">🚪 เข้าร่วมห้อง (JOIN)</button>
+        </div>
+
+        <!-- Host View -->
+        <div id="onlineHostPanel" class="online-panel">
+          <p class="online-desc">สร้างห้องและส่งรหัสให้เพื่อนเข้ามาร่วมสังเวียนดวลกันแบบ Real-time!</p>
+          <button id="btnCreateRoomAct" class="mk-btn mk-btn-primary" style="width: 100%; margin-bottom: 14px;">
+            🏠 เริ่มสร้างห้องใหม่ (CREATE ROOM)
+          </button>
+          <div id="hostRoomInfo" class="room-code-badge hidden">
+            <div class="room-label">รหัสห้องของคุณ (ROOM CODE):</div>
+            <div id="hostRoomCodeDisplay" class="room-code-num">------</div>
+            <button id="btnCopyRoomCode" class="mk-btn" style="padding: 6px 14px; font-size: 0.85rem; margin-top: 6px;">
+              📋 คัดลอกรหัสห้อง
+            </button>
+            <div id="hostStatusMsg" class="online-status-pulse">⏳ กำลังรอเพื่อนเชื่อมต่อเข้ามา...</div>
+          </div>
+        </div>
+
+        <!-- Join View -->
+        <div id="onlineJoinPanel" class="online-panel hidden">
+          <p class="online-desc">ใส่รหัสห้องที่ได้รับจากเพื่อนเพื่อเชื่อมต่อเข้าสู่สังเวียน:</p>
+          <div class="join-input-group">
+            <input type="text" id="joinRoomInput" placeholder="พิมพ์รหัสห้อง เช่น AK-1234" maxlength="12" />
+            <button id="btnJoinRoomAct" class="mk-btn mk-btn-primary">
+              ⚡ เชื่อมต่อห้อง (JOIN)
+            </button>
+          </div>
+          <div id="joinStatusMsg" class="online-status-text"></div>
         </div>
       </div>
     </div>

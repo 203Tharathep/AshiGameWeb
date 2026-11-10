@@ -762,7 +762,7 @@ body.lights-off #lightsToggleBtn {
 
 .stage-frame.aspect-wide {
   aspect-ratio: 16 / 9;
-  min-height: 480px;
+  min-height: 0;
   max-height: 82vh;
 }
 
@@ -1259,8 +1259,8 @@ body.has-rotated-landscape {
     gap: 28px;
   }
   .stage-frame.aspect-wide {
-    aspect-ratio: 16 / 9.5;
-    min-height: 380px;
+    aspect-ratio: 16 / 9;
+    min-height: 0;
     max-height: 75vh;
   }
   .stage-frame.aspect-mobile {

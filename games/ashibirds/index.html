@@ -7,7 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>Ashi Birds — หนังสติ๊กยิงถล่มปราสาทหมูอชิ</title>
-  <link rel="stylesheet" href="css/style.css?v=23">
+  <link rel="icon" href="assets/cover.jpg">
+  <link rel="stylesheet" href="css/style.css?v=24">
   <script src="../common/rotate-helper.js" defer></script>
 </head>
 <body>
@@ -19,8 +20,20 @@
     <div class="hud-bar">
       <div class="hud-left">
         <div class="hud-badge hud-score-box">
-          <span class="hud-label">คะแนน</span>
-          <span id="hud-score" class="hud-score-val">0</span>
+          <div class="hud-score-row">
+            <span class="hud-label">คะแนน</span>
+            <span id="hud-score" class="hud-score-val">0</span>
+          </div>
+          <div class="hud-star-meter-wrap" title="ระดับดาวและเป้าหมายคะแนนด่านนี้">
+            <div id="hud-live-stars" class="hud-live-stars">☆☆☆</div>
+            <div class="hud-star-track">
+              <div id="hud-star-fill" class="hud-star-fill" style="width: 0%;"></div>
+              <span class="hud-star-marker mark-1" title="1 ดาว"></span>
+              <span class="hud-star-marker mark-2" title="2 ดาว"></span>
+              <span class="hud-star-marker mark-3" title="3 ดาว"></span>
+            </div>
+            <span id="hud-star-target" class="hud-star-target">เป้า 3★: 36,000</span>
+          </div>
         </div>
 
         <div class="hud-badge hud-stage-box">
@@ -86,9 +99,30 @@
         <h1 class="modal-h1">🎉 ถล่มป้อมสำเร็จ!</h1>
         <div id="victory-stars-display" class="stars-row">★★★</div>
         <div class="modal-score-wrap">
-          <span class="modal-score-label">คะแนนรวมด่านนี้</span>
-          <span id="victory-score-num" class="modal-score-val">45,000</span>
-          <span id="victory-bonus-num" class="modal-score-bonus">+10,000 (โบนัสนกเหลือ)</span>
+          <div class="victory-score-breakdown">
+            <div class="v-breakdown-row">
+              <span class="v-label">💥 ทำลายสิ่งกีดขวาง:</span>
+              <span id="victory-blocks-stat" class="v-val">0 / 0 (0%)</span>
+            </div>
+            <div class="v-breakdown-row">
+              <span class="v-label">🎯 จำนวนนกที่ใช้:</span>
+              <span id="victory-birds-stat" class="v-val">1 ตัว</span>
+            </div>
+            <div class="v-breakdown-row">
+              <span class="v-label">🐷 คะแนนกำจัดหมู:</span>
+              <span id="victory-base-score" class="v-val">0</span>
+            </div>
+            <div class="v-breakdown-row bonus-row">
+              <span class="v-label">🕊️ <span id="victory-bonus-label">โบนัสนกที่เหลือ:</span></span>
+              <span id="victory-bonus-num" class="v-val">+0</span>
+            </div>
+            <div class="v-breakdown-divider"></div>
+            <div class="v-breakdown-row total-row">
+              <span class="v-label-total">🏆 คะแนนรวมสุทธิ:</span>
+              <span id="victory-score-num" class="modal-score-val">0</span>
+            </div>
+            <div id="victory-star-status" class="victory-star-status">⭐ ผ่านด่านสำเร็จ!</div>
+          </div>
         </div>
         <div class="modal-actions">
           <button id="victory-retry-btn" class="wood-btn secondary">🔄 เล่นซ้ำด่านนี้</button>

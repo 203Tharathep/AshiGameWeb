@@ -93,21 +93,111 @@ export class CombatEngine {
 
   // --- Input Handling ---
   handleKeyDown(key) {
-    this.p1Keys[key.toLowerCase()] = true;
-    this.p2Keys[key.toLowerCase()] = true;
-
-    // Buffer input for P1 specials
-    this.recordInput(this.p1, key.toLowerCase());
-
-    // Check P1 Fatality / Super
-    if (this.matchState === 'FINISH_HIM' && (key === ' ' || key.toLowerCase() === 'f')) {
-      this.triggerFatality(this.p1, this.p2);
-    }
+    this.handlePlayerKey(1, key, true);
+    this.handlePlayerKey(2, key, true);
   }
 
   handleKeyUp(key) {
-    this.p1Keys[key.toLowerCase()] = false;
-    this.p2Keys[key.toLowerCase()] = false;
+    this.handlePlayerKey(1, key, false);
+    this.handlePlayerKey(2, key, false);
+  }
+
+  handlePlayerKey(playerNum, key, isDown) {
+    if (!key) return;
+    const k = key.toLowerCase();
+
+    if (playerNum === 1) {
+      if (isDown) {
+        this.p1Keys[k] = true;
+        if (this.p1) this.recordInput(this.p1, k);
+        if (this.matchState === 'FINISH_HIM' && (k === ' ' || k === 'f')) {
+          this.triggerFatality(this.p1, this.p2);
+        }
+      } else {
+        this.p1Keys[k] = false;
+      }
+    } else {
+      // Map standard keys to P2 controls
+      const p2Map = {
+        'w': 'arrowup',
+        's': 'arrowdown',
+        'a': 'arrowleft',
+        'd': 'arrowright',
+        'u': '4',
+        'j': '1',
+        'i': '5',
+        'k': '2',
+        'l': '0',
+        ' ': 'enter',
+        'f': 'f'
+      };
+      const mapped = p2Map[k] || k;
+      if (isDown) {
+        this.p2Keys[mapped] = true;
+        this.p2Keys[k] = true;
+        if (this.p2) this.recordInput(this.p2, k);
+        if (this.matchState === 'FINISH_HIM' && (k === ' ' || k === 'f' || k === 'enter')) {
+          this.triggerFatality(this.p2, this.p1);
+        }
+      } else {
+        this.p2Keys[mapped] = false;
+        this.p2Keys[k] = false;
+      }
+    }
+  }
+
+  getStateSnapshot() {
+    if (!this.p1 || !this.p2) return null;
+    return {
+      round: this.round,
+      timer: this.roundTimer,
+      state: this.matchState,
+      p1: {
+        x: Math.round(this.p1.x),
+        y: Math.round(this.p1.y),
+        hp: this.p1.hp,
+        drainHp: this.p1.drainHp,
+        superMeter: this.p1.superMeter,
+        facing: this.p1.facing,
+        animState: this.p1.animState,
+        roundsWon: this.p1.roundsWon
+      },
+      p2: {
+        x: Math.round(this.p2.x),
+        y: Math.round(this.p2.y),
+        hp: this.p2.hp,
+        drainHp: this.p2.drainHp,
+        superMeter: this.p2.superMeter,
+        facing: this.p2.facing,
+        animState: this.p2.animState,
+        roundsWon: this.p2.roundsWon
+      }
+    };
+  }
+
+  applyStateSnapshot(snap) {
+    if (!snap || !this.p1 || !this.p2) return;
+    this.round = snap.round;
+    this.roundTimer = snap.timer;
+    this.matchState = snap.state;
+
+    this.p1.x = snap.p1.x;
+    this.p1.y = snap.p1.y;
+    this.p1.hp = snap.p1.hp;
+    this.p1.drainHp = snap.p1.drainHp;
+    this.p1.superMeter = snap.p1.superMeter;
+    this.p1.facing = snap.p1.facing;
+    this.p1.animState = snap.p1.animState;
+    this.p1.roundsWon = snap.p1.roundsWon;
+
+    this.p2.x = snap.p2.x;
+    this.p2.y = snap.p2.y;
+    this.p2.hp = snap.p2.hp;
+    this.p2.drainHp = snap.p2.drainHp;
+    this.p2.superMeter = snap.p2.superMeter;
+    this.p2.facing = snap.p2.facing;
+    this.p2.animState = snap.p2.animState;
+    this.p2.roundsWon = snap.p2.roundsWon;
   }
 
   recordInput(p, key) {

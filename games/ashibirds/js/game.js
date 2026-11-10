@@ -47,6 +47,9 @@ class AshiBirdsGame {
     this.currentLevel = null;
     this.totalScore = 0;
     this.levelScore = 0;
+    this.currentStars = 0;
+    this.comboCount = 0;
+    this.lastHitTime = 0;
     this.birdsQueue = [];
     this.activeBird = null;
     this.flyingBirds = [];
@@ -141,6 +144,9 @@ class AshiBirdsGame {
     this.currentLevelIndex = lvlIndex;
     this.currentLevel = window.LEVELS_DATA[lvlIndex];
     this.levelScore = 0;
+    this.currentStars = 0;
+    this.comboCount = 0;
+    this.lastHitTime = 0;
     this.isGameOver = false;
     this.hasFired = false;
     this.anyBirdFiredInLevel = false;
@@ -185,6 +191,8 @@ class AshiBirdsGame {
     // Build Structure Blocks
     this.blocks = [];
     this.tntBoxes = [];
+    this.totalBlocksInLevel = this.currentLevel.blocks.length;
+    this.destroyedBlocksCount = 0;
     this.crushCooldowns.clear();
     this.currentLevel.blocks.forEach((bData) => {
       const mat = window.MATERIAL_TYPES[bData.mat] || window.MATERIAL_TYPES.wood;
@@ -597,11 +605,10 @@ class AshiBirdsGame {
       this.shockwaves.push({ x: tx, y: ty, r: 16, maxR: radius, color: '#ff3d00', alpha: 1.0 });
       this.addFloatingText(tx, ty - 38, 'TNT BOOM! 🔥', '#ff5252');
 
-      this.totalScore += 2000;
-      this.levelScore += 2000;
-
       // Stronger, satisfying TNT blast (150px radius, 0.046 force, 260 max damage)
       this.applyRadialPulse(tx, ty, radius, 0.046, 260);
+
+      this.destroyedBlocksCount++;
 
       World.remove(this.world, tntBody);
       this.blocks = this.blocks.filter((b) => b !== tntBody);
@@ -849,9 +856,9 @@ class AshiBirdsGame {
     this.totalScore += pts;
     this.levelScore += pts;
 
-    this.addFloatingText(pig.position.x, pig.position.y - 24, `+${pts.toLocaleString()}`, '#76ff03');
-    this.createPuffParticles(pig.position.x, pig.position.y, '#76ff03', 22);
-    this.createPuffParticles(pig.position.x, pig.position.y, '#ffffff', 12);
+    this.addFloatingScore(pig.position.x, pig.position.y - 24, pts, '#76ff03', true);
+    this.createPuffParticles(pig.position.x, pig.position.y, '#76ff03', 24);
+    this.createPuffParticles(pig.position.x, pig.position.y, '#ffffff', 14);
 
     World.remove(this.world, pig);
     this.targets = this.targets.filter((t) => t !== pig);
@@ -860,14 +867,12 @@ class AshiBirdsGame {
   }
 
   destroyBlock(block) {
-    const pts = block.matDef.scorePerKill;
-    this.totalScore += pts;
-    this.levelScore += pts;
-
     const bx = block.position.x;
     const by = block.position.y;
     const reachX = (block.w || 30) * 0.7 + 42;
     const reachY = (block.h || 30) * 0.7 + 48;
+
+    this.destroyedBlocksCount++;
 
     // Falling debris & splinter impact on nearby pigs when an adjacent/overhead obstacle shatters
     this.targets.slice().forEach((pig) => {
@@ -1026,8 +1031,11 @@ class AshiBirdsGame {
     // Update floating texts
     for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
       const ft = this.floatingTexts[i];
-      ft.y -= 1.3;
-      ft.alpha -= 0.018;
+      ft.y += ft.rVelY || -1.3;
+      ft.alpha -= 0.016;
+      if (ft.scale && ft.scale > 1.0) {
+        ft.scale = Math.max(1.0, ft.scale - 0.018);
+      }
       if (ft.alpha <= 0) this.floatingTexts.splice(i, 1);
     }
   }
@@ -1058,24 +1066,54 @@ class AshiBirdsGame {
 
     // Count remaining unused birds (including activeBird if still in sling)
     const unusedCount = this.birdsQueue.length + (this.activeBird ? 1 : 0);
+    const totalBirds = this.currentLevel.birds.length;
+    const birdsUsed = Math.max(1, totalBirds - unusedCount);
+    const maxDirect3StarBirds = totalBirds >= 4 ? 2 : 1;
     const birdsBonus = unusedCount * 10000;
     this.totalScore += birdsBonus;
     this.levelScore += birdsBonus;
-    this.updateHUD();
 
-    const thresholds = this.currentLevel.starScores;
+    const blockRatio = this.totalBlocksInLevel > 0
+      ? (this.destroyedBlocksCount / this.totalBlocksInLevel)
+      : 0;
+    const blockPercent = Math.round(blockRatio * 100);
+
+    // Exact user rules:
+    // 1. ด่านที่มีนก 3 ตัว: ใช้นก 1 ตัว -> ได้ 3 ดาวทันที
+    // 2. ด่านที่มีนก 4 ตัวขึ้นไป: ใช้นกไม่เกิน 2 ตัว -> ได้ 3 ดาวทันที
+    // 3. หากใช้เกินโควตาข้างต้น: ต้องทำลายสิ่งกีดขวางเกิน 50% (>= 50%) ถึงจะได้ 3 ดาว
     let stars = 1;
-    if (this.levelScore >= thresholds[2]) stars = 3;
-    else if (this.levelScore >= thresholds[1]) stars = 2;
+    let starReason = '';
+
+    if (birdsUsed <= maxDirect3StarBirds) {
+      stars = 3;
+      if (maxDirect3StarBirds === 1) {
+        starReason = '🌟 สุดยอดความแม่นยำ! ฆ่าหมูหมดด้วยนกเพียง 1 ตัว ได้รับ 3 ดาวเต็ม!';
+      } else {
+        starReason = `🌟 ยอดเยี่ยม! ฆ่าหมูหมดด้วยนกเพียง ${birdsUsed} ตัว (ไม่เกิน 2 ตัว) ได้รับ 3 ดาวเต็ม!`;
+      }
+    } else if (blockPercent >= 50) {
+      stars = 3;
+      starReason = `⭐⭐⭐ ยอดเยี่ยม! ทำลายสิ่งกีดขวางได้ถึง ${blockPercent}% (เกิน 50%) ได้รับ 3 ดาวเต็ม!`;
+    } else if (blockPercent >= 20 || unusedCount >= 1) {
+      stars = 2;
+      const targetBirds = maxDirect3StarBirds === 1 ? 'นก 1 ตัว' : 'นกไม่เกิน 2 ตัว';
+      starReason = `⭐⭐ ผ่านด่านได้ 2 ดาว (ทำลายสิ่งกีดขวางได้ ${blockPercent}% • ต้องทำลายเกิน 50% หรือใช้${targetBirds}เพื่อรับ 3 ดาว)`;
+    } else {
+      stars = 1;
+      const targetBirds = maxDirect3StarBirds === 1 ? 'นก 1 ตัว' : 'นกไม่เกิน 2 ตัว';
+      starReason = `⭐ ผ่านด่านได้ 1 ดาว (ทำลายสิ่งกีดขวางได้ ${blockPercent}% • ต้องทำลายเกิน 50% หรือใช้${targetBirds}เพื่อรับ 3 ดาว)`;
+    }
 
     this.levelStars[this.currentLevelIndex] = Math.max(
       this.levelStars[this.currentLevelIndex] || 0,
       stars
     );
     this.saveStars();
+    this.updateHUD();
 
     window.ashiAudio.playVictory();
-    this.showVictoryModal(stars, birdsBonus, unusedCount);
+    this.showVictoryModal(stars, birdsBonus, unusedCount, birdsUsed, blockRatio, starReason, maxDirect3StarBirds);
   }
 
   handleLevelDefeat() {
@@ -1625,12 +1663,16 @@ class AshiBirdsGame {
     // Floating Score / Skill Popups
     this.floatingTexts.forEach((ft) => {
       this.ctx.save();
-      this.ctx.globalAlpha = Math.max(0, ft.alpha);
-      this.ctx.font = '800 22px "IBM Plex Sans Thai", "Inter", sans-serif';
+      this.ctx.globalAlpha = Math.max(0, Math.min(1, ft.alpha));
+      const baseSize = ft.isScore ? 24 : 22;
+      const fontSize = Math.round(baseSize * (ft.scale || 1.0));
+      this.ctx.font = `900 ${fontSize}px "Inter", "IBM Plex Sans Thai", sans-serif`;
       this.ctx.fillStyle = ft.color;
       this.ctx.strokeStyle = '#000000';
-      this.ctx.lineWidth = 4;
+      this.ctx.lineWidth = ft.isScore ? 5 : 4;
       this.ctx.textAlign = 'center';
+      this.ctx.shadowColor = 'rgba(0,0,0,0.85)';
+      this.ctx.shadowBlur = 6;
       this.ctx.strokeText(ft.text, ft.x, ft.y);
       this.ctx.fillText(ft.text, ft.x, ft.y);
       this.ctx.restore();
@@ -1695,8 +1737,48 @@ class AshiBirdsGame {
     }
   }
 
-  addFloatingText(x, y, text, color = '#ffd54f') {
-    this.floatingTexts.push({ x, y, text, color, alpha: 1.0 });
+  addFloatingText(x, y, text, color = '#ffd54f', isBig = false) {
+    this.floatingTexts.push({
+      x,
+      y,
+      text,
+      color,
+      alpha: 1.0,
+      scale: isBig ? 1.35 : 1.0,
+      rVelY: isBig ? -1.8 : -1.3
+    });
+  }
+
+  addFloatingScore(x, y, pts, color = '#ffd54f', isBig = false) {
+    const text = `+${pts.toLocaleString()}`;
+    this.floatingTexts.push({
+      x,
+      y,
+      text,
+      color,
+      alpha: 1.0,
+      scale: isBig ? 1.4 : 1.15,
+      isScore: true,
+      rVelY: isBig ? -2.0 : -1.5
+    });
+  }
+
+  registerHitCombo(x, y) {
+    const now = performance.now();
+    if (now - this.lastHitTime < 1350) {
+      this.comboCount++;
+      if (this.comboCount >= 2) {
+        const comboBonus = Math.min(this.comboCount * 300, 3000);
+        this.levelScore += comboBonus;
+        this.totalScore += comboBonus;
+        const comboText = `COMBO x${this.comboCount}! +${comboBonus.toLocaleString()}`;
+        this.addFloatingText(x, y - 48, comboText, '#ffb300', true);
+        this.createPuffParticles(x, y - 36, '#ffb300', 10);
+      }
+    } else {
+      this.comboCount = 1;
+    }
+    this.lastHitTime = now;
   }
 
   // =========================================================================
@@ -1704,7 +1786,14 @@ class AshiBirdsGame {
   // =========================================================================
   updateHUD() {
     const scoreEl = document.getElementById('hud-score');
-    if (scoreEl) scoreEl.textContent = this.levelScore.toLocaleString();
+    if (scoreEl) {
+      scoreEl.textContent = this.levelScore.toLocaleString();
+      scoreEl.classList.add('bump');
+      clearTimeout(this.scoreBumpTimer);
+      this.scoreBumpTimer = setTimeout(() => {
+        scoreEl.classList.remove('bump');
+      }, 160);
+    }
 
     const lvlEl = document.getElementById('hud-level-title');
     if (lvlEl && this.currentLevel) lvlEl.textContent = this.currentLevel.name;
@@ -1714,6 +1803,74 @@ class AshiBirdsGame {
 
     const pigsLeftEl = document.getElementById('hud-pigs-left');
     if (pigsLeftEl) pigsLeftEl.textContent = `${this.targets.length}`;
+
+    // Live Star Calculation & Target Progress Bar
+    if (this.currentLevel) {
+      const unusedCount = this.birdsQueue.length + (this.activeBird ? 1 : 0);
+      const totalBirds = this.currentLevel.birds.length;
+      const birdsUsed = Math.max(0, totalBirds - unusedCount);
+      const maxDirect3StarBirds = totalBirds >= 4 ? 2 : 1;
+      const blockRatio = this.totalBlocksInLevel > 0
+        ? (this.destroyedBlocksCount / this.totalBlocksInLevel)
+        : 0;
+      const blockPct = Math.round(blockRatio * 100);
+
+      // Determine projected stars based on exact user rule:
+      let stars = 0;
+      if (this.isGameOver) {
+        stars = this.levelStars[this.currentLevelIndex] || 1;
+      } else {
+        if (birdsUsed <= maxDirect3StarBirds) {
+          // If within direct 3-star bird limit, clearing all pigs will earn 3 stars!
+          stars = 3;
+        } else if (blockPct >= 50) {
+          // More than direct bird limit used, but obstacles destroyed >= 50%
+          stars = 3;
+        } else if (blockPct >= 20 || unusedCount >= 1) {
+          stars = 2;
+        } else {
+          stars = 1;
+        }
+      }
+
+      // Play chime when reaching a new star during gameplay
+      if (stars > this.currentStars) {
+        this.currentStars = stars;
+        if (window.ashiAudio) window.ashiAudio.playStarChime(stars);
+        const starLabels = ['⭐ ปลดล็อก 1 ดาวแล้ว!', '⭐⭐ ปลดล็อก 2 ดาวแล้ว!', '⭐⭐⭐ 3 ดาวเต็ม สุดยอด!'];
+        this.addFloatingText(this.width / 2, 140, starLabels[stars - 1] || '⭐ STAR!', '#ffd54f', true);
+      }
+
+      const liveStarsEl = document.getElementById('hud-live-stars');
+      if (liveStarsEl) {
+        liveStarsEl.textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+      }
+
+      const fillEl = document.getElementById('hud-star-fill');
+      if (fillEl) {
+        let fillPct = 0;
+        if (birdsUsed <= maxDirect3StarBirds) {
+          fillPct = 100;
+        } else {
+          fillPct = Math.min(100, Math.round((blockPct / 50) * 100));
+        }
+        fillEl.style.width = `${fillPct}%`;
+      }
+
+      const targetEl = document.getElementById('hud-star-target');
+      if (targetEl) {
+        if (this.targets.length > 0) {
+          if (birdsUsed <= maxDirect3StarBirds) {
+            const limitDesc = maxDirect3StarBirds === 1 ? 'นก 1 ตัว' : 'นกไม่เกิน 2 ตัว';
+            targetEl.textContent = `หมูเหลือ ${this.targets.length} • ใช้นกไป ${birdsUsed} ตัว (ชนะด้วย${limitDesc} = 3★ ทันที!)`;
+          } else {
+            targetEl.textContent = `หมูเหลือ ${this.targets.length} • ทำลายสิ่งกีดขวาง ${this.destroyedBlocksCount}/${this.totalBlocksInLevel} (${blockPct}%) (ทำลายเกิน 50% = 3★)`;
+          }
+        } else {
+          targetEl.textContent = `★★★ เคลียร์ด่านสำเร็จ! (${stars} ดาว)`;
+        }
+      }
+    }
   }
 
   updateSkillButtonUI() {
@@ -1915,21 +2072,62 @@ class AshiBirdsGame {
     modal.classList.remove('hidden');
   }
 
-  showVictoryModal(stars, birdsBonus, unusedCount) {
+  showVictoryModal(stars, birdsBonus, unusedCount, birdsUsed = 1, blockRatio = 0, starReason = '', maxDirect3StarBirds = 1) {
     const modal = document.getElementById('victory-modal');
     if (!modal) return;
 
     const starsEl = document.getElementById('victory-stars-display');
     if (starsEl) starsEl.textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
 
-    const scoreEl = document.getElementById('victory-score-num');
-    if (scoreEl) scoreEl.textContent = this.levelScore.toLocaleString();
+    const pct = Math.round((blockRatio || 0) * 100);
+    const blocksStatEl = document.getElementById('victory-blocks-stat');
+    if (blocksStatEl) {
+      blocksStatEl.textContent = `${this.destroyedBlocksCount} / ${this.totalBlocksInLevel} ชิ้น (${pct}%)`;
+    }
+
+    const birdsStatEl = document.getElementById('victory-birds-stat');
+    if (birdsStatEl) {
+      let birdBadge = '';
+      if (birdsUsed <= maxDirect3StarBirds) {
+        birdBadge = maxDirect3StarBirds === 1
+          ? '🌟 (ใช้นกตัวเดียว ได้ 3 ดาวทันที!)'
+          : `🌟 (ใช้นก ${birdsUsed} ตัว ไม่เกิน 2 ตัว ได้ 3 ดาวทันที!)`;
+      }
+      birdsStatEl.textContent = `${birdsUsed} ตัว ${birdBadge}`;
+    }
+
+    const baseScore = Math.max(0, this.levelScore - birdsBonus);
+    const baseEl = document.getElementById('victory-base-score');
+    if (baseEl) baseEl.textContent = baseScore.toLocaleString();
 
     const bonusEl = document.getElementById('victory-bonus-num');
     if (bonusEl) {
-      bonusEl.textContent = unusedCount > 0
-        ? `โบนัสนกเหลือ ${unusedCount} ตัว: +${birdsBonus.toLocaleString()} แต้ม!`
-        : 'ผ่านด่านสำเร็จ!';
+      bonusEl.textContent = unusedCount > 0 ? `+${birdsBonus.toLocaleString()}` : '+0';
+    }
+
+    const bonusLabelEl = document.getElementById('victory-bonus-label');
+    if (bonusLabelEl) {
+      bonusLabelEl.textContent = unusedCount > 0
+        ? `โบนัสนกเหลือ (${unusedCount} ตัว x10,000):`
+        : 'โบนัสนกเหลือ:';
+    }
+
+    const scoreEl = document.getElementById('victory-score-num');
+    if (scoreEl) scoreEl.textContent = this.levelScore.toLocaleString();
+
+    const statusEl = document.getElementById('victory-star-status');
+    if (statusEl) {
+      statusEl.textContent = starReason || (stars === 3 ? '⭐⭐⭐ 3 ดาวเต็ม!' : `⭐ ได้รับ ${stars} ดาว`);
+      if (stars === 3) {
+        statusEl.style.borderColor = '#ffd54f';
+        statusEl.style.color = '#ffd54f';
+      } else if (stars === 2) {
+        statusEl.style.borderColor = '#ffca28';
+        statusEl.style.color = '#ffca28';
+      } else {
+        statusEl.style.borderColor = '#ffb300';
+        statusEl.style.color = '#ffb300';
+      }
     }
 
     modal.classList.remove('hidden');

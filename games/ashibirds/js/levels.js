@@ -254,7 +254,7 @@ window.LEVELS_DATA = [
     name: 'ด่าน 1: ปฐมบทการบิน (First Flight)',
     subtitle: 'ดึงหนังสติ๊กเล็งยิงถล่มบ้านไม้ให้หล่นทับหมูเชฟ!',
     theme: 'sunny',
-    starScores: [15000, 26000, 36000],
+    starScores: [5000, 10000, 16000],
     birds: ['red', 'chuck', 'red'],
     targets: [
       p('chef_small', 840, GY)
@@ -280,7 +280,7 @@ window.LEVELS_DATA = [
     name: 'ด่าน 2: หอคอยคู่พิฆาต (Double Towers)',
     subtitle: 'แตะจอขณะ Chuck สีเหลืองกำลังบิน เพื่อพุ่งเทอร์โบทะลวงไม้!',
     theme: 'sunny',
-    starScores: [24000, 38000, 50000],
+    starScores: [10000, 15000, 22000],
     birds: ['chuck', 'red', 'chuck'],
     targets: [
       p('chef_small', 760, GY),
@@ -311,7 +311,7 @@ window.LEVELS_DATA = [
     name: 'ด่าน 3: วิหารผลึกน้ำแข็ง (Ice Palace)',
     subtitle: 'แตะจอขณะแก๊งอชิฟ้ากำลังบิน เพื่อแยกเป็น 3 ร่างถล่มน้ำแข็ง!',
     theme: 'sunny',
-    starScores: [32000, 48000, 64000],
+    starScores: [17500, 23000, 29000],
     birds: ['blues', 'blues', 'chuck'],
     targets: [
       p('chef_small', 770, GY),
@@ -341,7 +341,7 @@ window.LEVELS_DATA = [
     name: 'ด่าน 4: บังเกอร์หินผา (Stone Bunker)',
     subtitle: 'ส่ง Bomb Ashi พุ่งชนหรือแตะจอเพื่อระเบิดทำลายกำแพงหิน!',
     theme: 'sunset',
-    starScores: [35000, 52000, 68000],
+    starScores: [12500, 18000, 24000],
     birds: ['bomb', 'chuck', 'red'],
     targets: [
       p('commander', 850, GY),
@@ -368,7 +368,7 @@ window.LEVELS_DATA = [
     name: 'ด่าน 5: ฟองสบู่ถล่มหอคอย (Bubble Lift)',
     subtitle: 'แตะจอเมื่อ Stella สีชมพูบินถึงตึก เพื่อเป่าฟองสบู่ยกหินลอยฟ้าแล้วทิ้งดิ่ง!',
     theme: 'sunset',
-    starScores: [42000, 60000, 78000],
+    starScores: [17500, 23000, 30000],
     birds: ['stella', 'chuck', 'bomb'],
     targets: [
       p('chef', 765, GY),
@@ -399,7 +399,7 @@ window.LEVELS_DATA = [
     name: 'ด่าน 6: โกดังระเบิดลูกโซ่ (TNT Warehouse)',
     subtitle: 'เล็งยิงถัง TNT สีแดงเพื่อจุดชนวนระเบิดกวาดล้างทั้งโกดัง!',
     theme: 'sunset',
-    starScores: [46000, 68000, 88000],
+    starScores: [17500, 24000, 32000],
     birds: ['blues', 'chuck', 'red', 'bomb'],
     targets: [
       p('chef', 740, GY),
@@ -432,7 +432,7 @@ window.LEVELS_DATA = [
     name: 'ด่าน 7: พี่ใหญ่อชิทลายปราการ (Terence Smash)',
     subtitle: 'ส่ง Terence อชิยักษ์พุ่งทะลวงกำแพงหิน 2 ชั้นให้พินาศ!',
     theme: 'midnight',
-    starScores: [52000, 75000, 98000],
+    starScores: [20000, 26000, 33000],
     birds: ['terence', 'bomb', 'stella', 'chuck'],
     targets: [
       p('commander', 775, GY),
@@ -464,7 +464,7 @@ window.LEVELS_DATA = [
     name: 'ด่าน 8: หอคอยสามชั้นรัตติกาล (Midnight Tower)',
     subtitle: 'ผสมผสานสกิลของฝูงนกเพื่อโค่นหอคอยสูง 3 ชั้น!',
     theme: 'midnight',
-    starScores: [56000, 82000, 108000],
+    starScores: [17500, 24000, 31000],
     birds: ['blues', 'stella', 'bomb', 'terence'],
     targets: [
       p('chef', 850, GY),
@@ -498,7 +498,7 @@ window.LEVELS_DATA = [
     name: 'ด่าน 9: พญาอินทรีถล่มปฐพี (Mighty Eagle Dive)',
     subtitle: 'ยิงพญาอินทรี Eagle Ashi ขึ้นเหนือป้อม แล้วแตะจอเพื่อพุ่งโฉบถล่มปฐพี!',
     theme: 'midnight',
-    starScores: [64000, 92000, 120000],
+    starScores: [25000, 32000, 40000],
     birds: ['eagle', 'bomb', 'chuck', 'blues'],
     targets: [
       p('commander', 725, GY),
@@ -537,7 +537,7 @@ window.LEVELS_DATA = [
     name: 'ด่าน 10: ปราสาทราชาหมูอชิ (King Ashi Final Boss)',
     subtitle: 'ศึกตัดสิน! รวมพลังฝูงนกอชิถล่มบัลลังก์ราชาหมู Emperor King Ashi!',
     theme: 'boss',
-    starScores: [85000, 125000, 165000],
+    starScores: [25000, 34000, 42000],
     birds: ['eagle', 'terence', 'bomb', 'stella', 'chuck', 'blues'],
     targets: [
       p('commander', 715, GY),

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AshiLane - 3D Racing Game (ซิ่งทะลุมิติกับอาชิ)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,700;0,900;1,700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="./assets/index-DbFW5jyr.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-T6ITGFK-.css">
+
+  <script src="../common/rotate-helper.js" defer></script>
+</head>
+<body>
+  <div id="canvas-container"></div>
+
+  <!-- HUD: In-Race Overlay -->
+  <div id="hud" class="hidden">
+    <!-- Top Left: Lap & Position & Stage -->
+    <div class="hud-top-left">
+      <div id="hud-rank" class="rank-badge">1<span>st</span></div>
+      <div class="lap-box">
+        <div id="hud-stage-name" class="stage-badge">บุรีรัมย์ ไนท์ กรังด์ปรีซ์</div>
+        <div id="hud-lap" class="lap-text">LAP 1 / 3</div>
+        <div id="hud-time" class="time-text">00:00.00</div>
+        <div id="hud-best" class="best-text">BEST: --:--.--</div>
+      </div>
+    </div>
+
+    <!-- Top Center: Mystery Item Slot -->
+    <div id="hud-item-slot" class="item-slot hidden">
+      <div class="item-icon-wrap">
+        <span id="hud-item-icon">❓</span>
+      </div>
+      <span class="item-key-hint">[Q] หรือ [F] ใช้ไอเทม</span>
+    </div>
+
+    <!-- Top Right: Minimap Radar & Pause Button -->
+    <div class="hud-top-right">
+      <button id="btn-hud-pause" class="hud-pause-btn" title="หยุดเกม [ESC / P]">⏸️</button>
+      <canvas id="minimap-canvas" width="160" height="160"></canvas>
+    </div>
+
+    <!-- Bottom Left: Ashi Driver Reaction Cam & Emote Soundboard -->
+    <div class="hud-bottom-left">
+      <div class="driver-portrait-container">
+        <img id="hud-driver-img" src="" alt="Ashi Driver" />
+        <div id="hud-reaction-bubble" class="reaction-bubble">สปีดดด!</div>
+        <div id="hud-driver-name" class="driver-tag">นักซิ่งอาชิ</div>
+      </div>
+
+      <!-- Quick Emote Soundboard -->
+      <div class="emote-bar">
+        <button class="emote-btn">🔥 ปาดหน้า!</button>
+        <button class="emote-btn">🚀 แรงเกินต้าน!</button>
+        <button class="emote-btn">👑 เสี่ยมาแล้ว!</button>
+        <button class="emote-btn">🏎️ ดริฟต์เนียนๆ</button>
+      </div>
+    </div>
+
+    <!-- Bottom Right: Speedometer & Nitro Gauges -->
+    <div class="hud-bottom-right">
+      <div id="hud-momentum-badge" class="momentum-badge hidden">🎯 เลี้ยงความเร็ว (CARVING)</div>
+
+      <div class="drift-gauge-container">
+        <div class="drift-gauge-label">MINI-TURBO DRIFT</div>
+        <div class="drift-gauge-track">
+          <div id="hud-drift-bar" class="drift-gauge-fill"></div>
+        </div>
+      </div>
+
+      <div class="nitro-gauge-container">
+        <div class="nitro-gauge-label">⚡ NITRO BOOST (SHIFT / E)</div>
+        <div class="nitro-gauge-track">
+          <div id="hud-nitro-bar" class="nitro-gauge-fill"></div>
+        </div>
+      </div>
+
+      <div class="speedo-cluster">
+        <div class="gear-badge">
+          <span class="gear-sub">GEAR</span>
+          <span id="hud-gear" class="gear-val">1</span>
+        </div>
+        <div class="speed-box">
+          <span id="hud-speed" class="speed-val">0</span>
+          <span class="speed-unit">KM/H</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications banner -->
+    <div id="hud-notifications"></div>
+
+    <!-- Mobile Touch Controls -->
+    <div id="touch-controls">
+      <div class="touch-dpad">
+        <button id="btn-touch-left" class="t-btn">◀</button>
+        <button id="btn-touch-right" class="t-btn">▶</button>
+      </div>
+      <div class="touch-actions">
+        <button id="btn-touch-item" class="t-btn t-item">ITEM</button>
+        <button id="btn-touch-drift" class="t-btn t-drift">DRIFT</button>
+        <button id="btn-touch-boost" class="t-btn t-boost">BOOST</button>
+        <button id="btn-touch-brake" class="t-btn t-brake">BRAKE</button>
+        <button id="btn-touch-gas" class="t-btn t-gas">GAS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cinematic Cut Transition Curtain -->
+  <div id="cinematic-transition-curtain" class="cinematic-curtain hidden"></div>
+
+  <!-- Starting Grid Lineup Intro Overlay (TV Broadcast on-track camera sweep) -->
+  <div id="view-grid-intro" class="grid-intro-overlay hidden">
+    <div class="grid-intro-topbar">
+      <div class="grid-intro-badge">
+        <span class="grid-intro-dot"></span>
+        <span class="grid-intro-tag">STARTING GRID • LIVE</span>
+      </div>
+      <div id="grid-intro-stage-title" class="grid-intro-stage-title">🏖️ หาดทรายสายดริฟต์</div>
+      <button id="btn-skip-grid-intro" class="grid-intro-skip-pill" type="button" title="ข้ามการเปิดตัว (Space / Enter / คลิก)">
+        <span>ข้ามการเปิดตัว</span>
+        <span class="skip-key">SPACE ⏩</span>
+      </button>
+    </div>
+
+    <!-- TV Broadcast Showcase Card (Docked Bottom-Left to avoid covering 3D cars) -->
+    <div class="grid-broadcast-wrap">
+      <div id="grid-broadcast-card" class="grid-broadcast-card">
+        <!-- Big Full Photo Area -->
+        <div class="grid-broadcast-photo-box">
+          <img id="gb-photo" src="" alt="Racer Skin" class="grid-broadcast-photo" />
+          <div class="grid-broadcast-photo-vignette"></div>
+          
+          <div class="grid-broadcast-top-badges">
+            <div class="grid-broadcast-pos-badge" id="gb-pos">7</div>
+            <div class="grid-broadcast-meta-col">
+              <span class="gb-team-pill">🏎️ ASHI GRAND PRIX</span>
+              <span class="gb-role-pill" id="gb-badge">RIVAL RACER</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Info Bar -->
+        <div class="grid-broadcast-info-bar">
+          <div class="grid-broadcast-driver-name" id="gb-name">นักซิ่งอาชิ</div>
+          <div class="grid-broadcast-car-desc" id="gb-car">
+            <span class="gb-color-indicator" id="gb-color-dot"></span>
+            <span id="gb-car-name">อาชิ GT ซูเปอร์คาร์</span>
+            <span class="gb-car-tag-pill" id="gb-car-tag">SPEED DEMON</span>
+          </div>
+        </div>
+
+        <div class="grid-broadcast-glimmer"></div>
+      </div>
+    </div>
+
+    <div class="grid-intro-footer">
+      <span class="grid-intro-hint">⚡ กล้องกำลังแพลนชมรถรอบสนาม — กด <kbd>SPACE</kbd> หรือคลิกหน้าจอเพื่อเริ่มแข่งทันที</span>
+    </div>
+  </div>
+
+  <!-- Countdown 3-2-1-GO Overlay -->
+  <div id="countdown-overlay" class="hidden">
+    <div id="countdown-text" class="countdown-num">3</div>
+  </div>
+
+  <!-- VIEW 1: Main Menu -->
+  <div id="view-menu" class="ui-view">
+    <div class="menu-brand">
+      <div class="title-sub">THE ULTIMATE MEME DRIFT SIMULATOR</div>
+      <h1 class="title-main">ASHI<span class="accent">LANE</span></h1>
+      <div class="title-tag">ซิ่งทะลุมิติกับอาชิ 3D</div>
+    </div>
+
+    <div class="menu-card">
+      <div class="player-input-wrap">
+        <label for="player-name-input">ชื่อนักแข่ง (Player Name):</label>
+        <input type="text" id="player-name-input" maxlength="16" placeholder="กรอกชื่อของคุณ..." />
+      </div>
+
+      <div class="menu-actions">
+        <button id="btn-play-single" class="btn btn-primary pulse-btn">
+          <span class="btn-icon">🏆</span> แข่งกับบอทอาชิ (AI Grand Prix)
+        </button>
+        <button id="btn-play-timeattack" class="btn btn-secondary">
+          <span class="btn-icon">⏱️</span> จับเวลาความเร็ว (Time Attack)
+        </button>
+        <div class="btn-grid-two">
+          <button id="btn-open-create-room" class="btn btn-multi-host">
+            <span class="btn-icon">🌐</span> สร้างห้องเล่นกับเพื่อน
+          </button>
+          <button id="btn-open-join-room" class="btn btn-multi-join">
+            <span class="btn-icon">🔑</span> ใส่รหัสเข้าห้อง
+          </button>
+        </div>
+        <button id="btn-open-garage" class="btn btn-garage">
+          <span class="btn-icon">🚗</span> โรงรถ: เลือกรถ & สกินอาชิ 41 แบบ
+        </button>
+        <div class="menu-footer-bar">
+          <button id="btn-toggle-bgm" class="btn-subtle">🎵 เพลง: ปิด (คลิกเพื่อเปิด)</button>
+          <span class="controls-hint">⌨️ WASD/ลูกศร = ขับ | SPACE = ดริฟต์ | SHIFT = ไนโตร | Q/F = ใช้ไอเทม | C = มุมกล้อง | R = รีเซ็ต</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 1.5: Stage & Difficulty Select -->
+  <div id="view-stage-select" class="ui-view hidden">
+    <div class="stage-select-card">
+      <div class="stage-select-header">
+        <h2 id="stage-select-title">🏆 เลือกด่านแข่งขัน (AI Grand Prix)</h2>
+        <button id="btn-stage-back" class="btn btn-back">◀ ย้อนกลับ</button>
+      </div>
+
+      <!-- Stage Cards Grid -->
+      <div id="stages-grid" class="stages-grid"></div>
+
+      <!-- Match Options -->
+      <div class="stage-options-box">
+        <!-- Difficulty row (for GP) -->
+        <div id="stage-difficulty-row" class="option-row">
+          <span class="option-label">ความยากของ AI:</span>
+          <div class="pills-group">
+            <button class="diff-pill" data-diff="easy">ง่าย (Easy)</button>
+            <button class="diff-pill active" data-diff="normal">ปกติ (Normal)</button>
+            <button class="diff-pill" data-diff="hard">ยาก (Hard)</button>
+          </div>
+        </div>
+
+        <!-- Laps row -->
+        <div class="option-row">
+          <span class="option-label">จำนวนรอบ:</span>
+          <div class="pills-group">
+            <button class="laps-pill" data-laps="1">1 รอบ (Sprint)</button>
+            <button class="laps-pill" data-laps="2">2 รอบ</button>
+            <button class="laps-pill active" data-laps="3">3 รอบ (GP)</button>
+            <button class="laps-pill" data-laps="5">5 รอบ</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-select-footer">
+        <button id="btn-start-selected-race" class="btn btn-primary pulse-btn btn-lg">
+          🚀 เริ่มการแข่งขัน (Start Race)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 2: Garage & Customization with 360° Inspection -->
+  <div id="view-garage" class="ui-view hidden">
+    <!-- Top Bar -->
+    <div class="garage-topbar">
+      <div class="garage-title-wrap">
+        <h2>🏎️ โรงรถอาชิ <span class="accent">360° GARAGE</span></h2>
+        <span class="garage-sub">ปรับแต่งชิ้นส่วนแอดออน & หมุนชมรอบคันแบบ 3D อิสระ</span>
+      </div>
+      <button id="btn-garage-back" class="btn btn-back">◀ บันทึก & กลับเมนู</button>
+    </div>
+
+    <!-- Main Workspace Layout -->
+    <div class="garage-workspace">
+      <!-- Left Floating Glass Console -->
+      <aside class="garage-console">
+        <!-- Navigation Tabs -->
+        <div class="garage-tabs-header">
+          <button class="garage-tab-btn active" data-tab="cars">🚗 สเปครถ</button>
+          <button class="garage-tab-btn" data-tab="addons">🔧 แอดออน</button>
+          <button class="garage-tab-btn" data-tab="paint">🎨 สี & นีออน</button>
+          <button class="garage-tab-btn" data-tab="skins">🖼️ สกิน</button>
+        </div>
+
+        <div class="garage-tab-scroll">
+          <!-- TAB 1: CAR SELECTOR & STATS -->
+          <div id="tab-cars" class="garage-tab-content active">
+            <div class="car-nav-header">
+              <button id="garage-car-prev" class="nav-arrow" title="รุ่นก่อนหน้า">◀</button>
+              <div class="car-info-title">
+                <span id="garage-car-tag" class="badge">SPEED DEMON</span>
+                <h3 id="garage-car-name">Ashi GT Supercar</h3>
+              </div>
+              <button id="garage-car-next" class="nav-arrow" title="รุ่นถัดไป">▶</button>
+            </div>
+
+            <p id="garage-car-desc" class="car-desc-text">รถสปอร์ตแอโรไดนามิกส์ทรงต่ำ ความเร็วปลายสูงสุดจัดจ้าน</p>
+
+            <!-- Stats Bars -->
+            <div class="stats-list">
+              <div class="stat-row">
+                <div class="stat-label-wrap">
+                  <span>ความเร็วสูงสุด (Speed)</span>
+                </div>
+                <div class="stat-bar-track"><div id="stat-speed-bar" class="stat-bar-fill"></div></div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-label-wrap">
+                  <span>อัตราเร่ง (Acceleration)</span>
+                </div>
+                <div class="stat-bar-track"><div id="stat-accel-bar" class="stat-bar-fill"></div></div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-label-wrap">
+                  <span>การดริฟต์ (Drift Power)</span>
+                </div>
+                <div class="stat-bar-track"><div id="stat-drift-bar" class="stat-bar-fill"></div></div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-label-wrap">
+                  <span>การควบคุม (Handling)</span>
+                </div>
+                <div class="stat-bar-track"><div id="stat-handling-bar" class="stat-bar-fill"></div></div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-label-wrap">
+                  <span>ไนโตรบูสต์ (Nitro)</span>
+                </div>
+                <div class="stat-bar-track"><div id="stat-boost-bar" class="stat-bar-fill"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: ADDONS & CUSTOM PARTS -->
+          <div id="tab-addons" class="garage-tab-content">
+            <!-- Addon 1: Spoilers & Wings -->
+            <div class="addon-category-block">
+              <div class="addon-cat-header">
+                <span class="cat-icon">🏁</span>
+                <span class="cat-title">สปอยเลอร์ & ปีกหลัง (Rear Wing)</span>
+              </div>
+              <div class="addon-pills-row" data-category="spoiler">
+                <button class="addon-pill active" data-value="stock">สแตนดาร์ด</button>
+                <button class="addon-pill" data-value="ducktail">Ducktail สปอร์ต</button>
+                <button class="addon-pill" data-value="gt_wing">GT Carbon Wing</button>
+                <button class="addon-pill" data-value="hyper_fin">ครีบฉลาม Fin</button>
+                <button class="addon-pill" data-value="drag_wing">Drag Big Wing</button>
+                <button class="addon-pill" data-value="none">ถอดปีก Clean</button>
+              </div>
+            </div>
+
+            <!-- Addon 2: Rims & Wheels -->
+            <div class="addon-category-block">
+              <div class="addon-cat-header">
+                <span class="cat-icon">🛞</span>
+                <span class="cat-title">กะทะล้อ & แม็กซ์ (Rims & Wheels)</span>
+              </div>
+              <div class="addon-pills-row" data-category="rim">
+                <button class="addon-pill active" data-value="stock">สแตนดาร์ด</button>
+                <button class="addon-pill" data-value="sport_5spoke">สปอร์ต 5 ก้าน</button>
+                <button class="addon-pill" data-value="deep_dish">Deep Dish ออฟลึก</button>
+                <button class="addon-pill" data-value="turbofan">Turbofan แอโร่</button>
+                <button class="addon-pill" data-value="gold_mesh">Gold Mesh ซิ่งทอง</button>
+              </div>
+            </div>
+
+            <!-- Addon 3: Exhaust System -->
+            <div class="addon-category-block">
+              <div class="addon-cat-header">
+                <span class="cat-icon">🔥</span>
+                <span class="cat-title">ระบบท่อไอเสีย (Exhaust System)</span>
+              </div>
+              <div class="addon-pills-row" data-category="exhaust">
+                <button class="addon-pill active" data-value="stock">ท่อคู่เดิม</button>
+                <button class="addon-pill" data-value="burnt_titanium">ไทเทเนียมรมฟ้า</button>
+                <button class="addon-pill" data-value="quad_carbon">ท่อ 4 คาร์บอน</button>
+                <button class="addon-pill" data-value="side_pipes">ท่อออกข้างทรงซิ่ง</button>
+              </div>
+            </div>
+
+            <!-- Addon 4: Roof & Hood Equipment -->
+            <div class="addon-category-block">
+              <div class="addon-cat-header">
+                <span class="cat-icon">⚡</span>
+                <span class="cat-title">ของแต่งหลังคา & ฝากระโปรง (Roof / Hood)</span>
+              </div>
+              <div class="addon-pills-row" data-category="roof_hood">
+                <button class="addon-pill active" data-value="none">ไม่มี (Clean)</button>
+                <button class="addon-pill" data-value="roof_scoop">Roof Scoop ดักลม</button>
+                <button class="addon-pill" data-value="blower_scoop">Supercharger ดักสด</button>
+                <button class="addon-pill" data-value="rally_lightbar">Rally Lightbar 4 ดวง</button>
+              </div>
+            </div>
+
+            <!-- Addon 5: Underglow Neon -->
+            <div class="addon-category-block">
+              <div class="addon-cat-header">
+                <span class="cat-icon">✨</span>
+                <span class="cat-title">ไฟนีออนใต้ท้องรถ (Underglow Neon)</span>
+              </div>
+              <div class="addon-pills-row" data-category="underglow">
+                <button class="addon-pill active" data-value="body_match">ตามสีตัวถัง</button>
+                <button class="addon-pill" data-value="#00f0ff" style="border-color:#00f0ff">ฟ้านีออน Cyber</button>
+                <button class="addon-pill" data-value="#ff007f" style="border-color:#ff007f">ชมพู Hot Pink</button>
+                <button class="addon-pill" data-value="#00ff66" style="border-color:#00ff66">เขียว Acid</button>
+                <button class="addon-pill" data-value="#ffd700" style="border-color:#ffd700">ทอง Electric</button>
+                <button class="addon-pill" data-value="#9d4edd" style="border-color:#9d4edd">ม่วง Tokyo</button>
+                <button class="addon-pill" data-value="#ff0033" style="border-color:#ff0033">แดง Crimson</button>
+                <button class="addon-pill" data-value="none">ปิดไฟนีออน</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: PAINT & COLOR -->
+          <div id="tab-paint" class="garage-tab-content">
+            <div class="garage-section">
+              <h4>🎨 สีตัวถังรถ (Body Color)</h4>
+              <p class="section-subtext">เลือกพาเลทต์สียอดฮิต หรือปรับเฉดสีตามใจชอบ</p>
+              <div class="color-picker-row">
+                <input type="color" id="garage-color-input" value="#ff2255" />
+                <span class="color-hex-label" id="garage-color-hex">#FF2255</span>
+              </div>
+              <div class="swatches-grid">
+                <span class="color-swatch" style="background: #ff2255" data-color="#ff2255" title="Hot Crimson"></span>
+                <span class="color-swatch" style="background: #00d2ff" data-color="#00d2ff" title="Cyber Cyan"></span>
+                <span class="color-swatch" style="background: #00ff88" data-color="#00ff88" title="Neon Green"></span>
+                <span class="color-swatch" style="background: #ffd700" data-color="#ffd700" title="Racing Gold"></span>
+                <span class="color-swatch" style="background: #9d4edd" data-color="#9d4edd" title="Ultra Violet"></span>
+                <span class="color-swatch" style="background: #ff6600" data-color="#ff6600" title="Sunset Orange"></span>
+                <span class="color-swatch" style="background: #f8fafc" data-color="#f8fafc" title="Pearl White"></span>
+                <span class="color-swatch" style="background: #11141e" data-color="#11141e" title="Midnight Black"></span>
+                <span class="color-swatch" style="background: #2563eb" data-color="#2563eb" title="Subaru Blue"></span>
+                <span class="color-swatch" style="background: #ec4899" data-color="#ec4899" title="Bubblegum Pink"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: ASHI SKINS -->
+          <div id="tab-skins" class="garage-tab-content">
+            <div class="skin-panel-header">
+              <h3>🖼️ เลือกสกินอาชิ (Ashi Livery)</h3>
+              <span class="sub">คลิกเพื่อสวมใส่ภาพอาชิบนฝากระโปรง & ตัวถัง</span>
+            </div>
+            <div id="garage-skins-list" class="skins-scroll-grid">
+              <!-- Populated dynamically by UIManager -->
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center & Right 3D Viewport Controls Overlay -->
+      <div class="garage-viewport-overlay">
+        <!-- Floating 360° Turntable Controls Bar -->
+        <div class="garage-turntable-controls">
+          <div class="tt-group tt-quick-views">
+            <button id="btn-tt-view-front" class="tt-btn" title="มุมหน้ารถ">🚘 หน้ารถ</button>
+            <button id="btn-tt-view-side" class="tt-btn" title="มุมข้างรถ">🏎️ ข้างรถ</button>
+            <button id="btn-tt-view-rear" class="tt-btn" title="มุมท้ายรถ">🏁 ท้ายรถ</button>
+            <button id="btn-tt-view-iso" class="tt-btn active" title="มุมเฉียง 3/4">📐 3/4 View</button>
+            <button id="btn-tt-view-top" class="tt-btn" title="มุมสูงจากด้านบน">🛰️ มุมบน</button>
+          </div>
+
+          <div class="tt-divider"></div>
+
+          <div class="tt-group tt-rotation-actions">
+            <button id="btn-tt-left" class="tt-btn" title="หมุนซ้าย (Rotate Left)">◀ หมุนซ้าย</button>
+            <button id="btn-tt-autospin" class="tt-btn active" title="เปิด/ปิด การหมุนอัตโนมัติ">🔄 หมุนอัตโนมัติ</button>
+            <button id="btn-tt-right" class="tt-btn" title="หมุนขวา (Rotate Right)">หมุนขวา ▶</button>
+          </div>
+
+          <div class="tt-divider"></div>
+
+          <div class="tt-group tt-zoom-actions">
+            <button id="btn-tt-zoom-in" class="tt-btn tt-icon-btn" title="ซูมเข้า (Zoom In)">🔍+</button>
+            <button id="btn-tt-zoom-out" class="tt-btn tt-icon-btn" title="ซูมออก (Zoom Out)">🔍-</button>
+          </div>
+        </div>
+
+        <!-- Floating Drag / Touch Hint Badge -->
+        <div class="garage-drag-hint">
+          <span class="hint-icon">🖱️</span>
+          <span>คลิกลากหมุนดูรถได้รอบทิศ 360° | เลื่อนลูกกลิ้งเมาส์เพื่อซูม</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 3: Multiplayer Lobby -->
+  <div id="view-lobby" class="ui-view hidden">
+    <div class="lobby-card">
+      <div class="lobby-header">
+        <div class="room-code-tag">รหัสห้อง (ROOM CODE)</div>
+        <div id="lobby-room-code" class="room-code-big">ASHI-0000</div>
+        <div class="code-btn-row">
+          <button id="btn-copy-code" class="btn btn-sm">📋 คัดลอกรหัส</button>
+          <button id="btn-copy-link" class="btn btn-sm btn-cyan">🔗 คัดลอกลิงก์ชวนเพื่อน</button>
+        </div>
+      </div>
+
+      <!-- Lobby Players Grid -->
+      <div class="lobby-players-section">
+        <h3>ผู้เล่นในห้อง (RACERS)</h3>
+        <div id="lobby-players-grid" class="players-grid"></div>
+      </div>
+
+      <!-- Host Settings -->
+      <div id="lobby-host-controls" class="lobby-settings-box">
+        <div class="setting-item">
+          <label>เลือกสนาม (Track / Stage):</label>
+          <select id="lobby-stage-select">
+            <option value="beach">🏖️ ด่าน 1: ซันเซ็ตบีช สปีดเวย์</option>
+            <option value="buriram" selected>🌃 ด่าน 2: บุรีรัมย์ ไนท์ กรังด์ปรีซ์</option>
+            <option value="snow">❄️ ด่าน 3: ยอดเขาหิมะ เซอร์กิต</option>
+            <option value="volcano">🌋 ด่าน 4: ภูเขาไฟอาชิ อินเฟอร์โน</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label>จำนวนรอบ (Laps):</label>
+          <select id="lobby-laps-select">
+            <option value="1">1 รอบ (Quick Sprint)</option>
+            <option value="2">2 รอบ</option>
+            <option value="3" selected>3 รอบ (มาตรฐาน Grand Prix)</option>
+            <option value="5">5 รอบ (มาราธอน)</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label>เติมบอท AI เข้ามาแข่งด้วย:</label>
+          <select id="lobby-ai-select">
+            <option value="0">ไม่เติมบอท (เฉพาะเพื่อน)</option>
+            <option value="2" selected>+ 2 คัน</option>
+            <option value="4">+ 4 คัน</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Lobby Action Buttons -->
+      <div class="lobby-footer">
+        <button id="btn-leave-lobby" class="btn btn-danger">ออกจากห้อง</button>
+        <button id="btn-ready" class="btn btn-warning">⏳ กดพร้อม</button>
+        <button id="btn-start-race" class="btn btn-primary pulse-btn">🚀 เริ่มการแข่งขัน (Start Race)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 4: Victory / Podium Celebration -->
+  <div id="view-victory" class="ui-view hidden">
+    <div class="podium-overlay">
+      
+      <!-- Top Celebration Banner -->
+      <div class="podium-header">
+        <div class="podium-badge">🏆 ASHI GRAND PRIX PODIUM 🏆</div>
+        <h1 class="podium-title" id="podium-headline">พิธีมอบรางวัลชนะเลิศ</h1>
+        <p class="podium-subtitle" id="podium-subheadline">3 อันดับสุดยอดนักแข่งผู้พิชิตสนามแข่งขัน!</p>
+      </div>
+
+      <!-- The 3-Step Podium (อันดับ 1-3) -->
+      <div class="podium-stage">
+        
+        <!-- 2nd Place: Silver -->
+        <div class="podium-column rank-2" id="podium-col-2">
+          <div class="podium-racer">
+            <div class="podium-medal">🥈</div>
+            <div class="podium-avatar-frame silver-frame">
+              <img id="podium-avatar-2" class="podium-avatar-img" src="./assets/ashi/Gemini_Generated_Image_4g9dic4g9dic4g9d.jpg" alt="" onerror="this.src='/assets/ashi/Gemini_Generated_Image_4g9dic4g9dic4g9d.jpg'" />
+              <div class="podium-step-badge silver-badge">2nd</div>
+            </div>
+            <div class="podium-racer-card silver-card">
+              <div class="podium-racer-name" id="podium-name-2">-</div>
+              <div class="podium-racer-car" id="podium-car-2">-</div>
+              <div class="podium-racer-time" id="podium-time-2">-</div>
+            </div>
+          </div>
+          <div class="podium-pedestal pedestal-silver">
+            <div class="pedestal-number">2</div>
+            <div class="pedestal-shine"></div>
+            <div class="pedestal-label">รองชนะเลิศอันดับ 1</div>
+          </div>
+        </div>
+
+        <!-- 1st Place: Gold / Champion -->
+        <div class="podium-column rank-1" id="podium-col-1">
+          <div class="podium-racer champion-racer">
+            <div class="podium-crown">👑</div>
+            <div class="podium-avatar-frame gold-frame champion-frame">
+              <img id="podium-avatar-1" class="podium-avatar-img champion-avatar-img" src="./assets/ashi/Gemini_Generated_Image_4g9dic4g9dic4g9d.jpg" alt="" onerror="this.src='/assets/ashi/Gemini_Generated_Image_4g9dic4g9dic4g9d.jpg'" />
+              <div class="podium-step-badge gold-badge">🏆 1st 🏆</div>
+            </div>
+            <div class="podium-racer-card gold-card">
+              <div class="champion-ribbon">★ CHAMPION ★</div>
+              <div class="podium-racer-name champion-name" id="podium-name-1">-</div>
+              <div class="podium-racer-car" id="podium-car-1">-</div>
+              <div class="podium-racer-time champion-time" id="podium-time-1">-</div>
+            </div>
+          </div>
+          <div class="podium-pedestal pedestal-gold">
+            <div class="pedestal-number">1</div>
+            <div class="pedestal-shine"></div>
+            <div class="pedestal-label">🏆 แชมเปี้ยน 🏆</div>
+          </div>
+        </div>
+
+        <!-- 3rd Place: Bronze -->
+        <div class="podium-column rank-3" id="podium-col-3">
+          <div class="podium-racer">
+            <div class="podium-medal">🥉</div>
+            <div class="podium-avatar-frame bronze-frame">
+              <img id="podium-avatar-3" class="podium-avatar-img" src="./assets/ashi/Gemini_Generated_Image_4g9dic4g9dic4g9d.jpg" alt="" onerror="this.src='/assets/ashi/Gemini_Generated_Image_4g9dic4g9dic4g9d.jpg'" />
+              <div class="podium-step-badge bronze-badge">3rd</div>
+            </div>
+            <div class="podium-racer-card bronze-card">
+              <div class="podium-racer-name" id="podium-name-3">-</div>
+              <div class="podium-racer-car" id="podium-car-3">-</div>
+              <div class="podium-racer-time" id="podium-time-3">-</div>
+            </div>
+          </div>
+          <div class="podium-pedestal pedestal-bronze">
+            <div class="pedestal-number">3</div>
+            <div class="pedestal-shine"></div>
+            <div class="pedestal-label">รองชนะเลิศอันดับ 2</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Remaining Racers Table (อันดับ 4 เป็นต้นไป หรือ สรุปทั้งหมด) -->
+      <div class="podium-table-wrapper" id="podium-other-wrapper">
+        <div class="table-toggle-bar">
+          <span>📋 สรุปผลการแข่งขันและสถิติเวลาทั้งหมด</span>
+        </div>
+        <table class="rankings-table podium-table">
+          <thead>
+            <tr>
+              <th>อันดับ</th>
+              <th>นักแข่ง</th>
+              <th>รถที่ใช้</th>
+              <th>เวลารวม</th>
+              <th>รอบที่ดีที่สุด</th>
+            </tr>
+          </thead>
+          <tbody id="victory-rankings-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="victory-actions">
+        <button id="btn-victory-restart" class="btn btn-primary pulse-btn">🔄 แข่งใหม่อีกรอบ</button>
+        <button id="btn-victory-stage" class="btn btn-secondary">🗺️ เปลี่ยนด่านแข่งขัน</button>
+        <button id="btn-victory-menu" class="btn btn-secondary">🏠 เมนูหลัก</button>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,267 @@
+export const SKINS = [
+  {
+    id: 'green_dress',
+    name: 'Ashi Green Dress',
+    nameTh: 'ชุดเดรสเขียวเหนี่ยวทรัพย์',
+    file: 'Gemini_Generated_Image_4g9dic4g9dic4g9d.jpg',
+    rarity: 'legendary',
+    tag: 'ICONIC',
+    color: '#0d5c3a',
+    desc: 'สกินระดับตำนาน เดรสสีเขียวมรกต ลายรอบตัวถัง ฝากระโปรง และหลังคา เพิ่มความพริ้วไหว 100%'
+  },
+  {
+    id: 'red_bikini',
+    name: 'Ashi Red Bikini',
+    nameTh: 'บิกินี่แดงแรงฤทธิ์',
+    file: 'qwen_edit_20261004_234512.png',
+    rarity: 'legendary',
+    tag: 'HOT SPEED',
+    color: '#e60026',
+    desc: 'สกินท้าลมร้อน สีแดงจัดจ้านสะดุดตาทุกโค้ง เพิ่มความดุดันและร้อนแรงรอบคัน'
+  },
+  {
+    id: 'shrek_ashi',
+    name: 'Shrek Ashi Ogre',
+    nameTh: 'ชเร็ค อาชิโอเกอร์',
+    file: 'Gemini_Generated_Image_9bccp39bccp39bcc.jpeg',
+    rarity: 'epic',
+    tag: 'OGRE POWER',
+    color: '#4d7c0f',
+    desc: 'พลังแห่งหนองน้ำ ตัวเขียวหูแตร ปาดโค้งแบบไร้ความปรานี'
+  },
+  {
+    id: 'bomb_bird',
+    name: 'Angry Bomb Ashi',
+    nameTh: 'อาชินกดำระเบิดตู้ม',
+    file: 'Gemini_Generated_Image_w62h0zw62h0zw62h.jpg',
+    rarity: 'epic',
+    tag: 'EXPLOSIVE',
+    color: '#dc2626',
+    desc: 'หน้านิ่งแต่ระเบิดพลังบูสต์ ชนใครมีกระเด็น'
+  },
+  {
+    id: 'chuck_bird',
+    name: 'Angry Chuck Ashi',
+    nameTh: 'อาชินกเหลืองติดสปีด',
+    file: 'Gemini_Generated_Image_r2mua9r2mua9r2mu.jpg',
+    rarity: 'epic',
+    tag: 'HYPER FAST',
+    color: '#eab308',
+    desc: 'จงอยปากพุ่งทะยาน ความเร็วปลายไร้ขีดจำกัด'
+  },
+  {
+    id: 'tokyo_ghoul',
+    name: 'Tokyo Ghoul Ashi',
+    nameTh: 'อาชิกูล ตาแดงผมขาว',
+    file: 'Gemini_Generated_Image_ovar5lovar5lovar.jpeg',
+    rarity: 'epic',
+    tag: 'DARK MODE',
+    color: '#6366f1',
+    desc: 'ตาแดงประกายเลือด ผมขาวสุดเท่ ซิ่งทะลุยามค่ำคืน'
+  },
+  {
+    id: 'big_boss',
+    name: 'Office Big Boss',
+    nameTh: 'เสี่ยอาชิ เยี่ยมยอด 👍',
+    file: 'Gemini_Generated_Image_t2e45ct2e45ct2e4.jpeg',
+    rarity: 'rare',
+    tag: 'BIG BOSS',
+    color: '#0284c7',
+    desc: 'เสื้อเชิ้ตเนคไท ยกนิ้วโป้งให้กำลังใจคู่แข่งที่ตามหลัง'
+  },
+  {
+    id: 'larva_ashi',
+    name: 'Larva Ashi',
+    nameTh: 'อาชิ หนอนลาวา',
+    file: 'Gemini_Generated_Image_kwy6itkwy6itkwy6.jpeg',
+    rarity: 'rare',
+    tag: 'WIGGLE',
+    color: '#f59e0b',
+    desc: 'คู่หูหนอนจอมกวน ดริฟต์ดึ๋งๆ สไลด์เข้าเส้นชัย'
+  },
+  {
+    id: 'ripped_shirt',
+    name: 'Ripped Warrior Ashi',
+    nameTh: 'อาชิเสื้อขาด สายบู๊',
+    file: 'Gemini_Generated_Image_nkpk4ynkpk4ynkpk.jpeg',
+    rarity: 'rare',
+    tag: 'FIGHTER',
+    color: '#b91c1c',
+    desc: 'เสื้อขาดไม่ขาดใจ ดริฟต์สู้จนหยดสุดท้าย'
+  },
+  {
+    id: 'pizza_ashi',
+    name: 'Pizza Box Ashi',
+    nameTh: 'อาชิ กล่องพิซซ่าปริศนา',
+    file: 'Gemini_Generated_Image_8ffdat8ffdat8ffd.jpg',
+    rarity: 'rare',
+    tag: 'SECRET CHEF',
+    color: '#ea580c',
+    desc: 'ส่งด่วนความเร็วสูง พิซซ่ายังร้อนๆ ถึงเส้นชัยก่อนใคร'
+  },
+  {
+    id: 'sleeping_deep',
+    name: 'Deep Sleep Ashi',
+    nameTh: 'อาชิ หลับลึกตึงๆ',
+    file: '1.jpeg',
+    rarity: 'common',
+    tag: 'SLEEPY',
+    color: '#6366f1',
+    desc: 'หลับตาก็ยังชนะ สกินสมาธิขั้นสูงสุด'
+  },
+  {
+    id: 'tired_chubby',
+    name: 'Tired Ashi',
+    nameTh: 'อาชิ อิ่มความสุข',
+    file: 'Gemini_Generated_Image_njs9nynjs9nynjs9.jpg',
+    rarity: 'common',
+    tag: 'CHILL',
+    color: '#0284c7',
+    desc: 'นอนมองเพดานรอเพื่อนเข้าเส้นชัย'
+  },
+  {
+    id: 'style_2',
+    name: 'Ashi Smile 2',
+    nameTh: 'อาชิ หน้าหวานยิ้มพิมพ์ใจ',
+    file: '2.jpeg',
+    rarity: 'common',
+    tag: 'SWEET',
+    color: '#db2777',
+    desc: 'รอยยิ้มกระชากใจ แจกความสดใสบนสนามแข่ง'
+  },
+  {
+    id: 'style_3',
+    name: 'Ashi Chill 3',
+    nameTh: 'อาชิ ฟีลกู๊ด 3',
+    file: '3.jpeg',
+    rarity: 'common',
+    tag: 'FRESH',
+    color: '#059669',
+    desc: 'ความมั่นใจเกินร้อย เข้าโค้งไม่แตะเบรก'
+  },
+  {
+    id: 'style_4',
+    name: 'Ashi Cool 4',
+    nameTh: 'อาชิ หล่อเท่ 4',
+    file: '4.jpeg',
+    rarity: 'common',
+    tag: 'COOL',
+    color: '#7c3aed',
+    desc: 'มุมหล่อเหลาบาดตาคู่แข่ง'
+  },
+  {
+    id: 'style_5',
+    name: 'Ashi Vibe 5',
+    nameTh: 'อาชิ แววตานักซิ่ง 5',
+    file: '5.jpeg',
+    rarity: 'common',
+    tag: 'RACING',
+    color: '#dc2626',
+    desc: 'จ้องมองเส้นชัยข้างหน้า'
+  },
+  {
+    id: 'style_6',
+    name: 'Ashi Minion 6',
+    nameTh: 'อาชิ มินเนี่ยน 6',
+    file: '6.jpeg',
+    rarity: 'common',
+    tag: 'BANANA',
+    color: '#eab308',
+    desc: 'กวนโอ๊ยขั้นสุด ซิ่งแซงทุกคัน'
+  },
+  {
+    id: 'style_7',
+    name: 'Ashi Street 7',
+    nameTh: 'อาชิ สตรีทเรเซอร์ 7',
+    file: '7.jpeg',
+    rarity: 'common',
+    tag: 'STREET',
+    color: '#2563eb',
+    desc: 'สายสตรีทตัวจริงเสียงจริง'
+  },
+  {
+    id: 'style_glasses',
+    name: 'Ashi Shades',
+    nameTh: 'อาชิ แว่นเท่จัดจ้าน',
+    file: '1000010497.jpg',
+    rarity: 'rare',
+    tag: 'SWAG',
+    color: '#0891b2',
+    desc: 'แว่นตากันลมและแสงไฟสปอร์ตไลท์'
+  },
+  {
+    id: 'style_boss_look',
+    name: 'Ashi Stare',
+    nameTh: 'อาชิ จ้องเขม็ง',
+    file: '9594C133-5E25-46D5-AFBF-57F4A9578910.jpg',
+    rarity: 'rare',
+    tag: 'STARE',
+    color: '#0284c7',
+    desc: 'สายตาพิฆาตคู่แข่ง เสียวสันหลังวาบ'
+  },
+  {
+    id: 'style_selfie',
+    name: 'Ashi Selfie',
+    nameTh: 'อาชิ เซลฟี่น่ารัก',
+    file: 'A600349B-B25C-4CC0-98E5-E87A2CA8E409.jpg',
+    rarity: 'rare',
+    tag: 'KAWAII',
+    color: '#f43f5e',
+    desc: 'รูปเซลฟี่น่ารักมุ้งมิ้งบนฝากระโปรง'
+  },
+  {
+    id: 'style_meme1',
+    name: 'Ashi Meme Supreme',
+    nameTh: 'อาชิ มีมระดับพระกาฬ',
+    file: 'image.jpg',
+    rarity: 'rare',
+    tag: 'MEME',
+    color: '#d97706',
+    desc: 'มีมในตำนานที่ทุกคนต้องกราบ'
+  }
+];
+
+export const ALL_IMAGE_FILES = [
+  "Gemini_Generated_Image_4g9dic4g9dic4g9d.jpg",
+  "qwen_edit_20261004_234512.png",
+  "Gemini_Generated_Image_9bccp39bccp39bcc.jpeg",
+  "Gemini_Generated_Image_w62h0zw62h0zw62h.jpg",
+  "Gemini_Generated_Image_r2mua9r2mua9r2mu.jpg",
+  "Gemini_Generated_Image_ovar5lovar5lovar.jpeg",
+  "Gemini_Generated_Image_t2e45ct2e45ct2e4.jpeg",
+  "Gemini_Generated_Image_kwy6itkwy6itkwy6.jpeg",
+  "Gemini_Generated_Image_nkpk4ynkpk4ynkpk.jpeg",
+  "Gemini_Generated_Image_8ffdat8ffdat8ffd.jpg",
+  "Gemini_Generated_Image_njs9nynjs9nynjs9.jpg",
+  "Gemini_Generated_Image_980u6n980u6n980u.jpeg",
+  "1.jpeg",
+  "2.jpeg",
+  "3.jpeg",
+  "4.jpeg",
+  "5.jpeg",
+  "6.jpeg",
+  "7.jpeg",
+  "1000003143.jpg",
+  "1000010497.jpg",
+  "1000010594.jpg",
+  "1000010702.jpg",
+  "1792547722853.jpg",
+  "31741AB7-5D3F-492E-AD6B-C84A05DBC96A.jpg",
+  "4AE012A1-07E3-499B-A045-3DE065F8C41B.jpg",
+  "7697016D-AD18-4321-A86E-C1903606889C.jpg",
+  "8DC459A9-C6D5-40DE-B3DB-941B39FA6934.jpg",
+  "9594C133-5E25-46D5-AFBF-57F4A9578910.jpg",
+  "A600349B-B25C-4CC0-98E5-E87A2CA8E409.jpg",
+  "CF10F4A2-6167-46D3-8C7A-698AA1D28339.jpg",
+  "ed9e7aa4-dc13-498d-971e-040f8962f4d0.jpeg",
+  "F849256C-251C-457E-AD18-8D1859BBFC73.jpg",
+  "FDD01CB8-0FE1-4071-953B-4019578FA3C0.jpg",
+  "image.jpg",
+  "image(1).jpg",
+  "IMG_0288.JPG",
+  "IMG_0333.JPG",
+  "IMG_0335.JPG",
+  "IMG_20260921_130220.jpg",
+  "IMG_20261021_085203.jpg"
+];
+

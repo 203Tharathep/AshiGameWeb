@@ -69,6 +69,12 @@ const REPOS = [
     url: 'https://github.com/203Tharathep/AshiVsZombie.git',
     dest: 'games/ashivszombie',
     copyItems: ['index.html', 'css', 'js', 'assets']
+  },
+  {
+    name: 'AshiLane',
+    url: 'https://github.com/203Tharathep/AshiLane.git',
+    dest: 'games/ashilongroad',
+    copyItems: ['dist']
   }
 ];
 

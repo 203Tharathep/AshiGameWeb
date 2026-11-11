@@ -430,16 +430,52 @@ export const OFFICIAL_GAMES = [
       { key: 'ลากเมาส์ / ปัดนิ้ว', action: 'หมุนตู้โชว์ 3D รอบทิศทาง 360° และเอียงดูฟอยล์โฮโลแกรม' },
       { key: 'ลูกศรซ้าย–ขวา / ปุ่มสลับ', action: 'สลับดูการ์ดใบก่อนหน้าและถัดไป' }
     ]
+  },
+  {
+    id: 'ashilongroad',
+    title: 'AshiLane: ซิ่งทะลุมิติกับอาชิ 3D (Ashi Long Road)',
+    subtitle: 'เกมแข่งรถ 3D สปีดเรซซิ่ง ซิ่งดริฟต์เก็บไอเทม ตะลุยสนามแข่ง ปาดหน้าฝูงนักแข่งอาชิสุดป่วน',
+    playUrl: './games/ashilongroad/index.html',
+    author: '203Tharathep',
+    category: 'racing',
+    categoryLabel: 'แข่งรถ 3D / สปีด',
+    badge: '3D Racing · Mario Kart Style',
+    coverFit: 'cover',
+    thumbnailBg: './games/ashilongroad/assets/ashi/Gemini_Generated_Image_4g9dic4g9dic4g9d.jpg',
+    characterOverlay: '',
+    icon: './games/ashilongroad/assets/ashi/Gemini_Generated_Image_4g9dic4g9dic4g9d.jpg',
+    screenshots: [
+      { src: './games/ashilongroad/assets/ashi/Gemini_Generated_Image_4g9dic4g9dic4g9d.jpg', caption: 'AshiLane: หน้าปกเกมนักซิ่งอาชิ 3D' },
+      { src: './games/ashilongroad/assets/ashi/1000010497.jpg', caption: 'Ashi Supercar พร้อมลุยทุกโค้ง' },
+      { src: './games/ashilongroad/assets/ashi/1792547722853.jpg', caption: 'ซิ่งดริฟต์สะสมมินิเทอร์โบ' },
+      { src: './games/ashilongroad/assets/ashi/1.jpeg', caption: 'ฉลองชัยชนะบนโพเดียมอันดับ 1' }
+    ],
+    likes: 3120,
+    dislikes: 18,
+    plays: 38400,
+    allowMobileAspect: true,
+    defaultMobileAspect: false,
+    description:
+      'เกมแข่งรถ 3D สุดอลังการสไตล์ Mario Kart / Need for Speed ที่รวมร่างกับจักรวาลมีมอชิ! ขับรถซูเปอร์คาร์ อาชิ GT, โกคาร์ท และรถแข่งหลากสไตล์ เลือกลายสกินอาชิสุดฮา ดริฟต์เข้าโค้งสะสมมินิเทอร์โบ กดไนโตรบูสต์พุ่งทะยาน เก็บกล่องไอเทมสุ่มยิงสปีดสกัดคู่แข่ง แข่งขันชิงแชมป์บนโพเดียม 3 ด่าน (ซันเซ็ตบีช, บุรีรัมย์ ไนท์ กรังด์ปรีซ์, ไฮเปอร์สเปซ) พร้อมระบบเสียงเอฟเฟกต์และซาวด์บอร์ดสุดกวน! (เวอร์ชันออนไลน์: https://ashilongrace.onrender.com/)',
+    controls: [
+      { key: 'W / ↑ / ปุ่ม GAS', action: 'เหยียบคันเร่งพุ่งทะยานไปข้างหน้า' },
+      { key: 'A–D / ←–→ / ปุ่มพวงมาลัย', action: 'หักเลี้ยวซ้าย–ขวา' },
+      { key: 'Space / S / ↓ / ปุ่ม BRAKE', action: 'เบรก / เข้าเกียร์ถอยหลัง' },
+      { key: 'Shift / E / ปุ่ม BOOST', action: 'กดระเบิดพลังไนโตรเร่งความเร็วทะลุขีดจำกัด' },
+      { key: 'Q / F / ปุ่ม ITEM', action: 'กดปล่อยไอเทมกล่องสุ่มเพื่อป่วนคู่แข่ง' },
+      { key: 'แตะจอสัมผัส (Touch)', action: 'รองรับปุ่มควบคุมบนหน้าจอมือถือและแท็บเล็ตเต็มรูปแบบ' }
+    ]
   }
 ];
 
 export const CATEGORIES = [
-  { id: 'all', label: 'ทั้งหมด' },
-  { id: 'physics', label: 'ฟิสิกส์ / หนังสติ๊ก' },
-  { id: 'defense', label: 'กันป้อม / วางแผน' },
-  { id: 'card-battle', label: 'การ์ดแบทเทิล' },
-  { id: 'horror', label: 'สยองขวัญ' },
-  { id: 'visual-novel', label: 'เนื้อเรื่อง' },
-  { id: 'gacha-3d', label: 'กล่องสุ่ม 3D' },
-  { id: 'favorites', label: 'รายการโปรด' }
+  { id: 'all', label: 'ทั้งหมด', icon: '🎮' },
+  { id: 'racing', label: 'แข่งรถ 3D', icon: '🏎️' },
+  { id: 'physics', label: 'ฟิสิกส์', icon: '🎯' },
+  { id: 'defense', label: 'กันป้อม', icon: '🛡️' },
+  { id: 'card-battle', label: 'การ์ดแบทเทิล', icon: '🃏' },
+  { id: 'horror', label: 'สยองขวัญ', icon: '👻' },
+  { id: 'visual-novel', label: 'เนื้อเรื่อง', icon: '📖' },
+  { id: 'gacha-3d', label: 'กล่องสุ่ม 3D', icon: '🎁' },
+  { id: 'favorites', label: 'รายการโปรด', icon: '❤️' }
 ];

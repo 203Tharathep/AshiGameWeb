@@ -14,9 +14,12 @@ class CleanGamePortal {
     this.games = OFFICIAL_GAMES;
     this.categories = CATEGORIES;
     this.activeCategory = 'all';
+    this.currentSort = 'featured';
     this.searchQuery = '';
     this.currentGame = null;
     this.isMobileAspect = false;
+    this.currentScreenshots = [];
+    this.currentScreenshotIndex = 0;
 
     this.theme = localStorage.getItem('ashigame_theme') || 'light';
     this.favorites = new Set(this.loadArray('ashigame_favorites'));
@@ -93,6 +96,7 @@ class CleanGamePortal {
     this.dom = {
       brandLogoLink: document.getElementById('brandLogoLink'),
       searchInput: document.getElementById('searchInput'),
+      searchClearBtn: document.getElementById('searchClearBtn'),
       bgmPillWrap: document.getElementById('bgmPillWrap'),
       bgmToggleBtn: document.getElementById('bgmToggleBtn'),
       bgmIconWrap: document.getElementById('bgmIconWrap'),
@@ -103,7 +107,9 @@ class CleanGamePortal {
       themeIconWrap: document.getElementById('themeIconWrap'),
 
       homeView: document.getElementById('homeView'),
+      spotlightHero: document.getElementById('spotlightHero'),
       categoryPills: document.getElementById('categoryPills'),
+      sortSelect: document.getElementById('sortSelect'),
       gamesCountLabel: document.getElementById('gamesCountLabel'),
       gamesGrid: document.getElementById('gamesGrid'),
 
@@ -111,6 +117,7 @@ class CleanGamePortal {
       backToHomeBtn: document.getElementById('backToHomeBtn'),
       crumbCategory: document.getElementById('crumbCategory'),
       crumbTitle: document.getElementById('crumbTitle'),
+      stageAmbientGlow: document.getElementById('stageAmbientGlow'),
       gameStageWrapper: document.getElementById('gameStageWrapper'),
       iframeLoader: document.getElementById('iframeLoader'),
       gameIframe: document.getElementById('gameIframe'),
@@ -138,6 +145,8 @@ class CleanGamePortal {
 
       lightboxModal: document.getElementById('lightboxModal'),
       closeLightboxBtn: document.getElementById('closeLightboxBtn'),
+      prevLightboxBtn: document.getElementById('prevLightboxBtn'),
+      nextLightboxBtn: document.getElementById('nextLightboxBtn'),
       lightboxImg: document.getElementById('lightboxImg'),
       lightboxCaption: document.getElementById('lightboxCaption'),
       toast: document.getElementById('toast')
@@ -200,6 +209,7 @@ class CleanGamePortal {
       this.activeCategory = 'all';
       this.searchQuery = '';
       this.dom.searchInput.value = '';
+      this.dom.searchClearBtn?.classList.add('hidden');
       this.renderCategories();
       this.renderGrid();
       window.location.hash = '#home';
@@ -207,9 +217,23 @@ class CleanGamePortal {
 
     this.dom.searchInput.addEventListener('input', (e) => {
       this.searchQuery = e.target.value.trim();
+      this.dom.searchClearBtn?.classList.toggle('hidden', !this.searchQuery);
       if (!this.dom.playerView.classList.contains('hidden') && this.searchQuery) {
         window.location.hash = '#home';
       }
+      this.renderGrid();
+    });
+
+    this.dom.searchClearBtn?.addEventListener('click', () => {
+      this.searchQuery = '';
+      this.dom.searchInput.value = '';
+      this.dom.searchClearBtn?.classList.add('hidden');
+      this.renderGrid();
+      this.dom.searchInput.focus();
+    });
+
+    this.dom.sortSelect?.addEventListener('change', (e) => {
+      this.currentSort = e.target.value;
       this.renderGrid();
     });
 
@@ -222,6 +246,10 @@ class CleanGamePortal {
         document.body.classList.remove('lights-off');
         this.dom.lightboxModal.classList.add('hidden');
         this.exitAllFullscreenModes();
+      }
+      if (!this.dom.lightboxModal.classList.contains('hidden')) {
+        if (e.key === 'ArrowRight') this.stepLightbox(1);
+        if (e.key === 'ArrowLeft') this.stepLightbox(-1);
       }
     });
 
@@ -370,6 +398,16 @@ class CleanGamePortal {
       this.dom.lightboxModal.classList.add('hidden');
     });
 
+    this.dom.prevLightboxBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.stepLightbox(-1);
+    });
+
+    this.dom.nextLightboxBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.stepLightbox(1);
+    });
+
     this.dom.lightboxModal.addEventListener('click', (e) => {
       if (e.target === this.dom.lightboxModal) {
         this.dom.lightboxModal.classList.add('hidden');
@@ -416,7 +454,21 @@ class CleanGamePortal {
   renderCategories() {
     this.dom.categoryPills.innerHTML = this.categories.map((cat) => {
       const active = this.activeCategory === cat.id ? 'active' : '';
-      return `<button class="pill-btn ${active}" data-cat="${cat.id}">${cat.label}</button>`;
+      let count = 0;
+      if (cat.id === 'all') {
+        count = this.games.length;
+      } else if (cat.id === 'favorites') {
+        count = this.favorites.size;
+      } else {
+        count = this.games.filter((g) => g.category === cat.id).length;
+      }
+      return `
+        <button class="pill-btn ${active}" data-cat="${cat.id}">
+          <span class="pill-icon">${cat.icon || '🎮'}</span>
+          <span class="pill-label">${cat.label}</span>
+          <span class="pill-count">${count}</span>
+        </button>
+      `;
     }).join('');
 
     this.dom.categoryPills.querySelectorAll('.pill-btn').forEach((btn) => {
@@ -425,6 +477,97 @@ class CleanGamePortal {
         this.renderCategories();
         this.renderGrid();
       });
+    });
+  }
+
+  renderSpotlightHero() {
+    if (!this.dom.spotlightHero) return;
+
+    if (this.searchQuery) {
+      this.dom.spotlightHero.style.display = 'none';
+      return;
+    }
+
+    const filtered = this.getFilteredGames();
+    if (filtered.length === 0) {
+      this.dom.spotlightHero.style.display = 'none';
+      return;
+    }
+
+    const featuredGame =
+      this.activeCategory === 'all'
+        ? this.games.find((g) => g.id === 'ashibirds') || filtered[0]
+        : filtered[0];
+
+    if (!featuredGame) {
+      this.dom.spotlightHero.style.display = 'none';
+      return;
+    }
+
+    this.dom.spotlightHero.style.display = 'block';
+    const isFav = this.favorites.has(featuredGame.id);
+    const playsFormatted =
+      (featuredGame.plays || 0) >= 1000
+        ? `${((featuredGame.plays || 0) / 1000).toFixed(1)}k`
+        : `${featuredGame.plays || 0}`;
+
+    this.dom.spotlightHero.innerHTML = `
+      <div class="hero-card" data-id="${featuredGame.id}">
+        <div class="hero-backdrop" style="background-image: url('${featuredGame.thumbnailBg}')"></div>
+        <div class="hero-overlay"></div>
+        
+        <div class="hero-content">
+          <div class="hero-badge-row">
+            <span class="hero-tag">🔥 แนะนำประจำสัปดาห์</span>
+            <span class="hero-genre-tag">${featuredGame.categoryLabel}</span>
+          </div>
+
+          <h2 class="hero-title">${featuredGame.title}</h2>
+          <p class="hero-subtitle">${featuredGame.subtitle}</p>
+
+          <div class="hero-meta-row">
+            <span class="hero-stat-pill">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              ${playsFormatted} ครั้ง
+            </span>
+            <span class="hero-stat-pill">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              ${featuredGame.likes || 0} ถูกใจ
+            </span>
+            ${featuredGame.allowMobileAspect ? `<span class="hero-stat-pill mobile-ready">📱 รองรับมือถือ</span>` : ''}
+          </div>
+
+          <div class="hero-actions">
+            <button class="hero-play-btn js-hero-play" data-id="${featuredGame.id}">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+              <span>เล่นเกมนี้ทันที</span>
+            </button>
+            <button class="hero-fav-btn ${isFav ? 'is-fav' : ''} js-hero-fav" data-id="${featuredGame.id}" title="บันทึกรายการโปรด">
+              ${isFav ? SVG_HEART_SOLID : SVG_HEART_OUTLINE}
+              <span>${isFav ? 'ในรายการโปรด' : 'บันทึก'}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <img class="hero-thumb" src="${featuredGame.thumbnailBg}" alt="${featuredGame.title}" />
+        </div>
+      </div>
+    `;
+
+    this.dom.spotlightHero.querySelector('.js-hero-play')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.openGame(featuredGame.id);
+    });
+
+    this.dom.spotlightHero.querySelector('.hero-card')?.addEventListener('click', (e) => {
+      if (e.target.closest('.js-hero-fav')) return;
+      this.openGame(featuredGame.id);
+    });
+
+    this.dom.spotlightHero.querySelector('.js-hero-fav')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.toggleFavorite(featuredGame.id);
     });
   }
 
@@ -446,25 +589,56 @@ class CleanGamePortal {
           g.description.toLowerCase().includes(q)
       );
     }
+
+    if (this.currentSort === 'plays') {
+      list.sort((a, b) => (b.plays || 0) - (a.plays || 0));
+    } else if (this.currentSort === 'likes') {
+      list.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+    } else if (this.currentSort === 'title') {
+      list.sort((a, b) => a.title.localeCompare(b.title, 'th'));
+    }
+
     return list;
   }
 
   renderGrid() {
+    this.renderSpotlightHero();
     const filtered = this.getFilteredGames();
     this.dom.gamesCountLabel.textContent = `${filtered.length} เกม`;
 
     if (filtered.length === 0) {
       this.dom.gamesGrid.innerHTML = `
         <div class="empty-box">
-          <p>ไม่พบเกมในหมวดหมู่นี้</p>
+          <div class="empty-icon">🎮</div>
+          <h3>ไม่พบเกมในหมวดหมู่นี้</h3>
+          <p>ลองค้นหาด้วยคำอื่น หรือเลือกดูหมวดหมู่อื่นๆ ได้เลย</p>
+          ${
+            this.searchQuery
+              ? `<button id="clearSearchFromEmpty" class="btn-clear-empty">ล้างคำค้นหา</button>`
+              : ''
+          }
         </div>
       `;
+      document.getElementById('clearSearchFromEmpty')?.addEventListener('click', () => {
+        this.searchQuery = '';
+        if (this.dom.searchInput) this.dom.searchInput.value = '';
+        this.dom.searchClearBtn?.classList.add('hidden');
+        this.renderGrid();
+      });
       return;
     }
 
     this.dom.gamesGrid.innerHTML = filtered
       .map((game) => {
         const isFav = this.favorites.has(game.id);
+        const playsFormatted =
+          (game.plays || 0) >= 1000
+            ? `${((game.plays || 0) / 1000).toFixed(1)}k`
+            : `${game.plays || 0}`;
+        const badgeText = game.badge
+          ? game.badge.split('·')[0].trim()
+          : game.categoryLabel.split('/')[0].trim();
+
         return `
           <article class="game-card js-card" data-id="${game.id}">
             <div class="card-cover ${game.coverFit === 'contain' ? 'is-contain' : ''}">
@@ -479,22 +653,35 @@ class CleanGamePortal {
                   ? `<img class="card-char-overlay" src="${game.characterOverlay}" alt="" loading="lazy" />`
                   : ''
               }
-              <button class="card-fav-btn ${isFav ? 'is-fav' : ''} js-fav" data-id="${game.id}" title="รายการโปรด" aria-label="รายการโปรด">
+
+              <!-- Genre Badge on Cover -->
+              <span class="card-badge-pill">${badgeText}</span>
+
+              <!-- Favorite Button -->
+              <button class="card-fav-btn ${isFav ? 'is-fav' : ''} js-fav" data-id="${game.id}" title="${isFav ? 'นำออกจากรายการโปรด' : 'บันทึกในรายการโปรด'}" aria-label="รายการโปรด">
                 ${isFav ? SVG_HEART_SOLID : SVG_HEART_OUTLINE}
               </button>
+
+              <!-- Plays / Likes Pill -->
+              <div class="card-stats-pill">
+                <span>🔥 ${playsFormatted}</span>
+                <span>⭐ ${game.likes || 0}</span>
+              </div>
+
+              <!-- Play Overlay -->
               <div class="card-play-overlay">
                 <span class="play-pill">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="6 4 20 12 6 20 6 4"></polygon>
                   </svg>
-                  เล่นเกม
+                  เล่นเลย
                 </span>
               </div>
             </div>
 
             <div class="card-content">
               <div class="card-meta-row">
-                <span>${game.categoryLabel}</span>
+                <span class="card-cat-tag">${game.categoryLabel}</span>
                 <span class="card-enter-hint">เล่น →</span>
               </div>
               <h2 class="card-title">${game.title}</h2>
@@ -558,6 +745,10 @@ class CleanGamePortal {
       }, 2000);
     }
 
+    if (this.dom.stageAmbientGlow) {
+      this.dom.stageAmbientGlow.style.backgroundImage = `url('${game.thumbnailBg}')`;
+    }
+
     this.dom.crumbCategory.textContent = game.categoryLabel;
     this.dom.crumbTitle.textContent = game.title;
     this.dom.playerGameIcon.src = game.icon;
@@ -568,20 +759,25 @@ class CleanGamePortal {
     this.dom.playerDescription.textContent = game.description;
 
     this.dom.playerControlsList.innerHTML = game.controls
-      .map(
-        (c) => `
-        <div class="ctrl-item">
-          <span class="ctrl-key">${c.key}</span>
-          <span class="ctrl-desc">${c.action}</span>
-        </div>
-      `
-      )
+      .map((c) => {
+        const keysHtml = c.key
+          .split('/')
+          .map((k) => `<kbd class="kbd-key">${k.trim()}</kbd>`)
+          .join('<span class="kbd-sep">/</span>');
+        return `
+          <div class="ctrl-item">
+            <div class="ctrl-keys-wrap">${keysHtml}</div>
+            <span class="ctrl-desc">${c.action}</span>
+          </div>
+        `;
+      })
       .join('');
 
-    this.dom.playerScreenshotsGrid.innerHTML = game.screenshots
+    this.currentScreenshots = Array.isArray(game.screenshots) ? game.screenshots : [];
+    this.dom.playerScreenshotsGrid.innerHTML = this.currentScreenshots
       .map(
-        (s) => `
-        <div class="shot-item" data-src="${s.src}" data-cap="${s.caption}">
+        (s, idx) => `
+        <div class="shot-item" data-index="${idx}" title="${s.caption}">
           <img src="${s.src}" alt="${s.caption}" loading="lazy" />
         </div>
       `
@@ -590,9 +786,8 @@ class CleanGamePortal {
 
     this.dom.playerScreenshotsGrid.querySelectorAll('.shot-item').forEach((el) => {
       el.addEventListener('click', () => {
-        this.dom.lightboxImg.src = el.dataset.src;
-        this.dom.lightboxCaption.textContent = el.dataset.cap;
-        this.dom.lightboxModal.classList.remove('hidden');
+        const idx = parseInt(el.dataset.index, 10) || 0;
+        this.openLightbox(idx);
       });
     });
 
@@ -623,6 +818,29 @@ class CleanGamePortal {
     const isFav = this.favorites.has(this.currentGame.id);
     this.dom.playerFavBtn.classList.toggle('active', isFav);
     this.dom.playerFavIconWrap.innerHTML = isFav ? SVG_HEART_SOLID : SVG_HEART_OUTLINE;
+  }
+
+  openLightbox(index) {
+    if (!this.currentScreenshots || !this.currentScreenshots.length) return;
+    this.currentScreenshotIndex = Math.max(0, Math.min(index, this.currentScreenshots.length - 1));
+    const shot = this.currentScreenshots[this.currentScreenshotIndex];
+    if (shot) {
+      this.dom.lightboxImg.src = shot.src;
+      this.dom.lightboxCaption.textContent = `${shot.caption} (${this.currentScreenshotIndex + 1}/${this.currentScreenshots.length})`;
+      this.dom.lightboxModal.classList.remove('hidden');
+    }
+  }
+
+  stepLightbox(delta) {
+    if (!this.currentScreenshots || this.currentScreenshots.length <= 1) return;
+    this.currentScreenshotIndex =
+      (this.currentScreenshotIndex + delta + this.currentScreenshots.length) %
+      this.currentScreenshots.length;
+    const shot = this.currentScreenshots[this.currentScreenshotIndex];
+    if (shot) {
+      this.dom.lightboxImg.src = shot.src;
+      this.dom.lightboxCaption.textContent = `${shot.caption} (${this.currentScreenshotIndex + 1}/${this.currentScreenshots.length})`;
+    }
   }
 
   showExitFsBtnTemporarily() {

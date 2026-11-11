@@ -41,6 +41,12 @@
           placeholder="ค้นหาเกม..."
           autocomplete="off"
         />
+        <button id="searchClearBtn" class="search-clear-btn hidden" aria-label="ล้างการค้นหา" title="ล้างการค้นหา">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
         <kbd class="search-shortcut">/</kbd>
       </div>
 
@@ -84,19 +90,38 @@
   <!-- Main Content -->
   <main class="container">
     <!-- =====================================================
-         VIEW 1: MINIMAL HOME CATALOG
+         VIEW 1: MODERN HOME CATALOG & SPOTLIGHT
          ===================================================== -->
     <section id="homeView" class="view-fade">
+      <!-- Modern Spotlight Hero Showcase -->
+      <div id="spotlightHero" class="spotlight-hero"></div>
+
       <div class="filter-bar">
-        <nav id="categoryPills" class="category-pills" aria-label="หมวดหมู่เกม"></nav>
-        <span id="gamesCountLabel" class="games-count">11 เกม</span>
+        <div class="category-scroll-wrap">
+          <nav id="categoryPills" class="category-pills" aria-label="หมวดหมู่เกม"></nav>
+        </div>
+
+        <div class="filter-actions">
+          <div class="sort-select-wrap">
+            <svg class="sort-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18M6 12h12M9 18h6" />
+            </svg>
+            <select id="sortSelect" class="sort-select" aria-label="เรียงลำดับเกม">
+              <option value="featured">✨ แนะนำ</option>
+              <option value="plays">🔥 ยอดนิยม</option>
+              <option value="likes">⭐ ถูกใจ</option>
+              <option value="title">🔤 ชื่อ ก-ฮ</option>
+            </select>
+          </div>
+          <span id="gamesCountLabel" class="games-count">11 เกม</span>
+        </div>
       </div>
 
       <div id="gamesGrid" class="games-grid"></div>
     </section>
 
     <!-- =====================================================
-         VIEW 2: MINIMAL THEATER GAME PLAYER
+         VIEW 2: CINEMATIC THEATER GAME PLAYER
          ===================================================== -->
     <section id="playerView" class="view-fade hidden">
       <div class="player-nav">
@@ -124,27 +149,30 @@
         </button>
       </div>
 
-      <!-- Pure Rounded Theater Viewport -->
-      <div id="gameStageWrapper" class="stage-frame aspect-wide">
-        <div id="iframeLoader" class="stage-loader">
-          <div class="spinner"></div>
-          <span>กำลังโหลดเกม...</span>
+      <!-- Pure Rounded Theater Viewport with Ambilight Backlight -->
+      <div class="stage-frame-container">
+        <div id="stageAmbientGlow" class="stage-ambient-glow" aria-hidden="true"></div>
+        <div id="gameStageWrapper" class="stage-frame aspect-wide">
+          <div id="iframeLoader" class="stage-loader">
+            <div class="spinner"></div>
+            <span>กำลังโหลดเกม...</span>
+          </div>
+
+          <iframe
+            id="gameIframe"
+            title="Game Player"
+            allow="autoplay; fullscreen; gamepad; clipboard-write"
+            allowfullscreen
+          ></iframe>
+
+          <button id="exitFullscreenBtn" class="exit-fs-btn" title="ออกจากเต็มจอ (ESC หรือแตะที่นี่)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            <span>ออก</span>
+          </button>
         </div>
-
-        <iframe
-          id="gameIframe"
-          title="Game Player"
-          allow="autoplay; fullscreen; gamepad; clipboard-write"
-          allowfullscreen
-        ></iframe>
-
-        <button id="exitFullscreenBtn" class="exit-fs-btn" title="ออกจากเต็มจอ (ESC หรือแตะที่นี่)">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-          <span>ออก</span>
-        </button>
       </div>
 
       <!-- Minimal Action Bar -->
@@ -229,11 +257,15 @@
     </section>
   </main>
 
-  <!-- Minimal Lightbox -->
+  <!-- Modern Lightbox Gallery -->
   <div id="lightboxModal" class="lightbox hidden">
-    <button id="closeLightboxBtn" class="lightbox-close" aria-label="ปิด">✕</button>
-    <img id="lightboxImg" src="" alt="" />
-    <p id="lightboxCaption"></p>
+    <button id="closeLightboxBtn" class="lightbox-close" aria-label="ปิด" title="ปิด (ESC)">✕</button>
+    <button id="prevLightboxBtn" class="lightbox-nav prev" aria-label="ภาพก่อนหน้า" title="ภาพก่อนหน้า (←)">‹</button>
+    <div class="lightbox-stage">
+      <img id="lightboxImg" src="" alt="" />
+      <p id="lightboxCaption"></p>
+    </div>
+    <button id="nextLightboxBtn" class="lightbox-nav next" aria-label="ภาพถัดไป" title="ภาพถัดไป (→)">›</button>
   </div>
 
   <!-- Minimal Toast -->

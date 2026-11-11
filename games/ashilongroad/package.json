@@ -1,0 +1,26 @@
+{
+  "name": "ashilane-3d-racing",
+  "version": "1.0.0",
+  "description": "AshiLane - 3D Multiplayer Racing Game starring Ashi",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "node ./node_modules/vite/bin/vite.js build",
+    "preview": "node ./node_modules/vite/bin/vite.js preview --host 0.0.0.0",
+    "start": "node server.js",
+    "server": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "canvas-confetti": "^1.9.4",
+    "express": "^4.21.2",
+    "peerjs": "^1.5.4",
+    "three": "^0.170.0",
+    "vite": "^6.0.7",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {}
+}
+

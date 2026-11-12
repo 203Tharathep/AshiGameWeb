@@ -435,7 +435,7 @@ export const OFFICIAL_GAMES = [
     id: 'ashilongroad',
     title: 'AshiLane: ซิ่งทะลุมิติกับอาชิ 3D (Ashi Long Road)',
     subtitle: 'เกมแข่งรถ 3D สปีดเรซซิ่ง ซิ่งดริฟต์เก็บไอเทม ตะลุยสนามแข่ง ปาดหน้าฝูงนักแข่งอาชิสุดป่วน',
-    playUrl: './games/ashilongroad/index.html',
+    playUrl: 'https://ashilongrace.onrender.com/',
     author: '203Tharathep',
     category: 'racing',
     categoryLabel: 'แข่งรถ 3D / สปีด',
